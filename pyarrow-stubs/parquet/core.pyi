@@ -1,12 +1,22 @@
 from io import IOBase
 from os import PathLike
+import pathlib
 from typing import (
     Generator,
+    Generic,
     Literal,
+    TypeVar,
 )
 
 from _typeshed import Incomplete
 import pyarrow
+from pyarrow import (
+    Array,
+    NativeFile,
+    RecordBatch,
+    Schema,
+    Table,
+)
 from pyarrow._parquet import (
     ColumnChunkMetaData as ColumnChunkMetaData,
     ColumnSchema as ColumnSchema,
@@ -20,10 +30,11 @@ from pyarrow._parquet import (
     Statistics as Statistics,
 )
 from pyarrow.compute import Expression
+from pyarrow.dataset import Partitioning
 from pyarrow.fs import FileSystem
 
 def filters_to_expression(
-    filters: list[tuple[str, ...]] | list[tuple[tuple[str, ...], ...]]
+    filters: list[tuple[str, str, str] | list[tuple[str, str, str]]]
 ) -> Expression: ...
 
 class ParquetFile:
@@ -122,57 +133,65 @@ class ParquetWriter:
         **options,
     ) -> None: ...
     def __del__(self) -> None: ...
-    def __enter__(self): ...
+    def __enter__(self) -> ParquetWriter: ...
     def __exit__(self, *args, **kwargs): ...
     def write(
-        self, table_or_batch, row_group_size: Incomplete | None = ...
+        self,
+        table_or_batch: Table | RecordBatch,
+        row_group_size: int | None = ...,
     ) -> None: ...
-    def write_batch(self, batch, row_group_size: Incomplete | None = ...) -> None: ...
-    def write_table(self, table, row_group_size: Incomplete | None = ...) -> None: ...
+    def write_batch(
+        self, batch: RecordBatch, row_group_size: int | None = ...
+    ) -> None: ...
+    def write_table(self, table: Table, row_group_size: int | None = ...) -> None: ...
     def close(self) -> None: ...
 
 class ParquetDatasetPiece:
     def __init__(
         self,
-        path,
-        open_file_func=...,
-        file_options: Incomplete | None = ...,
-        row_group: Incomplete | None = ...,
-        partition_keys: Incomplete | None = ...,
+        path: str | pathlib.Path,
+        open_file_func: function = ...,
+        file_options: dict | None = ...,
+        row_group: int | None = ...,
+        partition_keys: list[tuple[str, str]] | None = ...,
     ) -> None: ...
-    def __eq__(self, other): ...
-    def get_metadata(self): ...
-    def open(self): ...
+    def __eq__(self, other) -> bool: ...
+    def get_metadata(self) -> FileMetaData: ...
+    def open(self) -> ParquetFile: ...
     def read(
         self,
-        columns: Incomplete | None = ...,
+        columns: list[str] | None = ...,
         use_threads: bool = ...,
-        partitions: Incomplete | None = ...,
-        file: Incomplete | None = ...,
+        partitions: ParquetPartitions | None = ...,
+        file: IOBase | None = ...,
         use_pandas_metadata: bool = ...,
-    ): ...
+    ) -> Table: ...
 
-class PartitionSet:
-    name: Incomplete
-    keys: Incomplete
-    key_indices: Incomplete
-    def __init__(self, name, keys: Incomplete | None = ...) -> None: ...
-    def get_index(self, key): ...
-    @property
-    def dictionary(self): ...
-    @property
-    def is_sorted(self): ...
+_K = TypeVar("_K")
 
-class ParquetPartitions:
-    levels: Incomplete
-    partition_names: Incomplete
+class PartitionSet(Generic[_K]):
+    name: str
+    keys: list[_K]
+    key_indices: dict[_K, int]
+    def __init__(self, name: str, keys: list[_K] | None = ...) -> None: ...
+    def get_index(self, key: _K) -> int: ...
+    @property
+    def dictionary(self) -> Array: ...
+    @property
+    def is_sorted(self) -> bool: ...
+
+_PPK = TypeVar("_PPK", str, int)
+
+class ParquetPartitions(Generic[_PPK]):
+    levels: list[PartitionSet[_PPK]]
+    partition_names: set[str]
     def __init__(self) -> None: ...
     def __len__(self) -> int: ...
     def __getitem__(self, i): ...
-    def equals(self, other): ...
-    def __eq__(self, other): ...
-    def get_index(self, level, name, key): ...
-    def filter_accepts_partition(self, part_key, filter, level): ...
+    def equals(self, other: ParquetPartitions) -> bool: ...
+    def __eq__(self, other) -> bool: ...
+    def get_index(self, level: int, name: str, key: _PPK) -> int: ...
+    def filter_accepts_partition(self, part_key, filter, level: int) -> bool: ...
 
 class ParquetManifest:
     filesystem: Incomplete
@@ -197,59 +216,39 @@ class ParquetManifest:
 class _ParquetDatasetMetadata: ...
 
 class ParquetDataset:
-    __doc__: Incomplete
+    paths: list[str]
+    split_row_groups: bool
+
     def __new__(
         cls,
-        path_or_paths: Incomplete | None = ...,
-        filesystem: Incomplete | None = ...,
-        schema: Incomplete | None = ...,
-        metadata: Incomplete | None = ...,
+        path_or_paths: str | list[str] | None = ...,
+        filesystem: FileSystem | None = ...,
+        schema: Schema | None = ...,
+        metadata: FileMetaData | None = ...,
         split_row_groups: bool = ...,
         validate_schema: bool = ...,
-        filters: Incomplete | None = ...,
-        metadata_nthreads: Incomplete | None = ...,
-        read_dictionary: Incomplete | None = ...,
+        filters: list[tuple[str, str, str] | list[tuple[str, str, str]]] | None = ...,
+        metadata_nthreads: int | None = ...,
+        read_dictionary: list[str] | None = ...,
         memory_map: bool = ...,
         buffer_size: int = ...,
         partitioning: str = ...,
-        use_legacy_dataset: Incomplete | None = ...,
+        use_legacy_dataset: bool | None = ...,
         pre_buffer: bool = ...,
-        coerce_int96_timestamp_unit: Incomplete | None = ...,
-        thrift_string_size_limit: Incomplete | None = ...,
-        thrift_container_size_limit: Incomplete | None = ...,
+        coerce_int96_timestamp_unit: Literal["ms", "ns"] | None = ...,
+        thrift_string_size_limit: int | None = ...,
+        thrift_container_size_limit: int | None = ...,
     ): ...
-    paths: Incomplete
-    split_row_groups: Incomplete
-    def __init__(
-        self,
-        path_or_paths,
-        filesystem: Incomplete | None = ...,
-        schema: Incomplete | None = ...,
-        metadata: Incomplete | None = ...,
-        split_row_groups: bool = ...,
-        validate_schema: bool = ...,
-        filters: Incomplete | None = ...,
-        metadata_nthreads: Incomplete | None = ...,
-        read_dictionary: Incomplete | None = ...,
-        memory_map: bool = ...,
-        buffer_size: int = ...,
-        partitioning: str = ...,
-        use_legacy_dataset: bool = ...,
-        pre_buffer: bool = ...,
-        coerce_int96_timestamp_unit: Incomplete | None = ...,
-        thrift_string_size_limit: Incomplete | None = ...,
-        thrift_container_size_limit: Incomplete | None = ...,
-    ) -> None: ...
-    def equals(self, other): ...
-    def __eq__(self, other): ...
+    def equals(self, other) -> bool: ...
+    def __eq__(self, other) -> bool: ...
     def validate_schemas(self) -> None: ...
     def read(
         self,
-        columns: Incomplete | None = ...,
+        columns: list[str] | None = ...,
         use_threads: bool = ...,
         use_pandas_metadata: bool = ...,
-    ): ...
-    def read_pandas(self, **kwargs): ...
+    ) -> Table: ...
+    def read_pandas(self, **kwargs) -> Table: ...
     @property
     def pieces(self): ...
     @property
@@ -284,32 +283,32 @@ class ParquetDataset:
 class _ParquetDatasetV2:
     def __init__(
         self,
-        path_or_paths,
-        filesystem: Incomplete | None = ...,
+        path_or_paths: str | list[str],
+        filesystem: FileSystem | None = ...,
         *,
-        filters: Incomplete | None = ...,
+        filters: list[tuple[str, str, str] | list[tuple[str, str, str]]] | None = ...,
         partitioning: str = ...,
-        read_dictionary: Incomplete | None = ...,
-        buffer_size: Incomplete | None = ...,
+        read_dictionary: list[str] | None = ...,
+        buffer_size: int | None = ...,
         memory_map: bool = ...,
-        ignore_prefixes: Incomplete | None = ...,
+        ignore_prefixes: list[str] | None = ...,
         pre_buffer: bool = ...,
-        coerce_int96_timestamp_unit: Incomplete | None = ...,
-        schema: Incomplete | None = ...,
-        decryption_properties: Incomplete | None = ...,
+        coerce_int96_timestamp_unit: Literal["ms", "ns"] | None = ...,
+        schema: Schema | None = ...,
+        decryption_properties: FileDecryptionProperties | None = ...,
         thrift_string_size_limit: Incomplete | None = ...,
         thrift_container_size_limit: Incomplete | None = ...,
         **kwargs,
     ) -> None: ...
     @property
-    def schema(self): ...
+    def schema(self) -> Schema: ...
     def read(
         self,
-        columns: Incomplete | None = ...,
+        columns: list[str] | None = ...,
         use_threads: bool = ...,
         use_pandas_metadata: bool = ...,
-    ): ...
-    def read_pandas(self, **kwargs): ...
+    ) -> Table: ...
+    def read_pandas(self, **kwargs) -> Table: ...
     @property
     def pieces(self): ...
     @property
@@ -322,82 +321,88 @@ class _ParquetDatasetV2:
     def partitioning(self): ...
 
 def read_table(
-    source,
+    source: str | NativeFile | IOBase,
     *,
-    columns: Incomplete | None = ...,
+    columns: list[str] | None = ...,
     use_threads: bool = ...,
-    metadata: Incomplete | None = ...,
-    schema: Incomplete | None = ...,
+    metadata: FileMetaData | None = ...,
+    schema: Schema | None = ...,
     use_pandas_metadata: bool = ...,
     memory_map: bool = ...,
-    read_dictionary: Incomplete | None = ...,
-    filesystem: Incomplete | None = ...,
-    filters: Incomplete | None = ...,
+    read_dictionary: list[str] | None = ...,
+    filesystem: FileSystem | None = ...,
+    filters: list[tuple[str, str, str] | list[tuple[str, str, str]]] | None = ...,
     buffer_size: int = ...,
     partitioning: str = ...,
     use_legacy_dataset: bool = ...,
-    ignore_prefixes: Incomplete | None = ...,
+    ignore_prefixes: list[str] | None = ...,
     pre_buffer: bool = ...,
-    coerce_int96_timestamp_unit: Incomplete | None = ...,
-    decryption_properties: Incomplete | None = ...,
-    thrift_string_size_limit: Incomplete | None = ...,
-    thrift_container_size_limit: Incomplete | None = ...,
-): ...
-def read_pandas(source, columns: Incomplete | None = ..., **kwargs): ...
+    coerce_int96_timestamp_unit: Literal["ms", "ns"] | None = ...,
+    decryption_properties: FileDecryptionProperties | None = ...,
+    thrift_string_size_limit: int | None = ...,
+    thrift_container_size_limit: int | None = ...,
+) -> Table: ...
+def read_pandas(
+    source: str | NativeFile | IOBase, columns: list[str] | None = ..., **kwargs
+) -> Table: ...
 def write_table(
-    table,
-    where,
-    row_group_size: Incomplete | None = ...,
+    table: Table,
+    where: str | NativeFile,
+    row_group_size: int | None = ...,
     version: str = ...,
-    use_dictionary: bool = ...,
+    use_dictionary: bool | list[str] = ...,
     compression: str = ...,
     write_statistics: bool = ...,
-    use_deprecated_int96_timestamps: Incomplete | None = ...,
-    coerce_timestamps: Incomplete | None = ...,
+    use_deprecated_int96_timestamps: bool | None = ...,
+    coerce_timestamps: str | None = ...,
     allow_truncated_timestamps: bool = ...,
-    data_page_size: Incomplete | None = ...,
-    flavor: Incomplete | None = ...,
-    filesystem: Incomplete | None = ...,
-    compression_level: Incomplete | None = ...,
+    data_page_size: int | None = ...,
+    flavor: Literal["spark"] | None = ...,
+    filesystem: FileSystem | None = ...,
+    compression_level: int | dict[str, int] | None = ...,
     use_byte_stream_split: bool = ...,
-    column_encoding: Incomplete | None = ...,
+    column_encoding: str | dict[str, str] | None = ...,
     data_page_version: str = ...,
     use_compliant_nested_type: bool = ...,
-    encryption_properties: Incomplete | None = ...,
-    write_batch_size: Incomplete | None = ...,
-    dictionary_pagesize_limit: Incomplete | None = ...,
+    encryption_properties: FileEncryptionProperties | None = ...,
+    write_batch_size: int | None = ...,
+    dictionary_pagesize_limit: int | None = ...,
     **kwargs,
 ) -> None: ...
 def write_to_dataset(
-    table,
-    root_path,
-    partition_cols: Incomplete | None = ...,
-    partition_filename_cb: Incomplete | None = ...,
-    filesystem: Incomplete | None = ...,
-    use_legacy_dataset: Incomplete | None = ...,
-    schema: Incomplete | None = ...,
-    partitioning: Incomplete | None = ...,
-    basename_template: Incomplete | None = ...,
-    use_threads: Incomplete | None = ...,
-    file_visitor: Incomplete | None = ...,
-    existing_data_behavior: Incomplete | None = ...,
+    table: Table,
+    root_path: str | pathlib.Path,
+    partition_cols: list[str] | None = ...,
+    partition_filename_cb: function | None = ...,
+    filesystem: FileSystem | None = ...,
+    use_legacy_dataset: bool | None = ...,
+    schema: Schema | None = ...,
+    partitioning: list[str] | Partitioning | None = ...,
+    basename_template: str | None = ...,
+    use_threads: bool | None = ...,
+    file_visitor: function | None = ...,
+    existing_data_behavior: Literal["overwrite_or_ignore", "error", "delete_matching"]
+    | None = ...,
     **kwargs,
 ) -> None: ...
 def write_metadata(
-    schema, where, metadata_collector: Incomplete | None = ..., **kwargs
+    schema: Schema,
+    where: str | NativeFile,
+    metadata_collector: list | None = ...,
+    **kwargs,
 ) -> None: ...
 def read_metadata(
     where,
     memory_map: bool = ...,
-    decryption_properties: Incomplete | None = ...,
+    decryption_properties: FileDecryptionProperties | None = ...,
     filesystem: Incomplete | None = ...,
 ): ...
 def read_schema(
-    where,
+    where: str | IOBase,
     memory_map: bool = ...,
-    decryption_properties: Incomplete | None = ...,
-    filesystem: Incomplete | None = ...,
-): ...
+    decryption_properties: FileDecryptionProperties | None = ...,
+    filesystem: FileSystem | None = ...,
+) -> FileMetaData: ...
 
 # Names in __all__ with no definition:
 #   _filters_to_expression
