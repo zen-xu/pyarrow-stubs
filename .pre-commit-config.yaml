@@ -16,7 +16,7 @@ repos:
       - id: pyupgrade
         types_or: [python, pyi]
         types: [text] # overwrite types: [python]
-        args: [--py38-plus]
+        args: [--py37-plus]
   - repo: https://github.com/PyCQA/flake8
     rev: 5.0.4
     hooks:
@@ -33,4 +33,6 @@ repos:
             --ignore=E301 E302 E305 E402 E501 E701 E704 F401 F811 W503 Y019 Y027 Y034 Y037 Y041 Y042,
             # TypeVars in private files are already private
             --per-file-ignores=_*.pyi:Y001,
+            # ignore private stub files
+            --per-file-ignores=_*.pyi:F821,
           ]
