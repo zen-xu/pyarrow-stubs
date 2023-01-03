@@ -1,4 +1,4 @@
-name: Release VSCode Server Bin
+name: Release
 
 on:
   push:
