@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyarrow-stubs"
-version = "10.0.1.3"
+version = "10.0.1.4"
 description = "Type annotations for pyarrow"
 authors = ["ZhengYu, Xu <zen-xu@outlook.com>"]
 license = "BSD-2-Clause"
