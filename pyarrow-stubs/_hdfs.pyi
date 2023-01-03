@@ -1,14 +1,13 @@
 from typing import (
     Any,
-    ClassVar,
+    Callable,
 )
 
 import pyarrow._fs
 
-_stringify_path: function
+_stringify_path: Callable
 
 class HadoopFileSystem(pyarrow._fs.FileSystem):
-    __pyx_vtable__: ClassVar[PyCapsule] = ...
     def __init__(self, *args, **kwargs) -> None: ...
     @classmethod
     def _reconstruct(cls, typecls, kwargs) -> Any: ...

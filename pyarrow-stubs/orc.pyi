@@ -1,7 +1,9 @@
 from io import IOBase
 
-from _fs import FileSystem
-from pyarrow import _orc
+from pyarrow._orc import (
+    ORCReader as _ORCReader,
+    ORCWriter as _ORCWriter,
+)
 from pyarrow.lib import (
     KeyValueMetadata,
     NativeFile,
@@ -10,8 +12,10 @@ from pyarrow.lib import (
     Table,
 )
 
+from ._fs import FileSystem
+
 class ORCFile:
-    reader: _orc.ORCReader
+    reader: _ORCReader
     def __init__(self, source: str | NativeFile | IOBase) -> None: ...
     @property
     def metadata(self) -> KeyValueMetadata: ...
@@ -53,7 +57,7 @@ class ORCFile:
 class ORCWriter:
     __doc__: str
     is_open: bool
-    writer: _orc.ORCWriter
+    writer: _ORCWriter
     def __init__(
         self,
         where: str | NativeFile | IOBase,

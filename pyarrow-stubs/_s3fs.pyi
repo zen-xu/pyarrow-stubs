@@ -1,5 +1,5 @@
 import enum
-import importlib._bootstrap
+import importlib._bootstrap  # type: ignore
 from typing import (
     Any,
     ClassVar,

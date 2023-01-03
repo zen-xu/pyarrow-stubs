@@ -1,13 +1,5 @@
 from typing import Any
 
-from pyarrow import (
-    filesystem as filesystem,
-    hdfs as hdfs,
-    ipc as ipc,
-    serialization as serialization,
-    types as types,
-    util as util,
-)
 from pyarrow._hdfsio import (
     HdfsFile as HdfsFile,
     have_libhdfs as have_libhdfs,
@@ -262,6 +254,15 @@ from pyarrow.serialization import (
     default_serialization_context as default_serialization_context,
     register_default_serialization_handlers as register_default_serialization_handlers,
     register_torch_serialization_handlers as register_torch_serialization_handlers,
+)
+
+from . import (
+    filesystem as filesystem,
+    hdfs as hdfs,
+    ipc as ipc,
+    serialization as serialization,
+    types as types,
+    util as util,
 )
 
 def show_versions() -> None: ...

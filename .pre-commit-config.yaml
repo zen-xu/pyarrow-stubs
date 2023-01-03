@@ -1,7 +1,22 @@
 minimum_pre_commit_version: 2.15.0
+default_language_version:
+  python: python3.7
 ci:
   autofix_prs: false
 repos:
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: ./check-mypy.sh
+        language: python
+        types_or: [python, pyi]
+        require_serial: true
+        additional_dependencies:
+          - mypy
+          - types-cffi
+          - numpy
+          - pandas-stubs
   - repo: https://github.com/python/black
     rev: 22.12.0
     hooks:

@@ -1,8 +1,5 @@
 from io import IOBase
-from typing import (
-    Literal,
-    overload,
-)
+from typing import overload
 
 import pandas as pd
 from pyarrow._feather import FeatherError as FeatherError
@@ -16,6 +13,7 @@ from pyarrow.lib import (
     schema as schema,
 )
 from pyarrow.vendored.version import Version as Version
+from typing_extensions import Literal
 
 class FeatherDataset:
     paths: list[str]

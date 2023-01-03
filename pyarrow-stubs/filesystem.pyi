@@ -25,8 +25,8 @@ class FileSystem:
         self,
         path: str,
         columns: list[str] | None = ...,
-        metadata: parquet.FileMetaData | None = ...,
-        schema: parquet.ParquetSchema | None = ...,
+        metadata: parquet.FileMetaData | None = ...,  # type: ignore
+        schema: parquet.ParquetSchema | None = ...,  # type: ignore
         use_threads: bool = ...,
         use_pandas_metadata: bool = ...,
     ) -> Table: ...

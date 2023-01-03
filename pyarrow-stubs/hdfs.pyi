@@ -5,7 +5,7 @@ import pyarrow._hdfsio as _hdfsio
 from pyarrow.filesystem import FileSystem as FileSystem
 from pyarrow.util import implements as implements
 
-class HadoopFileSystem(_hdfsio.HadoopFileSystem, FileSystem):
+class HadoopFileSystem(_hdfsio.HadoopFileSystem, FileSystem):  # type: ignore
     def __init__(
         self,
         host: str = ...,

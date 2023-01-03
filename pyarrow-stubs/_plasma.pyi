@@ -1,14 +1,14 @@
-import collections.abc
 import socket
 from typing import (
     Any,
-    ClassVar,
-    Literal,
-    TypedDict,
     overload,
 )
 
 import pyarrow.lib
+from typing_extensions import (
+    Literal,
+    TypedDict,
+)
 
 PLASMA_WAIT_TIMEOUT: int
 

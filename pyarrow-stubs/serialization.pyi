@@ -5,7 +5,7 @@ from pyarrow.lib import (
 )
 
 try:
-    import cloudpickle
+    import cloudpickle  # type: ignore
 except ImportError:
     cloudpickle = builtin_pickle
 
