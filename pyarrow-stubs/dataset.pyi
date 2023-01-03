@@ -2,7 +2,6 @@ from os import PathLike
 from typing import (
     Callable,
     Iterable,
-    Literal,
 )
 
 from pyarrow._dataset import (
@@ -58,6 +57,7 @@ from pyarrow.lib import (
     Schema,
     Table,
 )
+from typing_extensions import Literal
 
 def __getattr__(name: str) -> None: ...
 def partitioning(

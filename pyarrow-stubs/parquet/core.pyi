@@ -2,9 +2,9 @@ from io import IOBase
 from os import PathLike
 import pathlib
 from typing import (
+    Callable,
     Generator,
     Generic,
-    Literal,
     TypeVar,
 )
 
@@ -32,6 +32,10 @@ from pyarrow._parquet import (
 from pyarrow.compute import Expression
 from pyarrow.dataset import Partitioning
 from pyarrow.fs import FileSystem
+from typing_extensions import (
+    Literal,
+    TypeAlias,
+)
 
 def filters_to_expression(
     filters: list[tuple[str, str, str] | list[tuple[str, str, str]]]
@@ -100,7 +104,7 @@ class ParquetFile:
         self, columns: list[int] | None = ..., batch_size: int = ...
     ) -> int: ...
 
-_COMPRESSION = Literal["NONE", "SNAPPY", "GZIP", "BROTLI", "LZ4", "ZSTD"]
+_COMPRESSION: TypeAlias = Literal["NONE", "SNAPPY", "GZIP", "BROTLI", "LZ4", "ZSTD"]
 
 class ParquetWriter:
     flavor: Literal["spark"] | None
@@ -150,7 +154,7 @@ class ParquetDatasetPiece:
     def __init__(
         self,
         path: str | pathlib.Path,
-        open_file_func: function = ...,
+        open_file_func: Callable = ...,
         file_options: dict | None = ...,
         row_group: int | None = ...,
         partition_keys: list[tuple[str, str]] | None = ...,
@@ -373,14 +377,14 @@ def write_to_dataset(
     table: Table,
     root_path: str | pathlib.Path,
     partition_cols: list[str] | None = ...,
-    partition_filename_cb: function | None = ...,
+    partition_filename_cb: Callable | None = ...,
     filesystem: FileSystem | None = ...,
     use_legacy_dataset: bool | None = ...,
     schema: Schema | None = ...,
     partitioning: list[str] | Partitioning | None = ...,
     basename_template: str | None = ...,
     use_threads: bool | None = ...,
-    file_visitor: function | None = ...,
+    file_visitor: Callable | None = ...,
     existing_data_behavior: Literal["overwrite_or_ignore", "error", "delete_matching"]
     | None = ...,
     **kwargs,

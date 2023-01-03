@@ -1,9 +1,12 @@
 from collections.abc import Sequence
-from typing import TypeVar
+from typing import (
+    Callable,
+    TypeVar,
+)
 
 _T = TypeVar("_T")
 
-def implements(f: function): ...
+def implements(f: Callable): ...
 def product(seq: Sequence[_T]) -> _T: ...
 def get_contiguous_span(
     shape: tuple[int, ...], strides: tuple[int, ...], itemsize: int

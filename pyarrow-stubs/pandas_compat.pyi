@@ -1,7 +1,6 @@
 from typing import (
     Any,
     Callable,
-    TypedDict,
 )
 
 import numpy as np
@@ -15,6 +14,7 @@ from pyarrow.lib import (
     _ArrowType,
     frombytes as frombytes,
 )
+from typing_extensions import TypedDict
 
 class _SerializedDict(TypedDict):
     blocks: list[Any]

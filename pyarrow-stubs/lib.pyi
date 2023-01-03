@@ -15,10 +15,7 @@ from typing import (
     ItemsView,
     Iterable,
     KeysView,
-    Literal,
     NamedTuple,
-    TypeAlias,
-    TypeGuard,
     TypeVar,
     ValuesView,
     overload,
@@ -35,6 +32,11 @@ import pandas as pd
 from pyarrow.compute import (
     CastOptions,
     FunctionOptions,
+)
+from typing_extensions import (
+    Literal,
+    TypeAlias,
+    TypeGuard,
 )
 
 _ArrowType: TypeAlias = int | DataType
@@ -85,26 +87,26 @@ V4: importlib._bootstrap.MetadataVersion
 V5: importlib._bootstrap.MetadataVersion
 _NULL: NullScalar
 __pc: ModuleType | None
-_break_traceback_cycle_from_frame: function
+_break_traceback_cycle_from_frame: Callable
 _default_context_initialized: bool
 _default_serialization_context: SerializationContext
-_is_path_like: function
+_is_path_like: Callable
 _pandas_api: _PandasAPIShim
 _python_extension_types_registry: list
 _registry_nanny: _ExtensionRegistryNanny
-_stringify_path: function
-contextmanager: function
+_stringify_path: Callable
+contextmanager: Callable
 cpp_build_info: importlib._bootstrap.BuildInfo
 cpp_version: str
 cpp_version_info: importlib._bootstrap.VersionInfo
 have_signal_refcycle: bool
-namedtuple: function
+namedtuple: Callable
 
 class PyCapsule: ...
 
 _Self = TypeVar("_Self")
 
-_Array = TypeVar("_Array", bound="Array")
+_Array = TypeVar("_Array", bound=Array)
 _ChunkedArray = TypeVar("_ChunkedArray", bound=ChunkedArray)
 
 _T = TypeVar("_T")
@@ -613,7 +615,7 @@ class ChunkedArray(_PandasConvertible, Generic[_T, _Scalar]):
     def __len__(self) -> int: ...
     def __sizeof__(self) -> int: ...
 
-_COMPRESSION = Literal[
+_COMPRESSION: TypeAlias = Literal[
     "gzip", "bz2", "brotli", "lz4" "lz4_frame", "lz4_raw", "zstd", "snappy"
 ]
 
@@ -1914,7 +1916,7 @@ class _WriteStats(NamedTuple):
 class ordered_dict:
     def __init__(self, *args, **kwargs) -> None: ...
     def clear(self, *args, **kwargs) -> Any: ...
-    def copy(self) -> ashallowcopyofD: ...
+    def copy(self) -> ashallowcopyofD: ...  # noqa
     @classmethod
     def fromkeys(cls, *args, **kwargs) -> Any: ...
     def get(self, *args, **kwargs) -> Any: ...

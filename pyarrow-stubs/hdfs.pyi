@@ -1,8 +1,4 @@
 from collections.abc import Generator
-from typing import (
-    Literal,
-    overload,
-)
 
 from _typeshed import Incomplete
 import pyarrow._hdfsio as _hdfsio

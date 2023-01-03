@@ -1,8 +1,5 @@
 from os import PathLike
-from typing import (
-    Any,
-    Generator,
-)
+from typing import Generator
 
 from pyarrow import (
     Table,
