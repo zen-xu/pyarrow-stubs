@@ -16,7 +16,7 @@ jobs:
           python-version: "3.7"
       - uses: abatilo/actions-poetry@v2
         with:
-          poetry-version: "1.1.15"
+          poetry-version: "1.4.2"
       - name: publish
         run: |
           poetry build -f wheel
