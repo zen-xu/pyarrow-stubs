@@ -35,7 +35,7 @@ class S3FileSystem(pyarrow._fs.FileSystem):
         region: str = ...,
         request_timeout: float | None = ...,
         connect_timeout: float | None = ...,
-        schema: str = ...,
+        scheme: str = ...,
         endpoint_override: str | None = ...,
         background_writes: bool = ...,
         default_metadata: dict | pyarrow.lib.KeyValueMetadata = ...,
