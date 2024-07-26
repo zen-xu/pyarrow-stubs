@@ -56,7 +56,6 @@ class ParquetFileWriteOptions(pyarrow._dataset.FileWriteOptions):
     def __setstate__(self, state) -> Any: ...
 
 class ParquetFragmentScanOptions(pyarrow._dataset.FragmentScanOptions):
-
     __slots__: ClassVar[tuple] = ...
     buffer_size: Any
     pre_buffer: Any

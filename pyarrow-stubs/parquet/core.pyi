@@ -38,7 +38,7 @@ from typing_extensions import (
 )
 
 def filters_to_expression(
-    filters: list[tuple[str, str, str] | list[tuple[str, str, str]]]
+    filters: list[tuple[str, str, str] | list[tuple[str, str, str]]],
 ) -> Expression: ...
 
 class ParquetFile:
