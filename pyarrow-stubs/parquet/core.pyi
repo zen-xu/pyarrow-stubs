@@ -400,13 +400,13 @@ def read_metadata(
     memory_map: bool = ...,
     decryption_properties: FileDecryptionProperties | None = ...,
     filesystem: Incomplete | None = ...,
-): ...
+) -> FileMetaData: ...
 def read_schema(
     where: str | IOBase,
     memory_map: bool = ...,
     decryption_properties: FileDecryptionProperties | None = ...,
     filesystem: FileSystem | None = ...,
-) -> FileMetaData: ...
+) -> Schema: ...
 
 # Names in __all__ with no definition:
 #   _filters_to_expression
