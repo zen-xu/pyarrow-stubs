@@ -1,6 +1,5 @@
 from typing import (
     Any,
-    ClassVar,
 )
 
 import pyarrow._dataset

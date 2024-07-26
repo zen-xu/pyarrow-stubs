@@ -1,9 +1,31 @@
-minimum_pre_commit_version: 2.15.0
-default_language_version:
-  python: python3.7
 ci:
   autofix_prs: false
+
+default_language_version:
+  python: python3.11
+
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: check-ast
+      - id: debug-statements
+        exclude: sunray/_internal/rpdb.py
+      - id: check-docstring-first
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
   - repo: local
     hooks:
       - id: mypy
@@ -13,41 +35,7 @@ repos:
         types_or: [python, pyi]
         require_serial: true
         additional_dependencies:
-          - mypy
+          - mypy==1.11.0
           - types-cffi
           - numpy
           - pandas-stubs
-  - repo: https://github.com/python/black
-    rev: 22.12.0
-    hooks:
-      - id: black
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.11.2
-    hooks:
-      - id: isort
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
-    hooks:
-      - id: pyupgrade
-        types_or: [python, pyi]
-        types: [text] # overwrite types: [python]
-        args: [--py37-plus]
-  - repo: https://github.com/PyCQA/flake8
-    rev: 5.0.4
-    hooks:
-      - id: flake8
-        name: flake8 (py)
-        types: [python]
-        args: [--ignore=E501 F841]
-      - id: flake8
-        name: flake8 (pyi)
-        additional_dependencies:
-          - flake8-pyi==22.11.0
-        types: [pyi]
-        args: [
-            --ignore=E301 E302 E305 E402 E501 E701 E704 F401 F811 W503 Y019 Y027 Y034 Y037 Y041 Y042,
-            # TypeVars in private files are already private
-            --per-file-ignores=_*.pyi:Y001,
-            # ignore private stub files
-            --per-file-ignores=_*.pyi:F821,
-          ]
