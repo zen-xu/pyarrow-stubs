@@ -115,7 +115,7 @@ _T = TypeVar("_T")
 _T2 = TypeVar("_T2")
 _Scalar = TypeVar("_Scalar", bound=Scalar)
 
-class Array(_PandasConvertible, Generic[_T, _Scalar]):
+class Array(_PandasConvertibleToSeries, Generic[_T, _Scalar]):
     _name: Any
     nbytes: int
     null_count: int
@@ -540,7 +540,7 @@ class BuildInfo(NamedTuple):
     version: str
     version_info: str
 
-class ChunkedArray(_PandasConvertible, Generic[_T, _Scalar]):
+class ChunkedArray(_PandasConvertibleToSeries, Generic[_T, _Scalar]):
     _name: str | None
     chunks: list[Array[_T, _Scalar]]
     nbytes: int
@@ -1110,7 +1110,7 @@ class PythonFile(NativeFile):
 
 class ReadStats(importlib._bootstrap.ReadStats): ...
 
-class RecordBatch(_PandasConvertible):
+class RecordBatch(_PandasConvertibleToDataFrame):
     columns: list[Array]
     nbytes: int
     num_columns: int
@@ -1554,7 +1554,7 @@ class StructType(DataType):
     def __iter__(self) -> Generator[Field, None, None]: ...
     def __len__(self) -> int: ...
 
-class Table(_PandasConvertible):
+class Table(_PandasConvertibleToDataFrame):
     column_names: list[str]
     columns: list[Array]
     nbytes: int
@@ -1843,7 +1843,7 @@ class _PandasAPIShim:
     def pandas_dtype(self, dtype: DTypeLike) -> DTypeLike: ...
     def series(self, *args, **kwargs) -> pd.Series: ...
 
-class _PandasConvertible(_Weakrefable):
+class _PandasConvertibleToDataFrame(_Weakrefable):
     def to_pandas(
         self,
         memory_pool: MemoryPool | None = ...,
@@ -1861,7 +1861,27 @@ class _PandasConvertible(_Weakrefable):
         self_destruct: bool | None = ...,
         types_mapper: Callable[[DataType], pd.api.extensions.ExtensionDtype]
         | None = ...,
-    ) -> pd.Series | pd.DataFrame: ...
+    ) -> pd.DataFrame: ...
+
+class _PandasConvertibleToSeries(_Weakrefable):
+    def to_pandas(
+        self,
+        memory_pool: MemoryPool | None = ...,
+        categories: list[pd.Categorical] | None = ...,
+        strings_to_categorical: bool | None = ...,
+        zero_copy_only: bool | None = ...,
+        integer_object_nulls: bool | None = ...,
+        date_as_object: bool | None = ...,
+        timestamp_as_object: bool | None = ...,
+        use_threads: bool | None = ...,
+        deduplicate_objects: bool | None = ...,
+        ignore_metadata: bool | None = ...,
+        safe: bool | None = ...,
+        split_blocks: bool | None = ...,
+        self_destruct: bool | None = ...,
+        types_mapper: Callable[[DataType], pd.api.extensions.ExtensionDtype]
+        | None = ...,
+    ) -> pd.Series: ...
 
 class _ReadPandasMixin:
     def read_pandas(self, **options) -> Any: ...
