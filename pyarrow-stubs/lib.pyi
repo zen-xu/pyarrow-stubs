@@ -2208,6 +2208,10 @@ def table(
 ) -> Table: ...
 @overload
 def table(
+    data: RecordBatch, schema: Schema | None = ..., nthreads: int | None = ...
+) -> Table: ...
+@overload
+def table(
     arrays: list[Array],
     schema: Schema,
     metadata: dict | None = ...,
