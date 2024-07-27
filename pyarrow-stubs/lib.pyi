@@ -20,6 +20,7 @@ from typing import (
     ValuesView,
     overload,
 )
+from typing_extensions import Buffer as _Buffer
 
 import _io  # type: ignore
 import numpy as np
@@ -491,7 +492,7 @@ class BooleanArray(Array[bool, BooleanScalar]):
 
 class BooleanScalar(Scalar[bool]): ...
 
-class Buffer(_Weakrefable):
+class Buffer(_Weakrefable, _Buffer):
     address: int
     is_cpu: bool
     is_mutable: bool
