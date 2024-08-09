@@ -47,8 +47,10 @@ line-length    = 99
 target-version = "py38"
 
 [tool.ruff.lint]
-select = [
-  "I", # isort
+extend-select = [
+  "I",   # isort
+  "N",   # pep8-naming
+  "PYI", # flake8-pyi
 ]
 
 [tool.ruff.lint.isort]
