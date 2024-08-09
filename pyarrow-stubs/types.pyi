@@ -1,9 +1,7 @@
-from pyarrow.lib import (
-    DataType,
-    is_boolean_value as is_boolean_value,
-    is_float_value as is_float_value,
-    is_integer_value as is_integer_value,
-)
+from pyarrow.lib import DataType
+from pyarrow.lib import is_boolean_value as is_boolean_value
+from pyarrow.lib import is_float_value as is_float_value
+from pyarrow.lib import is_integer_value as is_integer_value
 
 def is_null(t: DataType) -> bool: ...
 def is_boolean(t: DataType) -> bool: ...

@@ -1,7 +1,8 @@
 from collections.abc import Generator
 
-from _typeshed import Incomplete
 import pyarrow._hdfsio as _hdfsio
+
+from _typeshed import Incomplete
 from pyarrow.filesystem import FileSystem as FileSystem
 from pyarrow.util import implements as implements
 
@@ -16,9 +17,7 @@ class HadoopFileSystem(_hdfsio.HadoopFileSystem, FileSystem):  # type: ignore
         extra_conf: Incomplete | None = ...,
     ) -> None: ...
     def __reduce__(self) -> tuple: ...
-    def walk(
-        self, top_path: str
-    ) -> Generator[tuple[str, list[str], list[str]], None, None]: ...
+    def walk(self, top_path: str) -> Generator[tuple[str, list[str], list[str]], None, None]: ...
 
 def connect(
     host: str = ...,

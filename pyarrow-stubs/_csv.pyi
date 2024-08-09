@@ -1,8 +1,6 @@
-from typing import (
-    Any,
-    ClassVar,
-    overload,
-)
+from typing import Any
+from typing import ClassVar
+from typing import overload
 
 import pyarrow.lib
 
@@ -171,6 +169,4 @@ def read_csv(
 @overload
 def read_csv(source) -> Any: ...
 def tobytes(o) -> Any: ...
-def write_csv(
-    data, output_file, write_options=..., MemoryPoolmemory_pool=...
-) -> Any: ...
+def write_csv(data, output_file, write_options=..., MemoryPoolmemory_pool=...) -> Any: ...

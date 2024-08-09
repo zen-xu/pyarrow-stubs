@@ -2,16 +2,14 @@ from collections.abc import Generator
 from subprocess import Popen
 from types import ModuleType
 
-from pyarrow._plasma import (
-    ObjectID as ObjectID,
-    ObjectNotAvailable as ObjectNotAvailable,
-    PlasmaBuffer as PlasmaBuffer,
-    PlasmaClient as PlasmaClient,
-    PlasmaObjectExists as PlasmaObjectExists,
-    PlasmaObjectNotFound as PlasmaObjectNotFound,
-    PlasmaStoreFull as PlasmaStoreFull,
-    connect as connect,
-)
+from pyarrow._plasma import ObjectID as ObjectID
+from pyarrow._plasma import ObjectNotAvailable as ObjectNotAvailable
+from pyarrow._plasma import PlasmaBuffer as PlasmaBuffer
+from pyarrow._plasma import PlasmaClient as PlasmaClient
+from pyarrow._plasma import PlasmaObjectExists as PlasmaObjectExists
+from pyarrow._plasma import PlasmaObjectNotFound as PlasmaObjectNotFound
+from pyarrow._plasma import PlasmaStoreFull as PlasmaStoreFull
+from pyarrow._plasma import connect as connect
 
 TF_PLASMA_OP_PATH: str
 tf_plasma_op: ModuleType | None

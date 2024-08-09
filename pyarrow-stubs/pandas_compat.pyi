@@ -1,19 +1,16 @@
-from typing import (
-    Any,
-    Callable,
-)
+from typing import Any
+from typing import Callable
 
 import numpy as np
 import pandas as pd
+
 from pandas.core.internals import BlockManager
-from pyarrow.lib import (
-    Array,
-    DataType,
-    Schema,
-    Table,
-    _ArrowType,
-    frombytes as frombytes,
-)
+from pyarrow.lib import Array
+from pyarrow.lib import DataType
+from pyarrow.lib import Schema
+from pyarrow.lib import Table
+from pyarrow.lib import _ArrowType
+from pyarrow.lib import frombytes as frombytes
 from typing_extensions import TypedDict
 
 class _SerializedDict(TypedDict):

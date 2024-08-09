@@ -2,16 +2,15 @@ from io import IOBase
 from typing import overload
 
 import pandas as pd
+
 from pyarrow._feather import FeatherError as FeatherError
-from pyarrow.lib import (
-    ChunkedArray,
-    Codec as Codec,
-    NativeFile,
-    Schema,
-    Table as Table,
-    concat_tables as concat_tables,
-    schema as schema,
-)
+from pyarrow.lib import ChunkedArray
+from pyarrow.lib import Codec as Codec
+from pyarrow.lib import NativeFile
+from pyarrow.lib import Schema
+from pyarrow.lib import Table as Table
+from pyarrow.lib import concat_tables as concat_tables
+from pyarrow.lib import schema as schema
 from pyarrow.vendored.version import Version as Version
 from typing_extensions import Literal
 
@@ -19,9 +18,7 @@ class FeatherDataset:
     paths: list[str]
     validate_schema: bool
     schema: Schema
-    def __init__(
-        self, path_or_paths: list[str], validate_schema: bool = ...
-    ) -> None: ...
+    def __init__(self, path_or_paths: list[str], validate_schema: bool = ...) -> None: ...
     def read_table(self, columns: list[str] | None = ...) -> Table: ...
     def validate_schemas(self, piece: str, table: Table) -> None: ...
     def read_pandas(

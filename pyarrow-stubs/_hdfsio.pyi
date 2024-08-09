@@ -1,10 +1,10 @@
 import re
-from typing import (
-    Any,
-    overload,
-)
+
+from typing import Any
+from typing import overload
 
 import pyarrow.lib
+
 from typing_extensions import Literal
 
 _HDFS_PATH_RE: re.Pattern

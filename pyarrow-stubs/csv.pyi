@@ -1,13 +1,11 @@
-from pyarrow._csv import (
-    ISO8601 as ISO8601,
-    ConvertOptions as ConvertOptions,
-    CSVStreamingReader as CSVStreamingReader,
-    CSVWriter as CSVWriter,
-    InvalidRow as InvalidRow,
-    ParseOptions as ParseOptions,
-    ReadOptions as ReadOptions,
-    WriteOptions as WriteOptions,
-    open_csv as open_csv,
-    read_csv as read_csv,
-    write_csv as write_csv,
-)
+from pyarrow._csv import ISO8601 as ISO8601
+from pyarrow._csv import ConvertOptions as ConvertOptions
+from pyarrow._csv import CSVStreamingReader as CSVStreamingReader
+from pyarrow._csv import CSVWriter as CSVWriter
+from pyarrow._csv import InvalidRow as InvalidRow
+from pyarrow._csv import ParseOptions as ParseOptions
+from pyarrow._csv import ReadOptions as ReadOptions
+from pyarrow._csv import WriteOptions as WriteOptions
+from pyarrow._csv import open_csv as open_csv
+from pyarrow._csv import read_csv as read_csv
+from pyarrow._csv import write_csv as write_csv

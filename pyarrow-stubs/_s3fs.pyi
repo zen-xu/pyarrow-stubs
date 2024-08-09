@@ -1,9 +1,8 @@
 import enum
 import importlib._bootstrap  # type: ignore
-from typing import (
-    Any,
-    ClassVar,
-)
+
+from typing import Any
+from typing import ClassVar
 
 import pyarrow._fs
 import pyarrow.lib

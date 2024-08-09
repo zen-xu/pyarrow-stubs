@@ -1,29 +1,28 @@
 from io import IOBase
 
 import pandas as pd
-from pyarrow import ipc
 import pyarrow.lib as lib
-from pyarrow.lib import (
-    Buffer,
-    IpcReadOptions as IpcReadOptions,
-    IpcWriteOptions as IpcWriteOptions,
-    MemoryPool,
-    Message as Message,
-    MessageReader as MessageReader,
-    MetadataVersion as MetadataVersion,
-    NativeFile,
-    ReadStats as ReadStats,
-    RecordBatchReader as RecordBatchReader,
-    Schema,
-    WriteStats as WriteStats,
-    get_record_batch_size as get_record_batch_size,
-    get_tensor_size as get_tensor_size,
-    read_message as read_message,
-    read_record_batch as read_record_batch,
-    read_schema as read_schema,
-    read_tensor as read_tensor,
-    write_tensor as write_tensor,
-)
+
+from pyarrow import ipc
+from pyarrow.lib import Buffer
+from pyarrow.lib import IpcReadOptions as IpcReadOptions
+from pyarrow.lib import IpcWriteOptions as IpcWriteOptions
+from pyarrow.lib import MemoryPool
+from pyarrow.lib import Message as Message
+from pyarrow.lib import MessageReader as MessageReader
+from pyarrow.lib import MetadataVersion as MetadataVersion
+from pyarrow.lib import NativeFile
+from pyarrow.lib import ReadStats as ReadStats
+from pyarrow.lib import RecordBatchReader as RecordBatchReader
+from pyarrow.lib import Schema
+from pyarrow.lib import WriteStats as WriteStats
+from pyarrow.lib import get_record_batch_size as get_record_batch_size
+from pyarrow.lib import get_tensor_size as get_tensor_size
+from pyarrow.lib import read_message as read_message
+from pyarrow.lib import read_record_batch as read_record_batch
+from pyarrow.lib import read_schema as read_schema
+from pyarrow.lib import read_tensor as read_tensor
+from pyarrow.lib import write_tensor as write_tensor
 
 class RecordBatchStreamReader(lib._RecordBatchStreamReader):
     def __init__(
@@ -97,6 +96,4 @@ def serialize_pandas(
     nthreads: int | None = ...,
     preserve_index: bool | None = ...,
 ) -> Buffer: ...
-def deserialize_pandas(
-    buf: memoryview | Buffer, *, use_threads: bool = ...
-) -> pd.DataFrame: ...
+def deserialize_pandas(buf: memoryview | Buffer, *, use_threads: bool = ...) -> pd.DataFrame: ...
