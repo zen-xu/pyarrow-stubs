@@ -18,6 +18,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 requires-python = ">=3.8,<4"
+dependencies = ["pyarrow >=17"]
 
 [project.urls]
 homepage   = "https://github.com/zen-xu/pyarrow-stubs"
@@ -40,6 +41,9 @@ pyarrow-stubs = { path = ".", editable = true }
 pre-commit    = "*"
 mypy          = ">=1.11"
 ruff          = ">=0.5"
+types-cffi    = "*"
+pandas-stubs  = "*"
+hatchling     = "*"
 
 [tool.ruff]
 fix            = true
@@ -66,3 +70,4 @@ explicit_package_bases = true
 files                  = "pyarrow-stubs"
 namespace_packages     = true
 show_error_codes       = true
+mypy_path              = "pyarrow-stubs"
