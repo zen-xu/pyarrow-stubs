@@ -1,8 +1,6 @@
-from pyarrow.lib import (
-    SerializationContext as SerializationContext,
-    builtin_pickle as builtin_pickle,
-    py_buffer as py_buffer,
-)
+from pyarrow.lib import SerializationContext as SerializationContext
+from pyarrow.lib import builtin_pickle as builtin_pickle
+from pyarrow.lib import py_buffer as py_buffer
 
 try:
     import cloudpickle  # type: ignore

@@ -1,11 +1,9 @@
 from _typeshed import Incomplete
-from pyarrow.lib import (
-    Array,
-    Buffer,
-    Field,
-    RecordBatch,
-    Schema,
-)
+from pyarrow.lib import Array
+from pyarrow.lib import Buffer
+from pyarrow.lib import Field
+from pyarrow.lib import RecordBatch
+from pyarrow.lib import Schema
 
 class _JvmBufferNanny:
     ref_manager: Incomplete

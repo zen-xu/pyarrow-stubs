@@ -1,16 +1,12 @@
 from io import IOBase
 
-from pyarrow._orc import (
-    ORCReader as _ORCReader,
-    ORCWriter as _ORCWriter,
-)
-from pyarrow.lib import (
-    KeyValueMetadata,
-    NativeFile,
-    RecordBatch,
-    Schema,
-    Table,
-)
+from pyarrow._orc import ORCReader as _ORCReader
+from pyarrow._orc import ORCWriter as _ORCWriter
+from pyarrow.lib import KeyValueMetadata
+from pyarrow.lib import NativeFile
+from pyarrow.lib import RecordBatch
+from pyarrow.lib import Schema
+from pyarrow.lib import Table
 
 from ._fs import FileSystem
 

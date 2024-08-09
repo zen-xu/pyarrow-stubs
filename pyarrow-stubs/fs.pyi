@@ -1,27 +1,23 @@
 from _typeshed import Incomplete
 from pyarrow import PythonFile
-from pyarrow._fs import (
-    FileInfo as FileInfo,
-    FileSelector as FileSelector,
-    FileSystem as FileSystem,
-    FileSystemHandler as FileSystemHandler,
-    FileType as FileType,
-    LocalFileSystem as LocalFileSystem,
-    PyFileSystem as PyFileSystem,
-    SubTreeFileSystem as SubTreeFileSystem,
-)
+from pyarrow._fs import FileInfo as FileInfo
+from pyarrow._fs import FileSelector as FileSelector
+from pyarrow._fs import FileSystem as FileSystem
+from pyarrow._fs import FileSystemHandler as FileSystemHandler
+from pyarrow._fs import FileType as FileType
+from pyarrow._fs import LocalFileSystem as LocalFileSystem
+from pyarrow._fs import PyFileSystem as PyFileSystem
+from pyarrow._fs import SubTreeFileSystem as SubTreeFileSystem
 from pyarrow._gcsfs import GcsFileSystem as GcsFileSystem
 from pyarrow._hdfs import HadoopFileSystem as HadoopFileSystem
-from pyarrow._s3fs import (
-    AwsDefaultS3RetryStrategy as AwsDefaultS3RetryStrategy,
-    AwsStandardS3RetryStrategy as AwsStandardS3RetryStrategy,
-    S3FileSystem as S3FileSystem,
-    S3LogLevel as S3LogLevel,
-    S3RetryStrategy as S3RetryStrategy,
-    finalize_s3 as finalize_s3,
-    initialize_s3 as initialize_s3,
-    resolve_s3_region as resolve_s3_region,
-)
+from pyarrow._s3fs import AwsDefaultS3RetryStrategy as AwsDefaultS3RetryStrategy
+from pyarrow._s3fs import AwsStandardS3RetryStrategy as AwsStandardS3RetryStrategy
+from pyarrow._s3fs import S3FileSystem as S3FileSystem
+from pyarrow._s3fs import S3LogLevel as S3LogLevel
+from pyarrow._s3fs import S3RetryStrategy as S3RetryStrategy
+from pyarrow._s3fs import finalize_s3 as finalize_s3
+from pyarrow._s3fs import initialize_s3 as initialize_s3
+from pyarrow._s3fs import resolve_s3_region as resolve_s3_region
 
 FileStats = FileInfo
 

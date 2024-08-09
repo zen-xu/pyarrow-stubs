@@ -1,41 +1,35 @@
+import pathlib
+
 from io import IOBase
 from os import PathLike
-import pathlib
-from typing import (
-    Callable,
-    Generator,
-    Generic,
-    TypeVar,
-)
+from typing import Callable
+from typing import Generator
+from typing import Generic
+from typing import TypeVar
+
+import pyarrow
 
 from _typeshed import Incomplete
-import pyarrow
-from pyarrow import (
-    Array,
-    NativeFile,
-    RecordBatch,
-    Schema,
-    Table,
-)
-from pyarrow._parquet import (
-    ColumnChunkMetaData as ColumnChunkMetaData,
-    ColumnSchema as ColumnSchema,
-    FileDecryptionProperties as FileDecryptionProperties,
-    FileEncryptionProperties as FileEncryptionProperties,
-    FileMetaData as FileMetaData,
-    ParquetLogicalType as ParquetLogicalType,
-    ParquetReader as ParquetReader,
-    ParquetSchema as ParquetSchema,
-    RowGroupMetaData as RowGroupMetaData,
-    Statistics as Statistics,
-)
+from pyarrow import Array
+from pyarrow import NativeFile
+from pyarrow import RecordBatch
+from pyarrow import Schema
+from pyarrow import Table
+from pyarrow._parquet import ColumnChunkMetaData as ColumnChunkMetaData
+from pyarrow._parquet import ColumnSchema as ColumnSchema
+from pyarrow._parquet import FileDecryptionProperties as FileDecryptionProperties
+from pyarrow._parquet import FileEncryptionProperties as FileEncryptionProperties
+from pyarrow._parquet import FileMetaData as FileMetaData
+from pyarrow._parquet import ParquetLogicalType as ParquetLogicalType
+from pyarrow._parquet import ParquetReader as ParquetReader
+from pyarrow._parquet import ParquetSchema as ParquetSchema
+from pyarrow._parquet import RowGroupMetaData as RowGroupMetaData
+from pyarrow._parquet import Statistics as Statistics
 from pyarrow.compute import Expression
 from pyarrow.dataset import Partitioning
 from pyarrow.fs import FileSystem
-from typing_extensions import (
-    Literal,
-    TypeAlias,
-)
+from typing_extensions import Literal
+from typing_extensions import TypeAlias
 
 def filters_to_expression(
     filters: list[tuple[str, str, str] | list[tuple[str, str, str]]],
@@ -100,9 +94,7 @@ class ParquetFile:
         use_threads: bool = ...,
         use_pandas_metadata: bool = ...,
     ) -> pyarrow.Table: ...
-    def scan_contents(
-        self, columns: list[int] | None = ..., batch_size: int = ...
-    ) -> int: ...
+    def scan_contents(self, columns: list[int] | None = ..., batch_size: int = ...) -> int: ...
 
 _COMPRESSION: TypeAlias = Literal["NONE", "SNAPPY", "GZIP", "BROTLI", "LZ4", "ZSTD"]
 
@@ -144,9 +136,7 @@ class ParquetWriter:
         table_or_batch: Table | RecordBatch,
         row_group_size: int | None = ...,
     ) -> None: ...
-    def write_batch(
-        self, batch: RecordBatch, row_group_size: int | None = ...
-    ) -> None: ...
+    def write_batch(self, batch: RecordBatch, row_group_size: int | None = ...) -> None: ...
     def write_table(self, table: Table, row_group_size: int | None = ...) -> None: ...
     def close(self) -> None: ...
 

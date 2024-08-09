@@ -1,10 +1,9 @@
-from typing import (
-    Any,
-    ClassVar,
-    Generator,
-)
+from typing import Any
+from typing import ClassVar
+from typing import Generator
 
 import pyarrow.lib
+
 from typing_extensions import Literal
 
 _stringify_path: function
@@ -34,9 +33,7 @@ class ColumnChunkMetaData(pyarrow.lib._Weakrefable):
     @property
     def compression(
         self,
-    ) -> Literal[
-        "UNCOMPRESSED", "SNAPPY", "GZIP", "LZO", "BROTLI", "LZ4", "ZSTD", "UNKNOWN"
-    ]: ...
+    ) -> Literal["UNCOMPRESSED", "SNAPPY", "GZIP", "LZO", "BROTLI", "LZ4", "ZSTD", "UNKNOWN"]: ...
     @property
     def encodings(
         self,
@@ -200,9 +197,7 @@ class ParquetWriter(pyarrow.lib._Weakrefable):
         dictionary_pagesize_limit: int | None = ...,
     ) -> None: ...
     def close(self) -> None: ...
-    def write_table(
-        self, table: pyarrow.lib.Table, row_group_size: int | None = ...
-    ) -> None: ...
+    def write_table(self, table: pyarrow.lib.Table, row_group_size: int | None = ...) -> None: ...
 
 class RowGroupMetaData(pyarrow.lib._Weakrefable):
     __hash__: ClassVar[None] = ...  # type: ignore

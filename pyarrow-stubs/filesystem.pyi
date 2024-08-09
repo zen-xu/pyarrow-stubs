@@ -1,10 +1,8 @@
 from os import PathLike
 from typing import Generator
 
-from pyarrow import (
-    Table,
-    parquet,
-)
+from pyarrow import Table
+from pyarrow import parquet
 from pyarrow._gcsfs import GcsFileSystem
 from pyarrow._s3fs import S3FileSystem
 
@@ -38,9 +36,7 @@ class LocalFileSystem(FileSystem):
     def __init__(self) -> None: ...
     @classmethod
     def get_instance(cls) -> LocalFileSystem: ...
-    def walk(
-        self, path: str
-    ) -> Generator[tuple[str, list[str], list[str]], None, None]: ...
+    def walk(self, path: str) -> Generator[tuple[str, list[str], list[str]], None, None]: ...
 
 class DaskFileSystem(FileSystem):
     fs: S3FileSystem | GcsFileSystem

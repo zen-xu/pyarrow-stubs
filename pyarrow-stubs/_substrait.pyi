@@ -1,13 +1,9 @@
-from typing import (
-    Callable,
-    NamedTuple,
-)
+from typing import Callable
+from typing import NamedTuple
 
-from pyarrow.lib import (
-    Buffer,
-    RecordBatchReader,
-    Table,
-)
+from pyarrow.lib import Buffer
+from pyarrow.lib import RecordBatchReader
+from pyarrow.lib import Table
 
 def _parse_json_plan(plan: bytes) -> Buffer: ...
 def get_supported_functions() -> list[str]: ...

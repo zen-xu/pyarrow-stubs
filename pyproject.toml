@@ -1,48 +1,66 @@
-[tool.poetry]
+#:schema https://json.schemastore.org/pyproject.json
+
+[project]
 name = "pyarrow-stubs"
 version = "10.0.1.9"
 description = "Type annotations for pyarrow"
-authors = ["ZhengYu, Xu <zen-xu@outlook.com>"]
+authors = [{ name = "ZhengYu, Xu", email = "zen-xu@outlook.com" }]
 license = "BSD-2-Clause"
-homepage = "https://github.com/zen-xu/pyarrow-stubs"
 classifiers = [
-    "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: BSD License",
-    "Environment :: Console",
-    "Intended Audience :: Science/Research",
-    "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Topic :: Scientific/Engineering",
 ]
-packages = [{ include = "pyarrow-stubs" }]
+requires-python = ">=3.8,<4"
 
-[tool.poetry.dependencies]
-python = "^3.7"
-
-[tool.poetry.dev-dependencies]
-mypy = "^0.991"
-pre-commit = ">=2.19.0"
-typing-extensions = ">=4.2.0"
+[project.urls]
+homepage = "https://github.com/zen-xu/pyarrow-stubs"
+repository = "https://github.com/zen-xu/pyarrow-stubs.git"
+issues = "https://github.com/zen-xu/pyarrow-stubs/issues"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["pyarrow-stubs"]
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+[tool.pixi.pypi-dependencies]
+pyarrow-stubs = { path = ".", editable = true }
+pre-commit = "*"
+mypy = ">=1.11"
+ruff = ">=0.5"
 
 [tool.ruff]
 fix = true
-line-length = 88
-target-version = "py37"
+line-length = 99
+target-version = "py38"
 
 [tool.ruff.lint]
-ignore = [
-    "F811", # redefined-while-unused
-    "F821", # undefined-name
+select = [
+    "I", # isort
 ]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+lines-after-imports = 2
+lines-between-types = 1
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.mypy]
+explicit_package_bases = true
+files = "pyarrow-stubs"
+namespace_packages = true
+show_error_codes = true
