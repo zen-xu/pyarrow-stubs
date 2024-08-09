@@ -70,4 +70,4 @@ explicit_package_bases = true
 files                  = "pyarrow-stubs"
 namespace_packages     = true
 show_error_codes       = true
-mypy_path              = "pyarrow-stubs"
+custom_typeshed_dir    = "./pyarrow-stubs"
