@@ -1,0 +1,21 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  taplo-lint:
+    name: taplo lint
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: uncenter/setup-taplo@v1
+        with:
+          version: "0.9.3"
+      - run: taplo fmt --check
