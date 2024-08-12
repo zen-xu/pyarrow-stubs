@@ -1048,7 +1048,7 @@ packages:
   name: pyarrow-stubs
   version: 10.0.1.9
   path: .
-  sha256: ab92ae442ae77cb2ea2b161eca4f19174237ff68ec6d9c1c249322ebd53453ef
+  sha256: f4a6a815e2cf2b91f56150b8fa853fa06ce469589c9d00875bb8e2ebf17c9234
   requires_dist:
   - pyarrow>=17
   requires_python: '>=3.8,<4'

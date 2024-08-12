@@ -7,15 +7,15 @@ description = "Type annotations for pyarrow"
 authors = [{ name = "ZhengYu, Xu", email = "zen-xu@outlook.com" }]
 license = "BSD-2-Clause"
 classifiers = [
-  "License :: OSI Approved :: BSD License",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 requires-python = ">=3.8,<4"
 dependencies = ["pyarrow >=17"]
@@ -52,9 +52,13 @@ target-version = "py38"
 
 [tool.ruff.lint]
 extend-select = [
-  "I",   # isort
-  "N",   # pep8-naming
-  "PYI", # flake8-pyi
+    "I",   # isort
+    "N",   # pep8-naming
+    "PYI", # flake8-pyi
+]
+ignore = [
+    "PYI015", # assignment-default-in-stub
+    "PYI011", # typed-argument-default-in-stub
 ]
 
 [tool.ruff.lint.isort]

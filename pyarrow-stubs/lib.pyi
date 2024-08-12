@@ -1,6 +1,39 @@
+from collections.abc import Buffer as BufferProtocol
+from dataclasses import dataclass
+from dataclasses import field
+from enum import IntFlag
+from enum import auto
+from os import PathLike
+from typing import Literal
+from typing import Self
+from typing import TypeAlias
+from typing import overload
+
+class MetaDataVersion(IntFlag):
+    V1 = auto()
+    V2 = auto()
+    V3 = auto()
+    V4 = auto()
+    V5 = auto()
+
 class _Weakrefable: ...
-class IpcWriteOptions(_Weakrefable): ...
-class IpcReadOptions(_Weakrefable): ...
+
+@dataclass(kw_only=True, slots=True)
+class IpcWriteOptions(_Weakrefable):
+    metadata_version: MetaDataVersion = field(default=MetaDataVersion.V5, kw_only=False)
+    allow_64bit: bool = False
+    use_legacy_format: bool = False
+    compression: Literal["lz4", "zstd"] | Codec | None = None
+    use_threads: bool = True
+    emit_dictionary_deltas: bool = False
+    unify_dictionaries: bool = False
+
+@dataclass(kw_only=True, slots=True)
+class IpcReadOptions(_Weakrefable):
+    ensure_native_endian: bool = field(default=True, kw_only=False)
+    use_threads: bool = True
+    include_fields: list[str] | None = None
+
 class Message(_Weakrefable): ...
 class MemoryPool(_Weakrefable): ...
 class DataType(_Weakrefable): ...
@@ -88,5 +121,78 @@ class CompressedOutputStream(NativeFile): ...
 class _CRecordBatchWriter(_Weakrefable): ...
 class RecordBatchReader(_Weakrefable): ...
 class CacheOptions(_Weakrefable): ...
-class Codec(_Weakrefable): ...
+
+_Compression: TypeAlias = Literal[
+    "gzip", "bz2", "brotli", "lz4", "lz4_frame", "lz4_raw", "zstd", "snappy"
+]
+_Buffer: TypeAlias = Buffer | bytes | memoryview | BufferProtocol
+
+class Codec(_Weakrefable):
+    def __init__(self, compression: _Compression, *, compression_level: int | None = None): ...
+    @property
+    def name(self) -> str: ...
+    @property
+    def compression_level(self) -> int: ...
+    @staticmethod
+    def default_compression_level(compression: _Compression) -> int: ...
+    @classmethod
+    def detect(cls, path: str | PathLike) -> Self: ...
+    @classmethod
+    def is_available(cls, compression: _Compression) -> bool: ...
+    @classmethod
+    def maximum_compression_level(cls, compression: _Compression) -> int: ...
+    @classmethod
+    def minimum_compression_level(cls, compression: _Compression) -> int: ...
+    @classmethod
+    def supports_compression_level(cls, compression: _Compression) -> bool: ...
+    @overload
+    def compress(
+        self,
+        buf: _Buffer,
+        *,
+        memory_pool: MemoryPool | None = None,
+    ) -> Buffer: ...
+    @overload
+    def compress(
+        self,
+        buf: _Buffer,
+        *,
+        asbytes: Literal[False],
+        memory_pool: MemoryPool | None = None,
+    ) -> Buffer: ...
+    @overload
+    def compress(
+        self,
+        buf: _Buffer,
+        *,
+        asbytes: Literal[True],
+        memory_pool: MemoryPool | None = None,
+    ) -> bytes: ...
+    @overload
+    def decompress(
+        self,
+        buf: _Buffer,
+        *,
+        decompressed_size: int | None = None,
+        memory_pool: MemoryPool | None = None,
+    ) -> Buffer: ...
+    @overload
+    def decompress(
+        self,
+        buf: _Buffer,
+        *,
+        asbytes: Literal[False],
+        decompressed_size: int | None = None,
+        memory_pool: MemoryPool | None = None,
+    ) -> Buffer: ...
+    @overload
+    def decompress(
+        self,
+        buf: _Buffer,
+        *,
+        asbytes: Literal[True],
+        decompressed_size: int | None = None,
+        memory_pool: MemoryPool | None = None,
+    ) -> bytes: ...
+
 class StopToken: ...
