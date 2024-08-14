@@ -3,9 +3,10 @@ from typing import Self
 from typing import TypeAlias
 
 from . import lib
+from .compute import Expression
+from .compute import FunctionOptions
 
-# TODO: str | pyarrow.compute.Expression
-_StrOrExpr: TypeAlias = str
+_StrOrExpr: TypeAlias = str | Expression
 
 class Declaration(lib._Weakrefable):
     def __init__(
@@ -25,19 +26,15 @@ class TableSourceNodeOptions(ExecNodeOptions):
     def __init__(self, table: lib.Table) -> None: ...
 
 class FilterNodeOptions(ExecNodeOptions):
-    # TODO: filter_expression: pyarrow.compute.Expression
-    def __init__(self, filter_expression) -> None: ...
+    def __init__(self, filter_expression: Expression) -> None: ...
 
 class ProjectNodeOptions(ExecNodeOptions):
-    # TODO: expressions: list[pyarrow.compute.Expression]
-    def __init__(self, expressions: list, names: list[str] | None = None) -> None: ...
+    def __init__(self, expressions: list[Expression], names: list[str] | None = None) -> None: ...
 
 class AggregateNodeOptions(ExecNodeOptions):
-    # TODO: object: pyarrow.compute.FunctionOptions
-    #         keys: list[str | pyarrow.compute.Expression]
     def __init__(
         self,
-        aggregates: list[tuple[list[str], str, object, str]],
+        aggregates: list[tuple[list[str], str, FunctionOptions, str]],
         keys: list[_StrOrExpr] | None = None,
     ) -> None: ...
 
@@ -46,7 +43,7 @@ class OrderByNodeOptions(ExecNodeOptions):
         self,
         sort_keys: tuple[tuple[str, Literal["ascending", "descending"]], ...] = (),
         *,
-        null_placement: str = "at_end",
+        null_placement: Literal["at_start", "at_end"] = "at_end",
     ) -> None: ...
 
 class HashJoinNodeOptions(ExecNodeOptions):
