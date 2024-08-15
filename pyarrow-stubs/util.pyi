@@ -1,8 +1,5 @@
 from collections.abc import Callable
-from typing import Any
-from typing import Protocol
-from typing import Sequence
-from typing import TypeVar
+from typing import Any, Protocol, Sequence, TypeVar
 
 _F = TypeVar("_F", bound=Callable)
 _N = TypeVar("_N")

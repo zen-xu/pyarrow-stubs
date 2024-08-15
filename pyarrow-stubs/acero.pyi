@@ -1,10 +1,7 @@
-from typing import Literal
-from typing import Self
-from typing import TypeAlias
+from typing import Literal, Self, TypeAlias
 
 from . import lib
-from .compute import Expression
-from .compute import FunctionOptions
+from .compute import Expression, FunctionOptions
 
 _StrOrExpr: TypeAlias = str | Expression
 

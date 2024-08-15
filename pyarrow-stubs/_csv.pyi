@@ -1,9 +1,6 @@
-from dataclasses import dataclass
-from dataclasses import field
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import IO
-from typing import Callable
-from typing import Literal
+from typing import IO, Callable, Literal
 
 from . import lib
 

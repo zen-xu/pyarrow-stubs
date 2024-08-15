@@ -1,12 +1,14 @@
-from typing import Any
-from typing import Callable
-from typing import Iterable
-from typing import Literal
-from typing import Sequence
-from typing import TypeAlias
-from typing import TypedDict
-from typing import TypeVar
-from typing import overload
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Literal,
+    Sequence,
+    TypeAlias,
+    TypedDict,
+    TypeVar,
+    overload,
+)
 
 from . import lib
 
