@@ -62,7 +62,6 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-force-single-line   = true
 lines-after-imports = 2
 lines-between-types = 1
 
