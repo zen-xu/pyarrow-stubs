@@ -5,7 +5,7 @@ import cuda  # type: ignore[import-not-found]
 from numba.cuda.cudadrv import driver as _numba_driver  # type: ignore[import-not-found]
 
 from . import lib
-from ._stub_typing import ArrayLike
+from ._stubs_typing import ArrayLike
 
 class Context(lib._Weakrefable):
     def __init__(self, device_number: int = 0, handle: int | None = None) -> None: ...

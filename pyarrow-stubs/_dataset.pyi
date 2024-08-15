@@ -3,7 +3,7 @@ from typing import IO, Any, Generic, Iterator, Literal, NamedTuple, Self, TypeVa
 
 from . import _csv, _json, _parquet, lib
 from ._fs import FileSelector, FileSystem
-from ._stub_typing import ArrayLike, JoinType, Order
+from ._stubs_typing import ArrayLike, JoinType, Order
 from .acero import ExecNodeOptions
 from .compute import Expression
 from .ipc import IpcWriteOptions, RecordBatchReader
