@@ -1,0 +1,6 @@
+from ._dataset import FileFormat
+
+class OrcFileFormat(FileFormat):
+    def equals(self, other: OrcFileFormat) -> bool: ...
+    @property
+    def default_extname(self): ...
