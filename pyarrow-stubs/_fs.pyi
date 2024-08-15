@@ -1,0 +1,3 @@
+from . import lib
+
+class FileSystem(lib._Weakrefable): ...
