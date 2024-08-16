@@ -2,7 +2,7 @@ import datetime as dt
 import enum
 
 from abc import ABC, abstractmethod
-from typing import overload
+from typing import Self, overload
 
 from .lib import NativeFile, _Weakrefable
 
@@ -46,8 +46,8 @@ class FileSelector(_Weakrefable):
     def __init__(self, base_dir: str, allow_not_found: bool = False, recursive: bool = False): ...
 
 class FileSystem(_Weakrefable):
-    @staticmethod
-    def from_uri(uri: str) -> tuple[FileSystem, str]: ...
+    @classmethod
+    def from_uri(cls, uri: str) -> tuple[Self, str]: ...
     def equals(self, other: FileSystem) -> bool: ...
     @property
     def type_name(self) -> str: ...
