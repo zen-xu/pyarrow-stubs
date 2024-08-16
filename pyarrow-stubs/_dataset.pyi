@@ -299,16 +299,16 @@ class JsonFileFormat(FileFormat):
     def __init__(
         self,
         default_fragment_scan_options: JsonFragmentScanOptions | None = None,
-        parse_options: _json.JsonParseOptions | None = None,
-        read_options: _json.JsonReadOptions | None = None,
+        parse_options: _json.ParseOptions | None = None,
+        read_options: _json.ReadOptions | None = None,
     ) -> None: ...
     def equals(self, other: JsonFileFormat) -> bool: ...
 
 class JsonFragmentScanOptions(FragmentScanOptions):
-    parse_options: _json.JsonParseOptions
-    read_options: _json.JsonReadOptions
+    parse_options: _json.ParseOptions
+    read_options: _json.ReadOptions
     def __init__(
-        self, parse_options: _json.JsonParseOptions, read_options: _json.JsonReadOptions
+        self, parse_options: _json.ParseOptions, read_options: _json.ReadOptions
     ) -> None: ...
     def equals(self, other: JsonFragmentScanOptions) -> bool: ...
 
