@@ -59,6 +59,7 @@ extend-select = [
 ignore = [
   "PYI015", # assignment-default-in-stub
   "PYI011", # typed-argument-default-in-stub
+  "N818",   # error-suffix-on-exception-name
 ]
 
 [tool.ruff.lint.isort]
