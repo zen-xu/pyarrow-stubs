@@ -1,17 +1,46 @@
 from typing import Collection, Literal, Protocol, TypeAlias
 
 from pyarrow._compute import Expression
-from pyarrow._parquet import ColumnChunkMetaData as ColumnChunkMetaData
-from pyarrow._parquet import ColumnSchema as ColumnSchema
-from pyarrow._parquet import FileDecryptionProperties as FileDecryptionProperties
-from pyarrow._parquet import FileEncryptionProperties as FileEncryptionProperties
-from pyarrow._parquet import FileMetaData as FileMetaData
-from pyarrow._parquet import ParquetLogicalType as ParquetLogicalType
-from pyarrow._parquet import ParquetReader as ParquetReader
-from pyarrow._parquet import ParquetSchema as ParquetSchema
-from pyarrow._parquet import RowGroupMetaData as RowGroupMetaData
-from pyarrow._parquet import SortingColumn as SortingColumn
-from pyarrow._parquet import Statistics as Statistics
+from pyarrow._parquet import (
+    ColumnChunkMetaData,
+    ColumnSchema,
+    FileDecryptionProperties,
+    FileEncryptionProperties,
+    FileMetaData,
+    ParquetLogicalType,
+    ParquetReader,
+    ParquetSchema,
+    RowGroupMetaData,
+    SortingColumn,
+    Statistics,
+)
+from typing_extensions import deprecated
+
+__all__ = (
+    "ColumnChunkMetaData",
+    "ColumnSchema",
+    "FileDecryptionProperties",
+    "FileEncryptionProperties",
+    "FileMetaData",
+    "ParquetDataset",
+    "ParquetFile",
+    "ParquetLogicalType",
+    "ParquetReader",
+    "ParquetSchema",
+    "ParquetWriter",
+    "RowGroupMetaData",
+    "SortingColumn",
+    "Statistics",
+    "read_metadata",
+    "read_pandas",
+    "read_schema",
+    "read_table",
+    "write_metadata",
+    "write_table",
+    "write_to_dataset",
+    "_filters_to_expression",
+    "filters_to_expression",
+)
 
 class SupportEq(Protocol):
     def __eq__(self, other) -> bool: ...
@@ -38,3 +67,5 @@ _Filter: TypeAlias = (
 )
 
 def filters_to_expression(filters: list[_Filter | list[_Filter]]) -> Expression: ...
+@deprecated("use filters_to_expression")
+def _filters_to_expression(filters: list[_Filter | list[_Filter]]) -> Expression: ...
