@@ -39,3 +39,6 @@ FilterTuple: TypeAlias = (
     | tuple[str, Literal[">="], SupportGe]
     | tuple[str, Literal["in", "not in"], Collection]
 )
+
+class Buffer(Protocol):
+    def __buffer__(self, flags: int, /) -> memoryview: ...

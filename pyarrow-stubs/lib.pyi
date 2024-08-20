@@ -1,8 +1,9 @@
-from collections.abc import Buffer as BufferProtocol
 from dataclasses import dataclass, field
 from enum import IntFlag, auto
 from os import PathLike
 from typing import Literal, Self, TypeAlias, overload
+
+from ._stubs_typing import Buffer as BufferProtocol
 
 class MetaDataVersion(IntFlag):
     V1 = auto()
