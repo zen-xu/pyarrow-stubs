@@ -117,7 +117,7 @@ class ParquetFile:
     def scan_contents(self, columns: list | None = None, batch_size: int = 65536) -> int: ...
 
 class ParquetWriter:
-    flavor: set[str]
+    flavor: str
     schema_changed: bool
     schema: ParquetSchema
     where: str | Path | IO
@@ -130,7 +130,7 @@ class ParquetWriter:
         where: str | Path | IO,
         schema: Schema,
         filesystem: FileSystem | None = None,
-        flavor: set[str] | None = None,
+        flavor: str | None = None,
         version: Literal["1.0", "2.4", "2.6"] = ...,
         use_dictionary: bool = True,
         compression: Compression = "snappy",
@@ -239,7 +239,7 @@ def write_table(
     coerce_timestamps: str | None = None,
     allow_truncated_timestamps: bool = False,
     data_page_size: int | None = None,
-    flavor: set[str] | None = None,
+    flavor: str | None = None,
     filesystem: FileSystem | None = None,
     compression_level: int | dict | None = None,
     use_byte_stream_split: bool = False,
