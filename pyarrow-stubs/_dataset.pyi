@@ -1,5 +1,16 @@
 from pathlib import Path
-from typing import IO, Any, Generic, Iterator, Literal, NamedTuple, Self, TypeVar, overload
+from typing import (
+    IO,
+    Any,
+    Callable,
+    Generic,
+    Iterator,
+    Literal,
+    NamedTuple,
+    Self,
+    TypeVar,
+    overload,
+)
 
 from . import _csv, _json, _parquet, lib
 from ._fs import FileSelector, FileSystem
@@ -487,6 +498,23 @@ def get_partition_keys(partition_expression: Expression) -> dict[str, Any]: ...
 
 class WrittenFile(lib._Weakrefable):
     def __init__(self, path: str, metadata: _parquet.FileMetaData | None, size: int) -> None: ...
+
+def _filesystemdataset_write(
+    data: Scanner,
+    base_dir: str | Path,
+    basename_template: str,
+    filesystem: FileSystem,
+    partitioning: Partitioning,
+    file_options: FileWriteOptions,
+    max_partitions: int,
+    file_visitor: Callable[[str], None],
+    existing_data_behavior: Literal["error", "overwrite_or_ignore", "delete_matching"],
+    max_open_files: int,
+    max_rows_per_file: int,
+    min_rows_per_group: int,
+    max_rows_per_group: int,
+    create_dir: bool,
+): ...
 
 class _ScanNodeOptions(ExecNodeOptions):
     def _set_options(self, dataset: Dataset, scan_options: dict) -> None: ...
