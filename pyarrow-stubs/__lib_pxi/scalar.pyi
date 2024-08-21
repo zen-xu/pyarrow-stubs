@@ -1,0 +1,3 @@
+from pyarrow.lib import Scalar
+
+class ExtensionScalar(Scalar): ...
