@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from enum import IntFlag, auto
 from os import PathLike
-from typing import Literal, Self, TypeAlias, overload
+from typing import Literal, NamedTuple, Self, TypeAlias, overload
 
 from ._stubs_typing import Buffer as BufferProtocol
 
@@ -13,6 +13,11 @@ class MetaDataVersion(IntFlag):
     V5 = auto()
 
 class _Weakrefable: ...
+
+class MonthDayNano(NamedTuple):
+    days: int
+    months: int
+    nanoseconds: int
 
 @dataclass(kw_only=True, slots=True)
 class IpcWriteOptions(_Weakrefable):
