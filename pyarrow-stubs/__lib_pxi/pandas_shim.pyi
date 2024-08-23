@@ -1,3 +1,4 @@
+# mypy: disable-error-code="name-defined"
 from types import ModuleType
 from typing import Any, Iterable, TypeGuard
 
