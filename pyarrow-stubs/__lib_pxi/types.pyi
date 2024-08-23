@@ -1,6 +1,7 @@
 import datetime as dt
 
 from collections.abc import Mapping
+from decimal import Decimal
 from typing import Any, Generic, Iterable, Iterator, Literal, Protocol, Self, TypeAlias, overload
 
 import numpy as np
@@ -11,6 +12,7 @@ from pyarrow.lib import (
     ChunkedArray,
     ExtensionArray,
     MemoryPool,
+    MonthDayNano,
     Table,
     _Metadata,
     _Weakrefable,
@@ -43,10 +45,96 @@ class DataType(_Weakrefable):
     @classmethod
     def _import_from_c_capsule(cls, schema: CSchema) -> Self: ...
 
+# =========================== Scalar Data Types ===========================
+_AsPyType = TypeVar("_AsPyType")
+
+class ScalarDataType(DataType, Generic[_AsPyType]): ...
+class NullType(ScalarDataType[None]): ...
+class BoolType(ScalarDataType[bool]): ...
+class Uint8Type(ScalarDataType[int]): ...
+class Int8Type(ScalarDataType[int]): ...
+class Uint16Type(ScalarDataType[int]): ...
+class Int16Type(ScalarDataType[int]): ...
+class Uint32Type(ScalarDataType[int]): ...
+class Int32Type(ScalarDataType[int]): ...
+class Uint64Type(ScalarDataType[int]): ...
+class Int64Type(ScalarDataType[int]): ...
+class Float16Type(ScalarDataType[float]): ...
+class Float32Type(ScalarDataType[float]): ...
+class Float64Type(ScalarDataType[float]): ...
+class Date32Type(ScalarDataType[dt.date]): ...
+class Date64Type(ScalarDataType[dt.date]): ...
+class MonthDayNanoIntervalType(ScalarDataType[MonthDayNano]): ...
+class StringType(ScalarDataType[str]): ...
+class LargeStringType(ScalarDataType[str]): ...
+class StringViewType(ScalarDataType[str]): ...
+class BinaryType(ScalarDataType[bytes]): ...
+class LargeBinaryType(ScalarDataType[bytes]): ...
+class BinaryViewType(ScalarDataType[bytes]): ...
+
+_Unit = TypeVar("_Unit", bound=Literal["s", "ms", "us", "ns"])
+_Tz = TypeVar("_Tz", str, None)
+
+class TimestampType(ScalarDataType[int], Generic[_Unit, _Tz]):
+    @property
+    def unit(self) -> _Unit: ...
+    @property
+    def tz(self) -> _Tz: ...
+
+_Time32Unit = TypeVar("_Time32Unit", bound=Literal["s", "ms"])
+
+class Time32Type(ScalarDataType[dt.time], Generic[_Time32Unit]):
+    @property
+    def unit(self) -> _Time32Unit: ...
+
+_Time64Unit = TypeVar("_Time64Unit", bound=Literal["us", "ns"])
+
+class Time64Type(ScalarDataType[dt.time], Generic[_Time64Unit]):
+    @property
+    def unit(self) -> _Time64Unit: ...
+
+class DurationType(ScalarDataType[dt.timedelta], Generic[_Unit]):
+    @property
+    def unit(self) -> _Unit: ...
+
+class FixedSizeBinaryType(ScalarDataType[Decimal]): ...
+
+_Precision = TypeVar("_Precision")
+_Scale = TypeVar("_Scale")
+
+class Decimal128Type(FixedSizeBinaryType, Generic[_Precision, _Scale]):
+    @property
+    def precision(self) -> _Precision: ...
+    @property
+    def scale(self) -> _Scale: ...
+
+class Decimal256Type(FixedSizeBinaryType, Generic[_Precision, _Scale]):
+    @property
+    def precision(self) -> _Precision: ...
+    @property
+    def scale(self) -> _Scale: ...
+
+# =========================== Collection Data Types ===========================
+_DataTypeT = TypeVar("_DataTypeT", bound=DataType)
+
+class ListType(DataType, Generic[_DataTypeT]):
+    @property
+    def value_field(self) -> Field[_DataTypeT]: ...
+    @property
+    def value_type(self) -> _DataTypeT: ...
+
+class LargeListType(ListType[_DataTypeT]): ...
+class ListViewType(ListType[_DataTypeT]): ...
+class LargeListViewType(ListType[_DataTypeT]): ...
+
+class FixedSizeListType(ListType[_DataTypeT], Generic[_DataTypeT, _Size]):
+    @property
+    def list_size(self) -> _Size: ...
+
 class DictionaryMemo(_Weakrefable): ...
 
-_IndexT = TypeVar("_IndexT", bound=DataType)
-_ValueT = TypeVar("_ValueT", bound=DataType)
+_IndexT = TypeVar("_IndexT", bound=ScalarDataType)
+_ValueT = TypeVar("_ValueT", bound=ScalarDataType)
 _Ordered = TypeVar("_Ordered", bound=Literal[True, False], default=Literal[False])
 
 class DictionaryType(DataType, Generic[_IndexT, _ValueT, _Ordered]):
@@ -57,31 +145,7 @@ class DictionaryType(DataType, Generic[_IndexT, _ValueT, _Ordered]):
     @property
     def value_type(self) -> _ValueT: ...
 
-class ListType(DataType, Generic[_ValueT]):
-    @property
-    def value_field(self) -> Field[_ValueT]: ...
-    @property
-    def value_type(self) -> _ValueT: ...
-
-class LargeListType(DataType, Generic[_ValueT]):
-    @property
-    def value_field(self) -> Field[_ValueT]: ...
-    @property
-    def value_type(self) -> _ValueT: ...
-
-class ListViewType(DataType, Generic[_ValueT]):
-    @property
-    def value_field(self) -> Field[_ValueT]: ...
-    @property
-    def value_type(self) -> _ValueT: ...
-
-class LargeListViewType(DataType, Generic[_ValueT]):
-    @property
-    def value_field(self) -> Field[_ValueT]: ...
-    @property
-    def value_type(self) -> _ValueT: ...
-
-_K = TypeVar("_K", bound=DataType)
+_K = TypeVar("_K", bound=ScalarDataType)
 
 class MapType(DataType, Generic[_K, _ValueT, _Ordered]):
     @property
@@ -89,21 +153,13 @@ class MapType(DataType, Generic[_K, _ValueT, _Ordered]):
     @property
     def key_type(self) -> _K: ...
     @property
-    def item_field(self) -> Field[_ValueT, Literal[False]]: ...
+    def item_field(self) -> Field[_ValueT]: ...
     @property
     def item_type(self) -> _ValueT: ...
     @property
     def keys_sorted(self) -> _Ordered: ...
 
 _Size = TypeVar("_Size")
-
-class FixedSizeListType(DataType, Generic[_ValueT, _Size]):
-    @property
-    def value_field(self) -> Field[_ValueT]: ...
-    @property
-    def value_type(self) -> _ValueT: ...
-    @property
-    def list_size(self) -> _Size: ...
 
 class StructType(DataType):
     def get_field_index(self, name: str) -> int: ...
@@ -131,55 +187,15 @@ class DenseUnionType(UnionType):
     @property
     def mode(self) -> Literal["dense"]: ...
 
-_Unit = TypeVar("_Unit", bound=Literal["s", "ms", "us", "ns"])
-_Tz = TypeVar("_Tz", str, None)
-
-class TimestampType(DataType, Generic[_Unit, _Tz]):
-    @property
-    def unit(self) -> _Unit: ...
-    @property
-    def tz(self) -> _Tz: ...
-
-_Time32Unit = TypeVar("_Time32Unit", bound=Literal["s", "ms"])
-
-class Time32Type(DataType, Generic[_Time32Unit]):
-    @property
-    def unit(self) -> _Time32Unit: ...
-
-_Time64Unit = TypeVar("_Time64Unit", bound=Literal["us", "ns"])
-
-class Time64Type(DataType, Generic[_Time64Unit]):
-    @property
-    def unit(self) -> _Time64Unit: ...
-
-class DurationType(DataType, Generic[_Unit]):
-    @property
-    def unit(self) -> _Unit: ...
-
-class FixedSizeBinaryType(DataType): ...
-
-_Precision = TypeVar("_Precision")
-_Scale = TypeVar("_Scale")
-
-class Decimal128Type(FixedSizeBinaryType, Generic[_Precision, _Scale]):
-    @property
-    def precision(self) -> _Precision: ...
-    @property
-    def scale(self) -> _Scale: ...
-
-class Decimal256Type(FixedSizeBinaryType, Generic[_Precision, _Scale]):
-    @property
-    def precision(self) -> _Precision: ...
-    @property
-    def scale(self) -> _Scale: ...
-
-_RunEndType = TypeVar("_RunEndType", bound=DataType)
+_RunEndType = TypeVar("_RunEndType", Int16Type, Int32Type, Int64Type)
 
 class RunEndEncodedType(DataType, Generic[_RunEndType, _ValueT]):
     @property
     def run_end_type(self) -> _RunEndType: ...
     @property
     def value_type(self) -> _ValueT: ...
+
+# =========================== Extension Data Types ===========================
 
 class BaseExtensionType(DataType):
     def __arrow_ext_class__(self) -> type[ExtensionArray]: ...
@@ -234,7 +250,6 @@ def ensure_metadata(
     meta: Mapping[bytes | str, bytes | str] | KeyValueMetadata | None, allow_none: bool = False
 ) -> KeyValueMetadata | None: ...
 
-_DataTypeT = TypeVar("_DataTypeT", bound=DataType)
 _NewDataTypeT = TypeVar("_NewDataTypeT", bound=DataType)
 _Nullable = TypeVar("_Nullable", bound=Literal[True, False], default=Literal[True])
 
@@ -322,30 +337,6 @@ def field(
 def field(
     name: str, type: _DataTypeT, nullable: _Nullable, metadata: dict | None = None
 ) -> Field[_DataTypeT, _Nullable]: ...
-
-NullType: TypeAlias = DataType
-BoolType: TypeAlias = DataType
-Uint8Type: TypeAlias = DataType
-Int8Type: TypeAlias = DataType
-Uint16Type: TypeAlias = DataType
-Int16Type: TypeAlias = DataType
-Uint32Type: TypeAlias = DataType
-Int32Type: TypeAlias = DataType
-Uint64Type: TypeAlias = DataType
-Int64Type: TypeAlias = DataType
-Date32Type: TypeAlias = DataType
-Date64Type: TypeAlias = DataType
-Float16Type: TypeAlias = DataType
-Float32Type: TypeAlias = DataType
-Float64Type: TypeAlias = DataType
-MonthDayNanoIntervalType: TypeAlias = DataType
-StringType: TypeAlias = DataType
-LargeStringType: TypeAlias = DataType
-BinaryType: TypeAlias = DataType
-LargeBinaryType: TypeAlias = DataType
-BinaryViewType: TypeAlias = DataType
-StringViewType: TypeAlias = DataType
-
 def null() -> NullType: ...
 def bool_() -> BoolType: ...
 def uint8() -> Uint8Type: ...
