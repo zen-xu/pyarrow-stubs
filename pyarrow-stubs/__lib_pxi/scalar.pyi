@@ -11,7 +11,7 @@ from pyarrow.lib import Array, Buffer, MemoryPool, MonthDayNano, Tensor, _Weakre
 from typing_extensions import TypeVar
 
 from . import types
-from .types import _AsPyType, _DataTypeT, _NewDataTypeT
+from .types import _AsPyType, _DataTypeT, _NewDataTypeT, _Time32Unit, _Time64Unit, _Tz, _Unit
 
 _IsValid = TypeVar("_IsValid", default=Literal[True])
 _AsPyTypeK = TypeVar("_AsPyTypeK")
@@ -126,19 +126,19 @@ class Date64Scalar(Scalar[types.Date64Type, _IsValid]):
     @property
     def value(self) -> dt.date | None: ...
 
-class Time32Scalar(Scalar[types.Time32Type, _IsValid]):
+class Time32Scalar(Scalar[types.Time32Type[_Time32Unit], _IsValid]):
     @property
     def value(self) -> dt.time | None: ...
 
-class Time64Scalar(Scalar[types.Time64Type, _IsValid]):
+class Time64Scalar(Scalar[types.Time64Type[_Time64Unit], _IsValid]):
     @property
     def value(self) -> dt.time | None: ...
 
-class TimestampScalar(Scalar[types.TimestampType, _IsValid]):
+class TimestampScalar(Scalar[types.TimestampType[_Unit, _Tz], _IsValid]):
     @property
     def value(self) -> int | None: ...
 
-class DurationScalar(Scalar[types.DurationType, _IsValid]):
+class DurationScalar(Scalar[types.DurationType[_Unit], _IsValid]):
     @property
     def value(self) -> dt.timedelta | None: ...
 

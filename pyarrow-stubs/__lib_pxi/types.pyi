@@ -72,7 +72,7 @@ class LargeBinaryType(_BasicDataType[bytes]): ...
 class BinaryViewType(_BasicDataType[bytes]): ...
 
 _Unit = TypeVar("_Unit", bound=Literal["s", "ms", "us", "ns"])
-_Tz = TypeVar("_Tz", str, None)
+_Tz = TypeVar("_Tz", str, None, default=None)
 
 class TimestampType(_BasicDataType[int], Generic[_Unit, _Tz]):
     @property
