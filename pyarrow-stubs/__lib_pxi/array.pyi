@@ -30,12 +30,214 @@ from .types import (
 )
 
 @overload
+def nulls(size: int, memory_pool: MemoryPool | None = None) -> NullArray: ...
+@overload
+def nulls(
+    size: int, type: types.NullType | None, memory_pool: MemoryPool | None = None
+) -> NullArray: ...
+@overload
+def nulls(
+    size: int, type: types.BoolType, memory_pool: MemoryPool | None = None
+) -> BooleanArray: ...
+@overload
+def nulls(size: int, type: types.Int8Type, memory_pool: MemoryPool | None = None) -> Int8Array: ...
+@overload
+def nulls(
+    size: int, types: types.Int16Type, memory_pool: MemoryPool | None = None
+) -> Int16Array: ...
+@overload
+def nulls(
+    size: int, types: types.Int32Type, memory_pool: MemoryPool | None = None
+) -> Int32Array: ...
+@overload
+def nulls(
+    size: int, types: types.Int64Type, memory_pool: MemoryPool | None = None
+) -> Int64Array: ...
+@overload
+def nulls(
+    size: int, types: types.Uint8Type, memory_pool: MemoryPool | None = None
+) -> UInt8Array: ...
+@overload
+def nulls(
+    size: int, types: types.Uint16Type, memory_pool: MemoryPool | None = None
+) -> UInt16Array: ...
+@overload
+def nulls(
+    size: int, types: types.Uint32Type, memory_pool: MemoryPool | None = None
+) -> UInt32Array: ...
+@overload
+def nulls(
+    size: int, types: types.Uint64Type, memory_pool: MemoryPool | None = None
+) -> UInt64Array: ...
+@overload
+def nulls(
+    size: int, types: types.Float16Type, memory_pool: MemoryPool | None = None
+) -> HalfFloatArray: ...
+@overload
+def nulls(
+    size: int, types: types.Float32Type, memory_pool: MemoryPool | None = None
+) -> FloatArray: ...
+@overload
+def nulls(
+    size: int, types: types.Float64Type, memory_pool: MemoryPool | None = None
+) -> DoubleArray: ...
+@overload
+def nulls(
+    size: int, types: types.Decimal128Type, memory_pool: MemoryPool | None = None
+) -> Decimal128Array: ...
+@overload
+def nulls(
+    size: int, types: types.Decimal256Type, memory_pool: MemoryPool | None = None
+) -> Decimal256Array: ...
+@overload
+def nulls(
+    size: int, types: types.Date32Type, memory_pool: MemoryPool | None = None
+) -> Date32Array: ...
+@overload
+def nulls(
+    size: int, types: types.Date64Type, memory_pool: MemoryPool | None = None
+) -> Date64Array: ...
+@overload
+def nulls(
+    size: int, types: types.Time32Type, memory_pool: MemoryPool | None = None
+) -> Time32Array: ...
+@overload
+def nulls(
+    size: int, types: types.Time64Type, memory_pool: MemoryPool | None = None
+) -> Time64Array: ...
+@overload
+def nulls(
+    size: int, types: types.TimestampType, memory_pool: MemoryPool | None = None
+) -> TimestampArray: ...
+@overload
+def nulls(
+    size: int, types: types.DurationType, memory_pool: MemoryPool | None = None
+) -> DurationArray: ...
+@overload
+def nulls(
+    size: int, types: types.MonthDayNanoIntervalType, memory_pool: MemoryPool | None = None
+) -> MonthDayNanoIntervalArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.BinaryType,
+    memory_pool: MemoryPool | None = None,
+) -> BinaryArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.LargeBinaryType,
+    memory_pool: MemoryPool | None = None,
+) -> LargeBinaryArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.FixedSizeBinaryType,
+    memory_pool: MemoryPool | None = None,
+) -> FixedSizeBinaryArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.StringType,
+    memory_pool: MemoryPool | None = None,
+) -> StringArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.LargeStringType,
+    memory_pool: MemoryPool | None = None,
+) -> LargeStringArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.BinaryViewType,
+    memory_pool: MemoryPool | None = None,
+) -> BinaryViewArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.StringViewType,
+    memory_pool: MemoryPool | None = None,
+) -> StringViewArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.ListType[_DataTypeT],
+    memory_pool: MemoryPool | None = None,
+) -> ListArray[scalar.ListScalar[_DataTypeT]]: ...
+@overload
+def nulls(
+    size: int,
+    types: types.FixedSizeListType[_DataTypeT, _Size],
+    memory_pool: MemoryPool | None = None,
+) -> FixedSizeListArray[_DataTypeT, _Size]: ...
+@overload
+def nulls(
+    size: int,
+    types: types.LargeListType[_DataTypeT],
+    memory_pool: MemoryPool | None = None,
+) -> LargeListArray[_DataTypeT]: ...
+@overload
+def nulls(
+    size: int,
+    types: types.ListViewType[_DataTypeT],
+    memory_pool: MemoryPool | None = None,
+) -> ListViewArray[_DataTypeT]: ...
+@overload
+def nulls(
+    size: int,
+    types: types.LargeListViewType[_DataTypeT],
+    memory_pool: MemoryPool | None = None,
+) -> LargeListViewArray[_DataTypeT]: ...
+@overload
+def nulls(
+    size: int,
+    types: types.StructType,
+    memory_pool: MemoryPool | None = None,
+) -> StructArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.MapType[_MapKeyT, _MapItemT],
+    memory_pool: MemoryPool | None = None,
+) -> MapArray[_MapKeyT, _MapItemT]: ...
+@overload
+def nulls(
+    size: int,
+    types: types.DictionaryType[_IndexT, _ValueT],
+    memory_pool: MemoryPool | None = None,
+) -> DictionaryArray[_IndexT, _ValueT]: ...
+@overload
+def nulls(
+    size: int,
+    types: types.RunEndEncodedType[_RunEndType, _ValueT],
+    memory_pool: MemoryPool | None = None,
+) -> RunEndEncodedArray[_RunEndType, _ValueT]: ...
+@overload
+def nulls(
+    size: int,
+    types: types.UnionType,
+    memory_pool: MemoryPool | None = None,
+) -> UnionArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.FixedShapeTensorType,
+    memory_pool: MemoryPool | None = None,
+) -> FixedShapeTensorArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.ExtensionType,
+    memory_pool: MemoryPool | None = None,
+) -> ExtensionArray: ...
+@overload
 def repeat(
     value: None | scalar.NullScalar, size: int, memory_pool: MemoryPool | None = None
 ) -> NullArray: ...
 @overload
 def repeat(  # type: ignore[overload-overlap]
-    value: bool | scalar.BinaryScalar, size: int, memory_pool: MemoryPool | None = None
+    value: bool | scalar.BooleanScalar, size: int, memory_pool: MemoryPool | None = None
 ) -> BooleanArray: ...
 @overload
 def repeat(
@@ -211,10 +413,10 @@ def repeat(
 ) -> DictionaryArray[_IndexT, _ValueT]: ...
 @overload
 def repeat(
-    value: scalar.RunEndEncodedScalar,
+    value: scalar.RunEndEncodedScalar[_RunEndType, _ValueT],
     size: int,
     memory_pool: MemoryPool | None = None,
-) -> RunEndEncodedArray: ...
+) -> RunEndEncodedArray[_RunEndType, _ValueT]: ...
 @overload
 def repeat(
     value: scalar.UnionScalar,
