@@ -1,18 +1,242 @@
+import datetime as dt
+
 from collections.abc import Callable
-from typing import Any, Generic, Iterator, Literal, Self, TypeAlias, TypeVar, overload
+from decimal import Decimal
+from typing import Any, Generic, Iterable, Iterator, Literal, Self, TypeAlias, TypeVar, overload
 
 import numpy as np
 import pandas as pd
 
+from numpy.typing import NDArray
 from pandas.core.dtypes.base import ExtensionDtype
 from pyarrow._compute import CastOptions
 from pyarrow._stubs_typing import ArrayLike, Order
-from pyarrow.lib import Buffer, MemoryPool, _Weakrefable
+from pyarrow.lib import Buffer, MemoryPool, MonthDayNano, Tensor, _Weakrefable
 
-from . import scalar
+from . import scalar, types
 from .device import DeviceAllocationType
 from .scalar import Scalar
-from .types import DataType, MapType, _AsPyType, _BasicDataType, _DataTypeT
+from .types import (
+    DataType,
+    Field,
+    MapType,
+    _AsPyType,
+    _BasicDataType,
+    _DataTypeT,
+    _IndexT,
+    _RunEndType,
+    _Size,
+    _ValueT,
+)
+
+@overload
+def repeat(
+    value: None | scalar.NullScalar, size: int, memory_pool: MemoryPool | None = None
+) -> NullArray: ...
+@overload
+def repeat(  # type: ignore[overload-overlap]
+    value: bool | scalar.BinaryScalar, size: int, memory_pool: MemoryPool | None = None
+) -> BooleanArray: ...
+@overload
+def repeat(
+    value: scalar.Int8Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Int8Array: ...
+@overload
+def repeat(
+    value: scalar.Int16Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Int16Array: ...
+@overload
+def repeat(
+    value: scalar.Int32Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Int32Array: ...
+@overload
+def repeat(
+    value: int | scalar.Int64Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Int64Array: ...
+@overload
+def repeat(
+    value: scalar.UInt8Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> UInt8Array: ...
+@overload
+def repeat(
+    value: scalar.UInt16Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> UInt16Array: ...
+@overload
+def repeat(
+    value: scalar.UInt32Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> UInt32Array: ...
+@overload
+def repeat(
+    value: scalar.UInt64Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> UInt64Array: ...
+@overload
+def repeat(
+    value: scalar.HalfFloatScalar, size: int, memory_pool: MemoryPool | None = None
+) -> HalfFloatArray: ...
+@overload
+def repeat(
+    value: scalar.FloatScalar, size: int, memory_pool: MemoryPool | None = None
+) -> FloatArray: ...
+@overload
+def repeat(
+    value: float | scalar.DoubleScalar, size: int, memory_pool: MemoryPool | None = None
+) -> DoubleArray: ...
+@overload
+def repeat(
+    value: Decimal | scalar.Decimal128Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Decimal128Array: ...
+@overload
+def repeat(
+    value: scalar.Decimal256Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Decimal256Array: ...
+@overload
+def repeat(
+    value: dt.date | scalar.Date32Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Date32Array: ...
+@overload
+def repeat(
+    value: scalar.Date64Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Date64Array: ...
+@overload
+def repeat(
+    value: scalar.Time32Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Time32Array: ...
+@overload
+def repeat(
+    value: dt.time | scalar.Time64Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Time64Array: ...
+@overload
+def repeat(
+    value: scalar.TimestampScalar, size: int, memory_pool: MemoryPool | None = None
+) -> TimestampArray: ...
+@overload
+def repeat(
+    value: dt.timedelta | scalar.DurationScalar, size: int, memory_pool: MemoryPool | None = None
+) -> DurationArray: ...
+@overload
+def repeat(  # type: ignore[overload-overlap]
+    value: MonthDayNano | scalar.MonthDayNanoIntervalScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> MonthDayNanoIntervalArray: ...
+@overload
+def repeat(
+    value: bytes | scalar.BinaryScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> BinaryArray: ...
+@overload
+def repeat(
+    value: scalar.LargeBinaryScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> LargeBinaryArray: ...
+@overload
+def repeat(
+    value: scalar.FixedBinaryScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> FixedSizeBinaryArray: ...
+@overload
+def repeat(
+    value: str | scalar.StringScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> StringArray: ...
+@overload
+def repeat(
+    value: scalar.LargeStringScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> LargeStringArray: ...
+@overload
+def repeat(
+    value: scalar.BinaryViewScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> BinaryViewArray: ...
+@overload
+def repeat(
+    value: scalar.StringViewScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> StringViewArray: ...
+@overload
+def repeat(
+    value: list | tuple | scalar.ListScalar[_DataTypeT],
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> ListArray[scalar.ListScalar[_DataTypeT]]: ...
+@overload
+def repeat(
+    value: scalar.FixedSizeListScalar[_DataTypeT, _Size],
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> FixedSizeListArray[_DataTypeT, _Size]: ...
+@overload
+def repeat(
+    value: scalar.LargeListScalar[_DataTypeT],
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> LargeListArray[_DataTypeT]: ...
+@overload
+def repeat(
+    value: scalar.ListViewScalar[_DataTypeT],
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> ListViewArray[_DataTypeT]: ...
+@overload
+def repeat(
+    value: scalar.LargeListViewScalar[_DataTypeT],
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> LargeListViewArray[_DataTypeT]: ...
+@overload
+def repeat(
+    value: dict[str, Any] | scalar.StructScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> StructArray: ...
+@overload
+def repeat(
+    value: scalar.MapScalar[_MapKeyT, _MapItemT],
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> MapArray[_MapKeyT, _MapItemT]: ...
+@overload
+def repeat(
+    value: scalar.DictionaryScalar[_IndexT, _ValueT],
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> DictionaryArray[_IndexT, _ValueT]: ...
+@overload
+def repeat(
+    value: scalar.RunEndEncodedScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> RunEndEncodedArray: ...
+@overload
+def repeat(
+    value: scalar.UnionScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> UnionArray: ...
+@overload
+def repeat(
+    value: scalar.FixedShapeTensorScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> FixedShapeTensorArray: ...
+@overload
+def repeat(
+    value: scalar.ExtensionScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> ExtensionArray: ...
+
+_Mask: TypeAlias = NDArray[np.bool_] | list[bool] | BooleanArray
+
+def infer_type(values: Iterable, mask: _Mask, from_pandas: bool = False) -> DataType: ...
 
 _ConvertAs = TypeVar("_ConvertAs", pd.DataFrame, pd.Series)
 _SchemaCapsule: TypeAlias = Any
@@ -60,7 +284,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def from_pandas(
         obj: pd.Series | np.ndarray | ArrayLike,
         *,
-        mask: bool | None = None,
+        mask: _Mask | None = None,
         type: _DataTypeT,
         safe: bool = True,
         memory_pool: MemoryPool | None = None,
@@ -70,7 +294,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def from_pandas(
         obj: pd.Series | np.ndarray | ArrayLike,
         *,
-        mask: bool | None = None,
+        mask: _Mask | None = None,
         safe: bool = True,
         memory_pool: MemoryPool | None = None,
     ) -> Array[Scalar]: ...
@@ -117,7 +341,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def drop_null(self) -> Self: ...
     def filter(
         self,
-        mask: list[bool] | Array | ArrayLike,
+        mask: _Mask,
         *,
         null_selection_behavior: Literal["drop", "emit_null"] = "drop",
     ) -> Self: ...
@@ -211,20 +435,18 @@ class BaseListArray(Array[_ScalarT]):
     def value_parent_indices(self) -> Int64Array: ...
     def value_lengths(self) -> Int32Array: ...
 
-_ListValueT = TypeVar("_ListValueT", bound=_BasicDataType)
-
 class ListArray(BaseListArray[_ScalarT]):
     @overload
     @classmethod
     def from_arrays(
         cls,
         offsets: Int32Array,
-        values: Array[Scalar[_ListValueT]],
+        values: Array[Scalar[_DataTypeT]],
         *,
         type: None = None,
         pool: MemoryPool | None = None,
-        mask: bool | None = None,
-    ) -> ListArray[scalar.ListScalar[_ListValueT]]: ...
+        mask: _Mask | None = None,
+    ) -> ListArray[scalar.ListScalar[_DataTypeT]]: ...
     @overload
     @classmethod
     def from_arrays(
@@ -234,25 +456,25 @@ class ListArray(BaseListArray[_ScalarT]):
         *,
         type: _DataTypeT,
         pool: MemoryPool | None = None,
-        mask: bool | None = None,
+        mask: _Mask | None = None,
     ) -> ListArray[scalar.ListScalar[_DataTypeT]]: ...
     @property
     def values(self) -> Array: ...
     @property
     def offsets(self) -> Int32Array: ...
 
-class LargeListArray(BaseListArray[_ScalarT]):
+class LargeListArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
     @overload
     @classmethod
     def from_arrays(
         cls,
         offsets: Int64Array,
-        values: Array[Scalar[_ListValueT]],
+        values: Array[Scalar[_DataTypeT]],
         *,
         type: None = None,
         pool: MemoryPool | None = None,
-        mask: bool | None = None,
-    ) -> LargeListArray[scalar.ListScalar[_ListValueT]]: ...
+        mask: _Mask | None = None,
+    ) -> LargeListArray[_DataTypeT]: ...
     @overload
     @classmethod
     def from_arrays(
@@ -262,25 +484,25 @@ class LargeListArray(BaseListArray[_ScalarT]):
         *,
         type: _DataTypeT,
         pool: MemoryPool | None = None,
-        mask: bool | None = None,
-    ) -> LargeListArray[scalar.ListScalar[_DataTypeT]]: ...
+        mask: _Mask | None = None,
+    ) -> LargeListArray[_DataTypeT]: ...
     @property
     def values(self) -> Array: ...
     @property
     def offsets(self) -> Int64Array: ...
 
-class ListViewArray(BaseListArray[_ScalarT]):
+class ListViewArray(BaseListArray[scalar.ListViewScalar[_DataTypeT]]):
     @overload
     @classmethod
     def from_arrays(
         cls,
         offsets: Int32Array,
-        values: Array[Scalar[_ListValueT]],
+        values: Array[Scalar[_DataTypeT]],
         *,
         type: None = None,
         pool: MemoryPool | None = None,
-        mask: bool | None = None,
-    ) -> ListViewArray[scalar.ListScalar[_ListValueT]]: ...
+        mask: _Mask | None = None,
+    ) -> ListViewArray[_DataTypeT]: ...
     @overload
     @classmethod
     def from_arrays(
@@ -290,8 +512,8 @@ class ListViewArray(BaseListArray[_ScalarT]):
         *,
         type: _DataTypeT,
         pool: MemoryPool | None = None,
-        mask: bool | None = None,
-    ) -> ListViewArray[scalar.ListScalar[_DataTypeT]]: ...
+        mask: _Mask | None = None,
+    ) -> ListViewArray[_DataTypeT]: ...
     @property
     def values(self) -> Array: ...
     @property
@@ -299,18 +521,18 @@ class ListViewArray(BaseListArray[_ScalarT]):
     @property
     def sizes(self) -> Int32Array: ...
 
-class LargeListViewArray(BaseListArray[_ScalarT]):
+class LargeListViewArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
     @overload
     @classmethod
     def from_arrays(
         cls,
         offsets: Int64Array,
-        values: Array[Scalar[_ListValueT]],
+        values: Array[Scalar[_DataTypeT]],
         *,
         type: None = None,
         pool: MemoryPool | None = None,
-        mask: bool | None = None,
-    ) -> LargeListArray[scalar.ListScalar[_ListValueT]]: ...
+        mask: _Mask | None = None,
+    ) -> LargeListViewArray[_DataTypeT]: ...
     @overload
     @classmethod
     def from_arrays(
@@ -320,8 +542,8 @@ class LargeListViewArray(BaseListArray[_ScalarT]):
         *,
         type: _DataTypeT,
         pool: MemoryPool | None = None,
-        mask: bool | None = None,
-    ) -> LargeListArray[scalar.ListScalar[_DataTypeT]]: ...
+        mask: _Mask | None = None,
+    ) -> LargeListViewArray[_DataTypeT]: ...
     @property
     def values(self) -> Array: ...
     @property
@@ -329,10 +551,33 @@ class LargeListViewArray(BaseListArray[_ScalarT]):
     @property
     def sizes(self) -> Int64Array: ...
 
+class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, _Size]]):
+    @overload
+    @classmethod
+    def from_arrays(
+        cls,
+        values: Array[Scalar[_DataTypeT]],
+        *,
+        type: None = None,
+        mask: _Mask | None = None,
+    ) -> FixedSizeListArray[_DataTypeT, None]: ...
+    @overload
+    @classmethod
+    def from_arrays(
+        cls,
+        values: Array[Scalar[_DataTypeT]],
+        limit_size: _Size,
+        *,
+        type: None = None,
+        mask: _Mask | None = None,
+    ) -> FixedSizeListArray[_DataTypeT, _Size]: ...
+    @property
+    def values(self) -> BaseListArray[scalar.ListScalar[_DataTypeT]]: ...
+
 _MapKeyT = TypeVar("_MapKeyT", bound=_BasicDataType)
 _MapItemT = TypeVar("_MapItemT", bound=_BasicDataType)
 
-class MapArray(ListArray[_ScalarT]):
+class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
     @overload  # type: ignore[override]
     @classmethod
     def from_arrays(
@@ -343,8 +588,8 @@ class MapArray(ListArray[_ScalarT]):
         *,
         type: None = None,
         pool: MemoryPool | None = None,
-        mask: bool | None = None,
-    ) -> MapArray[scalar.MapScalar[_MapKeyT, _MapItemT]]: ...
+        mask: _Mask | None = None,
+    ) -> MapArray[_MapKeyT, _MapItemT]: ...
     @overload
     @classmethod
     def from_arrays(
@@ -354,11 +599,157 @@ class MapArray(ListArray[_ScalarT]):
         *,
         type: MapType[_MapKeyT, _MapItemT],
         pool: MemoryPool | None = None,
-        mask: bool | None = None,
-    ) -> MapArray[scalar.MapScalar[_MapKeyT, _MapItemT]]: ...
+        mask: _Mask | None = None,
+    ) -> MapArray[_MapKeyT, _MapItemT]: ...
     @property
     def keys(self) -> Array: ...
     @property
     def items(self) -> Array: ...
 
-class DictionaryArray: ...
+class UnionArray(Array[scalar.UnionScalar]):
+    def child(self, pos: int) -> Field: ...
+    def field(self, pos: int) -> Array: ...
+    @property
+    def type_codes(self) -> Int8Array: ...
+    @property
+    def offsets(self) -> Int32Array: ...
+    @staticmethod
+    def from_dense(
+        types: Int8Array,
+        value_offsets: Int32Array,
+        children: list[Array],
+        field_names: list[str] | None = None,
+        type_codes: Int8Array | None = None,
+    ) -> UnionArray: ...
+    @staticmethod
+    def from_sparse(
+        types: Int8Array,
+        children: list[Array],
+        field_names: list[str] | None = None,
+        type_codes: Int8Array | None = None,
+    ) -> UnionArray: ...
+
+class StringArray(Array[scalar.StringScalar]):
+    @staticmethod
+    def from_buffers(  # type: ignore[override]
+        length: int,
+        value_offsets: Buffer,
+        data: Buffer,
+        null_bitmap: Buffer | None = None,
+        null_count: int | None = -1,
+        offset: int | None = 0,
+    ) -> StringArray: ...
+
+class LargeStringArray(Array[scalar.LargeStringScalar]):
+    @staticmethod
+    def from_buffers(  # type: ignore[override]
+        length: int,
+        value_offsets: Buffer,
+        data: Buffer,
+        null_bitmap: Buffer | None = None,
+        null_count: int | None = -1,
+        offset: int | None = 0,
+    ) -> StringArray: ...
+
+class StringViewArray(Array[scalar.StringViewScalar]): ...
+
+class BinaryArray(Array[scalar.BinaryScalar]):
+    @property
+    def total_values_length(self) -> int: ...
+
+class LargeBinaryArray(Array[scalar.LargeBinaryScalar]):
+    @property
+    def total_values_length(self) -> int: ...
+
+class BinaryViewArray(Array[scalar.BinaryViewScalar]): ...
+
+class DictionaryArray(Array[scalar.DictionaryScalar[_IndexT, _ValueT]]):
+    @staticmethod
+    def from_buffers(  # type: ignore[override]
+        type: _ValueT,
+        length: int,
+        buffers: list[Buffer],
+        dictionary: Array | np.ndarray | pd.Series,
+        null_count: int = -1,
+        offset: int = 0,
+    ) -> DictionaryArray[Any, _ValueT]: ...
+    @staticmethod
+    def from_arrays(
+        indices: Array | np.ndarray | pd.Series | list[int],
+        dictionary: Array | np.ndarray | pd.Series,
+        mask: np.ndarray | pd.Series | BooleanArray | None = None,
+        ordered: bool = False,
+        from_pandas: bool = False,
+        safe: bool = True,
+        memory_pool: MemoryPool | None = None,
+    ) -> DictionaryArray: ...
+
+class StructArray(Array[scalar.StructScalar]):
+    def field(self, index: int | str) -> Array: ...
+    def flatten(self, memory_pool: MemoryPool | None = None) -> list[Array]: ...
+    @staticmethod
+    def from_arrays(
+        arrays: list[Array],
+        names: list[str] | None = None,
+        fields: list[Field] | None = None,
+        mask=None,
+        memory_pool: MemoryPool | None = None,
+    ) -> StructArray: ...
+    def sort(self, order: Order = "ascending", by: str | None = None, **kwargs) -> StructArray: ...
+
+class RunEndEncodedArray(Array[scalar.RunEndEncodedScalar[_RunEndType, _ValueT]]):
+    @overload
+    @staticmethod
+    def from_arrays(
+        run_ends: Int16Array,
+        values: Array,
+        type: _ValueT | None = None,
+    ) -> RunEndEncodedArray[types.Int16Type, _ValueT]: ...
+    @overload
+    @staticmethod
+    def from_arrays(
+        run_ends: Int32Array,
+        values: Array,
+        type: _ValueT | None = None,
+    ) -> RunEndEncodedArray[types.Int32Type, _ValueT]: ...
+    @overload
+    @staticmethod
+    def from_arrays(
+        run_ends: Int64Array,
+        values: Array,
+        type: _ValueT | None = None,
+    ) -> RunEndEncodedArray[types.Int64Type, _ValueT]: ...
+    @staticmethod
+    def from_buffers(  # type: ignore[override]
+        type: _ValueT,
+        length: int,
+        buffers: list[Buffer],
+        null_count: int = -1,
+        offset=0,
+        children: tuple[Array, Array] | None = None,
+    ) -> RunEndEncodedArray[Any, _ValueT]: ...
+    @property
+    def run_ends(self) -> Array[scalar.Scalar[_RunEndType]]: ...
+    @property
+    def values(self) -> Array[scalar.Scalar[_ValueT]]: ...
+    def find_physical_offset(self) -> int: ...
+    def find_physical_length(self) -> int: ...
+
+_ArrayT = TypeVar("_ArrayT", bound=Array)
+
+class ExtensionArray(Array[scalar.ExtensionScalar], Generic[_ArrayT]):
+    @property
+    def storage(self) -> Any: ...
+    @staticmethod
+    def from_storage(
+        typ: types.BaseExtensionType, storage: _ArrayT
+    ) -> ExtensionArray[_ArrayT]: ...
+
+class FixedShapeTensorArray(ExtensionArray[_ArrayT]):
+    def to_numpy_ndarray(self) -> np.ndarray: ...
+    def to_tensor(self) -> Tensor: ...
+    @staticmethod
+    def from_numpy_ndarray(obj: np.ndarray) -> FixedShapeTensorArray: ...
+
+def concat_arrays(arrays: Iterable[_ArrayT], memory_pool: MemoryPool | None = None) -> _ArrayT: ...
+def _empty_array(type: _DataTypeT) -> Array[scalar.Scalar[_DataTypeT]]: ...
