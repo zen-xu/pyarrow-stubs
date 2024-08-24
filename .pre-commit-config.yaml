@@ -33,3 +33,4 @@ repos:
           - types-cffi
           - numpy
           - pandas-stubs
+          - scipy

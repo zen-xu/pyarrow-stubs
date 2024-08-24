@@ -38,6 +38,8 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
 [tool.pixi.pypi-dependencies]
 pyarrow-stubs = { path = ".", editable = true }
+ipython       = "*"
+scipy         = "*"
 pre-commit    = "*"
 mypy          = ">=1.11"
 ruff          = ">=0.5"
