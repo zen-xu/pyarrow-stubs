@@ -1475,7 +1475,7 @@ class StructArray(Array[dict, StructScalar]):
     def flatten(self, memory_pool: MemoryPool | None = ...) -> list[Array]: ...
     @staticmethod
     def from_arrays(
-        arrays: Array,
+        arrays: Iterable[Array],
         names: list[str] | None = ...,
         fields: list[Field] | None = ...,
         mask: BooleanArray | None = ...,
