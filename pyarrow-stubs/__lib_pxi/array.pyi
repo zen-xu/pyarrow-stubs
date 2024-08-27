@@ -18,10 +18,9 @@ from typing import (
 import numpy as np
 import pandas as pd
 
-from numpy.typing import NDArray
 from pandas.core.dtypes.base import ExtensionDtype
 from pyarrow._compute import CastOptions
-from pyarrow._stubs_typing import ArrayLike, Order
+from pyarrow._stubs_typing import ArrayLike, Mask, Order
 from pyarrow.lib import Buffer, MemoryPool, MonthDayNano, Tensor, _Weakrefable
 
 from . import scalar, types
@@ -54,8 +53,8 @@ class ArrowCDeviceArray(Protocol):
 @overload  # type: ignore[overload-overlap]
 def array(
     values: Iterable[bool],
-    type: None,
-    mask: _Mask | None = None,
+    type: None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -64,8 +63,8 @@ def array(
 @overload
 def array(
     values: Iterable[int],
-    type: None,
-    mask: _Mask | None = None,
+    type: None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -74,8 +73,8 @@ def array(
 @overload
 def array(
     values: Iterable[float],
-    type: None,
-    mask: _Mask | None = None,
+    type: None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -84,8 +83,8 @@ def array(
 @overload
 def array(
     values: Iterable[Decimal],
-    type: None,
-    mask: _Mask | None = None,
+    type: None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -94,8 +93,8 @@ def array(
 @overload
 def array(
     values: Iterable[dict[str, Any]],
-    type: None,
-    mask: _Mask | None = None,
+    type: None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -104,8 +103,8 @@ def array(
 @overload
 def array(
     values: Iterable[dt.date],
-    type: None,
-    mask: _Mask | None = None,
+    type: None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -114,8 +113,8 @@ def array(
 @overload
 def array(
     values: Iterable[dt.time],
-    type: None,
-    mask: _Mask | None = None,
+    type: None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -124,8 +123,8 @@ def array(
 @overload
 def array(
     values: Iterable[dt.timedelta],
-    type: None,
-    mask: _Mask | None = None,
+    type: None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -134,8 +133,8 @@ def array(
 @overload
 def array(
     values: Iterable[MonthDayNano],
-    type: None,
-    mask: _Mask | None = None,
+    type: None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -144,8 +143,8 @@ def array(
 @overload
 def array(
     values: Iterable[list],
-    type: None,
-    mask: _Mask | None = None,
+    type: None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -155,7 +154,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: _DataTypeT,
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -165,7 +164,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["null"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -175,7 +174,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["bool", "boolean"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -185,7 +184,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["i1", "int8"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -195,7 +194,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["i2", "int16"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -205,7 +204,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["i4", "int32"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -215,7 +214,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["i8", "int64"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -225,7 +224,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["u1", "uint8"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -235,7 +234,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["u2", "uint16"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -245,7 +244,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["u4", "uint32"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -255,7 +254,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["u8", "uint64"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -265,7 +264,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["f2", "halffloat", "float16"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -275,7 +274,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["f4", "float", "float32"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -285,7 +284,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["f8", "double", "float64"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -295,7 +294,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["string", "str", "utf8"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -305,7 +304,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["binary"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -315,7 +314,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["large_string", "large_str", "large_utf8"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -325,7 +324,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["large_binary"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -335,7 +334,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["binary_view"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -345,7 +344,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["string_view"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -355,7 +354,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["date32", "date32[day]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -365,7 +364,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["date64", "date64[ms]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -375,7 +374,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["time32[s]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -385,7 +384,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["time32[ms]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -395,7 +394,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["time64[us]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -405,7 +404,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["time64[ns]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -415,7 +414,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["timestamp[s]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -425,7 +424,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["timestamp[ms]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -435,7 +434,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["timestamp[us]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -445,7 +444,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["timestamp[ns]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -455,7 +454,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["duration[s]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -465,7 +464,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["duration[ms]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -475,7 +474,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["duration[us]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -485,7 +484,7 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["duration[ns]"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
@@ -495,14 +494,12 @@ def array(
 def array(
     values: Iterable | ArrowCArray | ArrowCDeviceArray,
     type: Literal["month_day_nano_interval"],
-    mask: _Mask | None = None,
+    mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
     memory_pool: MemoryPool | None = None,
 ) -> Array[scalar.MonthDayNanoIntervalScalar]: ...
-
-# ===
 @overload  # type: ignore[overload-overlap]
 def asarray(values: Iterable[bool]) -> BooleanArray: ...
 @overload
@@ -1071,10 +1068,7 @@ def repeat(
     size: int,
     memory_pool: MemoryPool | None = None,
 ) -> ExtensionArray: ...
-
-_Mask: TypeAlias = NDArray[np.bool_] | list[bool] | BooleanArray
-
-def infer_type(values: Iterable, mask: _Mask, from_pandas: bool = False) -> DataType: ...
+def infer_type(values: Iterable, mask: Mask, from_pandas: bool = False) -> DataType: ...
 
 _ConvertAs = TypeVar("_ConvertAs", pd.DataFrame, pd.Series)
 
@@ -1120,7 +1114,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def from_pandas(
         obj: pd.Series | np.ndarray | ArrayLike,
         *,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
         type: _DataTypeT,
         safe: bool = True,
         memory_pool: MemoryPool | None = None,
@@ -1130,7 +1124,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def from_pandas(
         obj: pd.Series | np.ndarray | ArrayLike,
         *,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
         safe: bool = True,
         memory_pool: MemoryPool | None = None,
     ) -> Array[Scalar]: ...
@@ -1177,7 +1171,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def drop_null(self) -> Self: ...
     def filter(
         self,
-        mask: _Mask,
+        mask: Mask,
         *,
         null_selection_behavior: Literal["drop", "emit_null"] = "drop",
     ) -> Self: ...
@@ -1202,7 +1196,9 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def sort(self, order: Order = "ascending", **kwargs) -> Self: ...
     def __array__(self, dtype: np.dtype | None = None, copy: bool | None = None) -> np.ndarray: ...
     def to_numpy(self, zero_copy_only: bool = True, writable: bool = False) -> np.ndarray: ...
-    def to_pylist(self: Array[Scalar[_BasicDataType[_AsPyType], Any]]) -> list[_AsPyType]: ...
+    def to_pylist(
+        self: Array[Scalar[_BasicDataType[_AsPyType], Any]],
+    ) -> list[_AsPyType | None]: ...
     tolist = to_pylist
     def validate(self, *, full: bool = False) -> None: ...
     @property
@@ -1281,7 +1277,7 @@ class ListArray(BaseListArray[_ScalarT]):
         *,
         type: None = None,
         pool: MemoryPool | None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> ListArray[scalar.ListScalar[_DataTypeT]]: ...
     @overload
     @classmethod
@@ -1292,7 +1288,7 @@ class ListArray(BaseListArray[_ScalarT]):
         *,
         type: _DataTypeT,
         pool: MemoryPool | None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> ListArray[scalar.ListScalar[_DataTypeT]]: ...
     @property
     def values(self) -> Array: ...
@@ -1309,7 +1305,7 @@ class LargeListArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
         *,
         type: None = None,
         pool: MemoryPool | None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> LargeListArray[_DataTypeT]: ...
     @overload
     @classmethod
@@ -1320,7 +1316,7 @@ class LargeListArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
         *,
         type: _DataTypeT,
         pool: MemoryPool | None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> LargeListArray[_DataTypeT]: ...
     @property
     def values(self) -> Array: ...
@@ -1337,7 +1333,7 @@ class ListViewArray(BaseListArray[scalar.ListViewScalar[_DataTypeT]]):
         *,
         type: None = None,
         pool: MemoryPool | None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> ListViewArray[_DataTypeT]: ...
     @overload
     @classmethod
@@ -1348,7 +1344,7 @@ class ListViewArray(BaseListArray[scalar.ListViewScalar[_DataTypeT]]):
         *,
         type: _DataTypeT,
         pool: MemoryPool | None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> ListViewArray[_DataTypeT]: ...
     @property
     def values(self) -> Array: ...
@@ -1367,7 +1363,7 @@ class LargeListViewArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
         *,
         type: None = None,
         pool: MemoryPool | None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> LargeListViewArray[_DataTypeT]: ...
     @overload
     @classmethod
@@ -1378,7 +1374,7 @@ class LargeListViewArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
         *,
         type: _DataTypeT,
         pool: MemoryPool | None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> LargeListViewArray[_DataTypeT]: ...
     @property
     def values(self) -> Array: ...
@@ -1395,7 +1391,7 @@ class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, _S
         values: Array[Scalar[_DataTypeT]],
         *,
         type: None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> FixedSizeListArray[_DataTypeT, None]: ...
     @overload
     @classmethod
@@ -1405,7 +1401,7 @@ class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, _S
         limit_size: _Size,
         *,
         type: None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> FixedSizeListArray[_DataTypeT, _Size]: ...
     @property
     def values(self) -> BaseListArray[scalar.ListScalar[_DataTypeT]]: ...
@@ -1424,7 +1420,7 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
         *,
         type: None = None,
         pool: MemoryPool | None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> MapArray[_MapKeyT, _MapItemT]: ...
     @overload
     @classmethod
@@ -1435,7 +1431,7 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
         *,
         type: MapType[_MapKeyT, _MapItemT],
         pool: MemoryPool | None = None,
-        mask: _Mask | None = None,
+        mask: Mask | None = None,
     ) -> MapArray[_MapKeyT, _MapItemT]: ...
     @property
     def keys(self) -> Array: ...
