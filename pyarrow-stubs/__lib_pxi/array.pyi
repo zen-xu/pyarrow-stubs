@@ -2,7 +2,18 @@ import datetime as dt
 
 from collections.abc import Callable
 from decimal import Decimal
-from typing import Any, Generic, Iterable, Iterator, Literal, Optional, Self, TypeVar, overload
+from typing import (
+    Any,
+    Generic,
+    Iterable,
+    Iterator,
+    Literal,
+    Optional,
+    Self,
+    TypeAlias,
+    TypeVar,
+    overload,
+)
 
 import numpy as np
 import pandas as pd
@@ -37,7 +48,7 @@ from .types import (
 
 _T = TypeVar("_T")
 
-class NullableIterable(Iterable[Optional[_T]]): ...
+NullableIterable: TypeAlias = Iterable[_T | None]
 
 @overload  # type: ignore[overload-overlap]
 def array(
