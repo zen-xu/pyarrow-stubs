@@ -29,8 +29,3 @@ repos:
     rev: v1.11.2
     hooks:
       - id: mypy
-        additional_dependencies:
-          - types-cffi
-          - numpy
-          - pandas-stubs
-          - scipy
