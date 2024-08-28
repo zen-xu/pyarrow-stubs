@@ -1,6 +1,6 @@
-from typing import Iterable
+from typing import Iterable, Literal
 
-from .lib import Array, DataType, Field, MemoryPool, RecordBatch, _Weakrefable
+from .lib import Array, DataType, Field, MemoryPool, RecordBatch, Schema, _Weakrefable
 
 class Node(_Weakrefable):
     def return_type(self) -> DataType: ...
@@ -45,6 +45,17 @@ class TreeExprBuilder(_Weakrefable):
 
 class Configuration(_Weakrefable):
     def __init__(self, optimize: bool = True, dump_ir: bool = False) -> None: ...
+
+def make_projector(
+    schema: Schema,
+    children: list[Expression],
+    pool: MemoryPool,
+    selection_mode: Literal["NONE", "UINT16", "UINT32", "UINT64"] = "NONE",
+    configuration: Configuration | None = None,
+) -> Projector: ...
+def make_filter(
+    schema: Schema, condition: Condition, configuration: Configuration | None = None
+) -> Filter: ...
 
 class FunctionSignature(_Weakrefable):
     def return_type(self) -> DataType: ...

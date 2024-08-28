@@ -152,7 +152,7 @@ class BinaryScalar(Scalar[types.BinaryType, _IsValid]):
 class LargeBinaryScalar(Scalar[types.LargeBinaryType, _IsValid]):
     def as_buffer(self) -> Buffer: ...
 
-class FixedBinaryScalar(Scalar[types.FixedSizeBinaryType, _IsValid]):
+class FixedSizeBinaryScalar(Scalar[types.FixedSizeBinaryType, _IsValid]):
     def as_buffer(self) -> Buffer: ...
 
 class StringScalar(Scalar[types.StringType, _IsValid]):
@@ -432,7 +432,7 @@ __all__ = [
     "MonthDayNanoIntervalScalar",
     "BinaryScalar",
     "LargeBinaryScalar",
-    "FixedBinaryScalar",
+    "FixedSizeBinaryScalar",
     "StringScalar",
     "LargeStringScalar",
     "BinaryViewScalar",

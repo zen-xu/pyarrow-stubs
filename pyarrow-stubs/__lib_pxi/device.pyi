@@ -36,4 +36,4 @@ class MemoryManager(_Weakrefable):
 
 def default_cpu_memory_manager() -> MemoryManager: ...
 
-__all__ = ["DeviceAllocationType", "Device", "MemoryManager"]
+__all__ = ["DeviceAllocationType", "Device", "MemoryManager", "default_cpu_memory_manager"]
