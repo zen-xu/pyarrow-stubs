@@ -10,7 +10,7 @@ from .column import (
 )
 
 class DataFrameObject(Protocol):
-    def __dataframe__(self) -> Any: ...
+    def __dataframe__(self, nan_as_null: bool = False, allow_copy: bool = True) -> Any: ...
 
 ColumnObject: TypeAlias = Any
 

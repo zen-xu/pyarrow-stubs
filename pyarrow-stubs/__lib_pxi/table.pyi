@@ -26,9 +26,10 @@ from pyarrow._stubs_typing import (
     NullSelectionBehavior,
     Order,
     SupportArrowArray,
+    SupportArrowDeviceArray,
     SupportArrowStream,
-    SupportDeviceArrowArray,
 )
+from pyarrow.interchange.dataframe import _PyArrowDataFrame
 from pyarrow.lib import Field, MemoryPool, MonthDayNano, Schema
 
 from . import scalar
@@ -363,7 +364,7 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
     def __array__(self, dtype: np.dtype | None = None, copy: bool | None = None) -> np.ndarray: ...
     def __dataframe__(
         self, nan_as_null: bool = False, allow_copy: bool = True
-    ) -> pd.DataFrame: ...
+    ) -> _PyArrowDataFrame: ...
     def __len__(self) -> int: ...
     def column(self, i: int | str) -> _ColumnT: ...
     @property
@@ -542,7 +543,7 @@ def record_batch(
     | list[Array]
     | pd.DataFrame
     | SupportArrowArray
-    | SupportDeviceArrowArray,
+    | SupportArrowDeviceArray,
     names: list[str] | None = None,
     schema: Schema | None = None,
     metadata: Mapping | None = None,
@@ -553,7 +554,7 @@ def table(
     | pd.DataFrame
     | SupportArrowArray
     | SupportArrowStream
-    | SupportDeviceArrowArray,
+    | SupportArrowDeviceArray,
     names: list[str] | None = None,
     schema: Schema | None = None,
     metadata: Mapping | None = None,

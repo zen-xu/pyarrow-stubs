@@ -61,5 +61,8 @@ class SupportArrowStream(Protocol):
 class SupportArrowArray(Protocol):
     def __arrow_c_array__(self, requested_schema=None) -> Any: ...
 
-class SupportDeviceArrowArray(Protocol):
+class SupportArrowDeviceArray(Protocol):
     def __arrow_c_device_array__(self, requested_schema=None, **kwargs) -> Any: ...
+
+class SupportArrowSchema(Protocol):
+    def __arrow_c_schema(self) -> Any: ...
