@@ -1,360 +1,523 @@
-import importlib._bootstrap  # type: ignore
+from pathlib import Path
+from typing import (
+    IO,
+    Any,
+    Callable,
+    Generic,
+    Iterator,
+    Literal,
+    NamedTuple,
+    Self,
+    TypeVar,
+    overload,
+)
 
-from typing import Any
-from typing import ClassVar
-from typing import overload
+from . import _csv, _json, _parquet, lib
+from ._fs import FileSelector, FileSystem
+from ._stubs_typing import Indices, JoinType, Order
+from .acero import ExecNodeOptions
+from .compute import Expression
+from .ipc import IpcWriteOptions, RecordBatchReader
 
-import pyarrow.lib
-
-_DEFAULT_BATCH_READAHEAD: int
-_DEFAULT_BATCH_SIZE: int
-_DEFAULT_FRAGMENT_READAHEAD: int
-_dataset_pq: bool
-_is_iterable: function
-_is_path_like: function
-_orc_fileformat: None
-_orc_imported: bool
-_stringify_path: function
-
-class ArrowTypeError(TypeError, pyarrow.lib.ArrowException): ...
-
-class CsvFileFormat(FileFormat):
-    __slots__: ClassVar[tuple] = ...
-    _read_options_py: Any
-    parse_options: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def equals(self, CsvFileFormatother) -> Any: ...
-    def make_write_options(self, **kwargs) -> Any: ...
-    def __reduce__(self) -> Any: ...
-
-class CsvFileWriteOptions(FileWriteOptions):
-    write_options: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class CsvFragmentScanOptions(FragmentScanOptions):
-    __slots__: ClassVar[tuple] = ...
-    convert_options: Any
-    read_options: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def equals(self, CsvFragmentScanOptionsother) -> Any: ...
-    def __reduce__(self) -> Any: ...
-
-class Dataset(pyarrow.lib._Weakrefable):
-    partition_expression: Any
-    schema: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def count_rows(self, **kwargs) -> Any: ...
-    def get_fragments(self, Expressionfilter=...) -> Any: ...
-    def head(self, intnum_rows, **kwargs) -> Any: ...
+class Dataset(lib._Weakrefable):
+    @property
+    def partition_expression(self) -> Expression: ...
+    def replace_schema(self, schema: lib.Schema) -> None: ...
+    def get_fragments(self, filter: Expression | None = None): ...
+    def scanner(
+        self,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> Scanner: ...
+    def to_batches(
+        self,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> Iterator[lib.RecordBatch]: ...
+    def to_table(
+        self,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> lib.Table: ...
+    def take(
+        self,
+        indices: Indices,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> lib.Table: ...
+    def head(
+        self,
+        num_rows: int,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> lib.Table: ...
+    def count_rows(
+        self,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> int: ...
+    @property
+    def schema(self) -> lib.Schema: ...
+    def filter(self, expression: Expression) -> Self: ...
+    def sort_by(self, sorting: Order | list[tuple[str, Order]], **kwargs) -> InMemoryDataset: ...
     def join(
         self,
-        right_dataset,
-        keys,
-        right_keys=...,
-        join_type=...,
-        left_suffix=...,
-        right_suffix=...,
-        coalesce_keys=...,
-        use_threads=...,
-    ) -> Any: ...
-    def replace_schema(self, Schemaschema) -> Any: ...
-    @overload
-    def scanner(self, **kwargs) -> Any: ...
-    @overload
-    def scanner(self, columns=...) -> Any: ...
-    @overload
-    def scanner(self, filter=...) -> Any: ...
-    def take(self, indices, **kwargs) -> Any: ...
-    def to_batches(self, **kwargs) -> Any: ...
-    def to_table(self, **kwargs) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class DatasetFactory(pyarrow.lib._Weakrefable):
-    root_partition: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def finish(self, Schemaschema=...) -> Any: ...
-    def inspect(self) -> Any: ...
-    def inspect_schemas(self) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class DirectoryPartitioning(KeyValuePartitioning):
-    def __init__(self, *args, **kwargs) -> None: ...
-    def discover(
+        right_dataset: Dataset,
+        keys: str | list[str],
+        right_keys: str | list[str] | None = None,
+        join_type: JoinType = "left outer",
+        left_suffix: str | None = None,
+        right_suffix: str | None = None,
+        coalesce_keys: bool = True,
+        use_threads: bool = True,
+    ) -> InMemoryDataset: ...
+    def join_asof(
         self,
-        field_names=...,
-        infer_dictionary=...,
-        max_partition_dictionary_size=...,
-        schema=...,
-        segment_encoding=...,
-    ) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
+        right_dataset: Dataset,
+        on: str,
+        by: str | list[str],
+        tolerance: int,
+        right_on: str | list[str] | None = None,
+        right_by: str | list[str] | None = None,
+    ) -> InMemoryDataset: ...
 
-class FeatherFileFormat(IpcFileFormat):
-    default_extname: Any
-    def __init__(self, *args, **kwargs) -> None: ...
+class InMemoryDataset(Dataset): ...
 
-class FileFormat(pyarrow.lib._Weakrefable):
-    __hash__: ClassVar[None] = ...  # type: ignore
-    default_extname: Any
-    default_fragment_scan_options: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def inspect(self, file, filesystem=...) -> Any: ...
-    def make_fragment(self, file, filesystem=..., Expressionpartition_expression=...) -> Any: ...
-    def make_write_options(self) -> Any: ...
-    def __eq__(self, other) -> Any: ...
-    def __ge__(self, other) -> Any: ...
-    def __gt__(self, other) -> Any: ...
-    def __le__(self, other) -> Any: ...
-    def __lt__(self, other) -> Any: ...
-    def __ne__(self, other) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class FileFragment(Fragment):
-    buffer: Any
-    filesystem: Any
-    format: Any
-    path: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def open(self) -> Any: ...
-    def __reduce__(self) -> Any: ...
+class UnionDataset(Dataset):
+    @property
+    def children(self) -> list[Dataset]: ...
 
 class FileSystemDataset(Dataset):
-    files: Any
-    filesystem: Any
-    format: Any
-    partitioning: Any
-    def __init__(self, *args, **kwargs) -> None: ...
+    def __init__(
+        self,
+        fragments: list[Fragment],
+        schema: lib.Schema,
+        format: FileFormat,
+        filesystem: FileSystem | None = None,
+        root_partition: Expression | None = None,
+    ) -> None: ...
     @classmethod
     def from_paths(
         cls,
-        typecls,
-        paths,
-        schema=...,
-        format=...,
-        filesystem=...,
-        partitions=...,
-        root_partition=...,
-    ) -> Any: ...
-    def __reduce__(self) -> Any: ...
+        paths: list[str],
+        schema: lib.Schema | None = None,
+        format: FileFormat | None = None,
+        filesystem: FileSystem | None = None,
+        partitions: list[Expression] | None = None,
+        root_partition: Expression | None = None,
+    ) -> FileSystemDataset: ...
+    @property
+    def filesystem(self) -> FileSystem: ...
+    @property
+    def partitioning(self) -> Partitioning | None: ...
+    @property
+    def files(self) -> list[str]: ...
+    @property
+    def format(self) -> FileFormat: ...
 
-class FileSystemDatasetFactory(DatasetFactory):
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
+class FileWriteOptions(lib._Weakrefable):
+    @property
+    def format(self) -> FileFormat: ...
 
-class FileSystemFactoryOptions(pyarrow.lib._Weakrefable):
-    __slots__: ClassVar[tuple] = ...
-    exclude_invalid_files: Any
-    partition_base_dir: Any
-    partitioning: Any
-    partitioning_factory: Any
-    selector_ignore_prefixes: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class FileWriteOptions(pyarrow.lib._Weakrefable):
-    format: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class FilenamePartitioning(KeyValuePartitioning):
-    def __init__(self, *args, **kwargs) -> None: ...
-    def discover(
-        self, field_names=..., infer_dictionary=..., schema=..., segment_encoding=...
-    ) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class Fragment(pyarrow.lib._Weakrefable):
-    partition_expression: Any
-    physical_schema: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def count_rows(self, **kwargs) -> Any: ...
-    def head(self, intnum_rows, **kwargs) -> Any: ...
-    def scanner(self, Schemaschema=..., **kwargs) -> Any: ...
-    def take(self, indices, **kwargs) -> Any: ...
-    def to_batches(self, Schemaschema=..., **kwargs) -> Any: ...
-    def to_table(self, Schemaschema=..., **kwargs) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class FragmentScanOptions(pyarrow.lib._Weakrefable):
-    __hash__: ClassVar[None] = ...  # type: ignore
-    type_name: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __eq__(self, other) -> Any: ...
-    def __ge__(self, other) -> Any: ...
-    def __gt__(self, other) -> Any: ...
-    def __le__(self, other) -> Any: ...
-    def __lt__(self, other) -> Any: ...
-    def __ne__(self, other) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class HivePartitioning(KeyValuePartitioning):
-    def __init__(self, *args, **kwargs) -> None: ...
-    def discover(
+class FileFormat(lib._Weakrefable):
+    def inspect(
+        self, file: str | Path | IO, filesystem: FileSystem | None = None
+    ) -> lib.Schema: ...
+    def make_fragment(
         self,
-        infer_dictionary=...,
-        max_partition_dictionary_size=...,
-        null_fallback=...,
-        schema=...,
-        segment_encoding=...,
-    ) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
+        file: str | Path | IO,
+        filesystem: FileSystem | None = None,
+        partition_expression: Expression | None = None,
+        *,
+        file_size: int | None = None,
+    ) -> Fragment: ...
+    def make_write_options(self) -> FileWriteOptions: ...
+    @property
+    def default_extname(self) -> str: ...
+    @property
+    def default_fragment_scan_options(self) -> FragmentScanOptions: ...
+    @default_fragment_scan_options.setter
+    def default_fragment_scan_options(self, options: FragmentScanOptions) -> None: ...
 
-class InMemoryDataset(Dataset):
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
+class Fragment(lib._Weakrefable):
+    @property
+    def physical_schema(self) -> lib.Schema: ...
+    @property
+    def partition_expression(self) -> Expression: ...
+    def scanner(
+        self,
+        schema: lib.Schema | None = None,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> Scanner: ...
+    def to_batches(
+        self,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> Iterator[lib.RecordBatch]: ...
+    def to_table(
+        self,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> lib.Table: ...
+    def take(
+        self,
+        indices: Indices,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> lib.Table: ...
+    def head(
+        self,
+        num_rows: int,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> lib.Table: ...
+    def count_rows(
+        self,
+        columns: list[str] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> int: ...
 
-class IpcFileFormat(FileFormat):
-    default_extname: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def equals(self, IpcFileFormatother) -> Any: ...
-    def __reduce__(self) -> Any: ...
+class FileFragment(Fragment):
+    def open(self) -> lib.NativeFile: ...
+    @property
+    def path(self) -> str: ...
+    @property
+    def filesystem(self) -> FileSystem: ...
+    @property
+    def buffer(self) -> lib.Buffer: ...
+    @property
+    def format(self) -> FileFormat: ...
+
+class FragmentScanOptions(lib._Weakrefable):
+    @property
+    def type_name(self) -> str: ...
 
 class IpcFileWriteOptions(FileWriteOptions):
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
+    @property
+    def write_options(self) -> IpcWriteOptions: ...
+    @write_options.setter
+    def write_options(self, write_options: IpcWriteOptions) -> None: ...
+
+class IpcFileFormat(FileFormat):
+    def equals(self, other: IpcFileFormat) -> bool: ...
+    def make_write_options(self, **kwargs) -> IpcFileWriteOptions: ...
+    @property
+    def default_extname(self) -> str: ...
+
+class FeatherFileFormat(IpcFileFormat): ...
+
+class CsvFileFormat(FileFormat):
+    def __init__(
+        self,
+        parse_options: _csv.ParseOptions | None = None,
+        default_fragment_scan_options: CsvFragmentScanOptions | None = None,
+        convert_options: _csv.ConvertOptions | None = None,
+        read_options: _csv.ReadOptions | None = None,
+    ) -> None: ...
+    def make_write_options(self) -> _csv.WriteOptions: ...  # type: ignore[override]
+    @property
+    def parse_options(self) -> _csv.ParseOptions: ...
+    @parse_options.setter
+    def parse_options(self, parse_options: _csv.ParseOptions) -> None: ...
+    def equals(self, other: CsvFileFormat) -> bool: ...
+
+class CsvFragmentScanOptions(FragmentScanOptions):
+    convert_options: _csv.ConvertOptions
+    read_options: _csv.ReadOptions
+
+    def __init__(
+        self, convert_options: _csv.ConvertOptions, read_options: _csv.ReadOptions
+    ) -> None: ...
+    def equals(self, other: CsvFragmentScanOptions) -> bool: ...
+
+class CsvFileWriteOptions(FileWriteOptions):
+    write_options: _csv.WriteOptions
+
+class JsonFileFormat(FileFormat):
+    def __init__(
+        self,
+        default_fragment_scan_options: JsonFragmentScanOptions | None = None,
+        parse_options: _json.ParseOptions | None = None,
+        read_options: _json.ReadOptions | None = None,
+    ) -> None: ...
+    def equals(self, other: JsonFileFormat) -> bool: ...
+
+class JsonFragmentScanOptions(FragmentScanOptions):
+    parse_options: _json.ParseOptions
+    read_options: _json.ReadOptions
+    def __init__(
+        self, parse_options: _json.ParseOptions, read_options: _json.ReadOptions
+    ) -> None: ...
+    def equals(self, other: JsonFragmentScanOptions) -> bool: ...
+
+class Partitioning(lib._Weakrefable):
+    def parse(self, path: str) -> Expression: ...
+    @property
+    def schema(self) -> lib.Schema: ...
+
+class PartitioningFactory(lib._Weakrefable):
+    @property
+    def type_name(self) -> str: ...
 
 class KeyValuePartitioning(Partitioning):
-    dictionaries: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
+    @property
+    def dictionaries(self) -> list[lib.Array | None]: ...
 
-class Partitioning(pyarrow.lib._Weakrefable):
-    schema: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def parse(self, path) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
+class DirectoryPartitioning(KeyValuePartitioning):
+    @staticmethod
+    def discover(
+        field_names: list[str] | None = None,
+        infer_dictionary: bool = False,
+        max_partition_dictionary_size: int = 0,
+        schema: lib.Schema | None = None,
+        segment_encoding: Literal["uri", "none"] = "uri",
+    ) -> PartitioningFactory: ...
 
-class PartitioningFactory(pyarrow.lib._Weakrefable):
-    type_name: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class RecordBatchIterator(pyarrow.lib._Weakrefable):
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __iter__(self) -> Any: ...
-    def __next__(self) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class Scanner(pyarrow.lib._Weakrefable):
-    dataset_schema: Any
-    projected_schema: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def count_rows(self) -> Any: ...
-    def from_batches(
+class HivePartitioning(KeyValuePartitioning):
+    def __init__(
         self,
-        source,
-        Schemaschema=...,
-        booluse_threads=...,
-        use_async=...,
-        MemoryPoolmemory_pool=...,
-        columns=...,
-        Expressionfilter=...,
-        intbatch_size=...,
-        FragmentScanOptionsfragment_scan_options=...,
-    ) -> Any: ...
-    def from_dataset(
+        schema: lib.Schema,
+        dictionaries: dict[str, lib.Array] | None = None,
+        null_fallback: str = "__HIVE_DEFAULT_PARTITION__",
+        segment_encoding: Literal["uri", "none"] = "uri",
+    ) -> None: ...
+    @staticmethod
+    def discover(
+        infer_dictionary: bool = False,
+        max_partition_dictionary_size: int = 0,
+        null_fallback="__HIVE_DEFAULT_PARTITION__",
+        schema: lib.Schema | None = None,
+        segment_encoding: Literal["uri", "none"] = "uri",
+    ) -> PartitioningFactory: ...
+
+class FilenamePartitioning(KeyValuePartitioning):
+    def __init__(
         self,
-        Datasetdataset,
-        booluse_threads=...,
-        use_async=...,
-        MemoryPoolmemory_pool=...,
-        columns=...,
-        Expressionfilter=...,
-        intbatch_size=...,
-        intbatch_readahead=...,
-        intfragment_readahead=...,
-        FragmentScanOptionsfragment_scan_options=...,
-    ) -> Any: ...
-    def from_fragment(
+        schema: lib.Schema,
+        dictionaries: dict[str, lib.Array] | None = None,
+        segment_encoding: Literal["uri", "none"] = "uri",
+    ) -> None: ...
+    @staticmethod
+    def discover(
+        field_names: list[str] | None = None,
+        infer_dictionary: bool = False,
+        schema: lib.Schema | None = None,
+        segment_encoding: Literal["uri", "none"] = "uri",
+    ) -> PartitioningFactory: ...
+
+class DatasetFactory(lib._Weakrefable):
+    root_partition: Expression
+    def finish(self, schema: lib.Schema | None = None) -> Dataset: ...
+    def inspect(self) -> lib.Schema: ...
+    def inspect_schemas(self) -> list[lib.Schema]: ...
+
+class FileSystemFactoryOptions(lib._Weakrefable):
+    partitioning: Partitioning
+    partitioning_factory: PartitioningFactory
+    partition_base_dir: str
+    exclude_invalid_files: bool
+    selector_ignore_prefixes: list[str]
+
+    def __init__(
         self,
-        Fragmentfragment,
-        Schemaschema=...,
-        booluse_threads=...,
-        use_async=...,
-        MemoryPoolmemory_pool=...,
-        columns=...,
-        Expressionfilter=...,
-        intbatch_size=...,
-        intbatch_readahead=...,
-        FragmentScanOptionsfragment_scan_options=...,
-    ) -> Any: ...
-    def head(self, intnum_rows) -> Any: ...
-    def scan_batches(self) -> Any: ...
-    def take(self, indices) -> Any: ...
-    def to_batches(self) -> Any: ...
-    def to_reader(self) -> Any: ...
-    def to_table(self) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
+        artition_base_dir: str | None = None,
+        partitioning: Partitioning | PartitioningFactory | None = None,
+        exclude_invalid_files: bool = True,
+        selector_ignore_prefixes: list[str] | None = None,
+    ) -> None: ...
 
-class TaggedRecordBatch(importlib._bootstrap.TaggedRecordBatch): ...
-
-class TaggedRecordBatchIterator(pyarrow.lib._Weakrefable):
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __iter__(self) -> Any: ...
-    def __next__(self) -> Any: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
-
-class UnionDataset(Dataset):
-    children: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __reduce__(self) -> Any: ...
+class FileSystemDatasetFactory(DatasetFactory):
+    def __init__(
+        self,
+        filesystem: FileSystem,
+        paths_or_selector: FileSelector,
+        format: FileFormat,
+        options: FileSystemFactoryOptions | None = None,
+    ) -> None: ...
 
 class UnionDatasetFactory(DatasetFactory):
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
+    def __init__(self, factories: list[DatasetFactory]) -> None: ...
 
-class WrittenFile(pyarrow.lib._Weakrefable):
-    metadata: Any
-    path: Any
-    size: Any
-    def __init__(self, *args, **kwargs) -> None: ...
-    def __reduce__(self) -> Any: ...
-    def __setstate__(self, state) -> Any: ...
+_RecordBatchT = TypeVar("_RecordBatchT", bound=lib.RecordBatch)
 
-def __pyx_unpickle_WrittenFile(__pyx_type, long__pyx_checksum, __pyx_state) -> Any: ...
+class RecordBatchIterator(lib._Weakrefable, Generic[_RecordBatchT]):
+    def __iter__(self) -> Self: ...
+    def __next__(self) -> _RecordBatchT: ...
+
+class TaggedRecordBatch(NamedTuple):
+    record_batch: lib.RecordBatch
+    fragment: Fragment
+
+class TaggedRecordBatchIterator(lib._Weakrefable):
+    def __iter__(self) -> Self: ...
+    def __next__(self) -> TaggedRecordBatch: ...
+
+class Scanner(lib._Weakrefable):
+    @staticmethod
+    def from_dataset(
+        dataset: Dataset,
+        *,
+        columns: list[str] | dict[str, Expression] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> Scanner: ...
+    @staticmethod
+    def from_fragment(
+        fragment: Fragment,
+        *,
+        schema: lib.Schema | None = None,
+        columns: list[str] | dict[str, Expression] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> Scanner: ...
+    @overload
+    @staticmethod
+    def from_batches(
+        source: Iterator[lib.RecordBatch],
+        *,
+        schema: lib.Schema,
+        columns: list[str] | dict[str, Expression] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> Scanner: ...
+    @overload
+    @staticmethod
+    def from_batches(
+        source: RecordBatchReader,
+        *,
+        columns: list[str] | dict[str, Expression] | None = None,
+        filter: Expression | None = None,
+        batch_size: int = ...,
+        batch_readahead: int = 16,
+        fragment_readahead: int = 4,
+        fragment_scan_options: FragmentScanOptions | None = None,
+        use_threads: bool = True,
+        memory_pool: lib.MemoryPool | None = None,
+    ) -> Scanner: ...
+    @property
+    def dataset_schema(self) -> lib.Schema: ...
+    @property
+    def projected_schema(self) -> lib.Schema: ...
+    def to_batches(self) -> Iterator[lib.RecordBatch]: ...
+    def scan_batches(self) -> TaggedRecordBatchIterator: ...
+    def to_table(self) -> lib.Table: ...
+    def take(self, indices: Indices) -> lib.Table: ...
+    def head(self, num_rows: int) -> lib.Table: ...
+    def count_rows(self) -> int: ...
+    def to_reader(self) -> RecordBatchReader: ...
+
+def get_partition_keys(partition_expression: Expression) -> dict[str, Any]: ...
+
+class WrittenFile(lib._Weakrefable):
+    def __init__(self, path: str, metadata: _parquet.FileMetaData | None, size: int) -> None: ...
+
 def _filesystemdataset_write(
-    Scannerdata,
-    base_dir,
-    unicodebasename_template,
-    FileSystemfilesystem,
-    Partitioningpartitioning,
-    FileWriteOptionsfile_options,
-    intmax_partitions,
-    file_visitor,
-    unicodeexisting_data_behavior,
-    intmax_open_files,
-    intmax_rows_per_file,
-    intmin_rows_per_group,
-    intmax_rows_per_group,
-    boolcreate_dir,
-) -> Any: ...
-def _forbid_instantiation(klass, subclasses_instead=...) -> Any: ...
-def _get_orc_fileformat() -> Any: ...
-def _get_parquet_classes() -> Any: ...
-def _get_parquet_symbol(name) -> Any: ...
-def _get_partition_keys(Expressionpartition_expression) -> Any: ...
-def _pc() -> Any: ...
-def frombytes(*args, **kwargs) -> Any: ...
-def tobytes(o) -> Any: ...
+    data: Scanner,
+    base_dir: str | Path,
+    basename_template: str,
+    filesystem: FileSystem,
+    partitioning: Partitioning,
+    file_options: FileWriteOptions,
+    max_partitions: int,
+    file_visitor: Callable[[str], None],
+    existing_data_behavior: Literal["error", "overwrite_or_ignore", "delete_matching"],
+    max_open_files: int,
+    max_rows_per_file: int,
+    min_rows_per_group: int,
+    max_rows_per_group: int,
+    create_dir: bool,
+): ...
+
+class _ScanNodeOptions(ExecNodeOptions):
+    def _set_options(self, dataset: Dataset, scan_options: dict) -> None: ...
+
+class ScanNodeOptions(_ScanNodeOptions):
+    def __init__(self, dataset: Dataset, **kwargs) -> None: ...

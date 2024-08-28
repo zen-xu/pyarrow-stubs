@@ -1,17 +1,19 @@
-from typing import Any
-from typing import Callable
+from pathlib import Path
 
-import pyarrow._fs
+from ._fs import FileSystem
 
-_stringify_path: Callable
-
-class HadoopFileSystem(pyarrow._fs.FileSystem):
-    def __init__(self, *args, **kwargs) -> None: ...
-    @classmethod
-    def _reconstruct(cls, typecls, kwargs) -> Any: ...
-    @classmethod
-    def from_uri(cls, uri) -> HadoopFileSystem: ...
-    def __reduce__(self) -> Any: ...
-
-def frombytes(*args, **kwargs) -> Any: ...
-def tobytes(o) -> Any: ...
+class HadoopFileSystem(FileSystem):
+    def __init__(
+        self,
+        host: str,
+        port: int = 8020,
+        *,
+        user: str | None = None,
+        replication: int = 3,
+        buffer_size: int = 0,
+        default_block_size: int | None = None,
+        kerb_ticket: str | Path | None = None,
+        extra_conf: dict | None = None,
+    ): ...
+    @staticmethod
+    def from_uri(uri: str) -> HadoopFileSystem: ...  # type: ignore[override]

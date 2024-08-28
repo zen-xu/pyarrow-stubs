@@ -1,54 +1,76 @@
-from _typeshed import Incomplete
-from pyarrow import PythonFile
-from pyarrow._fs import FileInfo as FileInfo
-from pyarrow._fs import FileSelector as FileSelector
-from pyarrow._fs import FileSystem as FileSystem
-from pyarrow._fs import FileSystemHandler as FileSystemHandler
-from pyarrow._fs import FileType as FileType
-from pyarrow._fs import LocalFileSystem as LocalFileSystem
-from pyarrow._fs import PyFileSystem as PyFileSystem
-from pyarrow._fs import SubTreeFileSystem as SubTreeFileSystem
-from pyarrow._gcsfs import GcsFileSystem as GcsFileSystem
-from pyarrow._hdfs import HadoopFileSystem as HadoopFileSystem
-from pyarrow._s3fs import AwsDefaultS3RetryStrategy as AwsDefaultS3RetryStrategy
-from pyarrow._s3fs import AwsStandardS3RetryStrategy as AwsStandardS3RetryStrategy
-from pyarrow._s3fs import S3FileSystem as S3FileSystem
-from pyarrow._s3fs import S3LogLevel as S3LogLevel
-from pyarrow._s3fs import S3RetryStrategy as S3RetryStrategy
-from pyarrow._s3fs import finalize_s3 as finalize_s3
-from pyarrow._s3fs import initialize_s3 as initialize_s3
-from pyarrow._s3fs import resolve_s3_region as resolve_s3_region
+from pyarrow._fs import (  # noqa
+    FileSelector,
+    FileType,
+    FileInfo,
+    FileSystem,
+    LocalFileSystem,
+    SubTreeFileSystem,
+    _MockFileSystem,
+    FileSystemHandler,
+    PyFileSystem,
+)
+from pyarrow._azurefs import AzureFileSystem
+from pyarrow._hdfs import HadoopFileSystem
+from pyarrow._gcsfs import GcsFileSystem
+from pyarrow._s3fs import (  # noqa
+    AwsDefaultS3RetryStrategy,
+    AwsStandardS3RetryStrategy,
+    S3FileSystem,
+    S3LogLevel,
+    S3RetryStrategy,
+    ensure_s3_initialized,
+    finalize_s3,
+    ensure_s3_finalized,
+    initialize_s3,
+    resolve_s3_region,
+)
 
 FileStats = FileInfo
 
-def __getattr__(name: str) -> None: ...
 def copy_files(
     source: str,
     destination: str,
-    source_filesystem: FileSystem | None = ...,
-    destination_filesystem: FileSystem | None = ...,
+    source_filesystem: FileSystem | None = None,
+    destination_filesystem: FileSystem | None = None,
     *,
-    chunk_size: int = ...,
-    use_threads: bool = ...,
+    chunk_size: int = 1024 * 1024,
+    use_threads: bool = True,
 ) -> None: ...
 
-class FSSpecHandler(FileSystemHandler):
-    fs: Incomplete
-    def __init__(self, fs) -> None: ...
-    def __eq__(self, other) -> bool: ...
-    def __ne__(self, other) -> bool: ...
-    def get_type_name(self) -> str: ...
-    def normalize_path(self, path: str) -> str: ...
-    def get_file_info(self, paths: list[str]) -> list[FileInfo]: ...
-    def get_file_info_selector(self, selector: FileSelector) -> list[FileInfo]: ...
-    def create_dir(self, path: str, recursive: bool) -> None: ...
-    def delete_dir(self, path: str) -> None: ...
-    def delete_dir_contents(self, path: str, missing_dir_ok: bool) -> None: ...  # type: ignore
-    def delete_root_dir_contents(self) -> None: ...
-    def delete_file(self, path: str) -> None: ...
-    def move(self, src: str, dest: str) -> None: ...
-    def copy_file(self, src: str, dest: str) -> None: ...
-    def open_input_stream(self, path: str) -> PythonFile: ...
-    def open_input_file(self, path: str) -> PythonFile: ...
-    def open_output_stream(self, path: str, metadata: dict[str, str]) -> PythonFile: ...
-    def open_append_stream(self, path: str, metadata: dict[str, str]) -> PythonFile: ...
+class FSSpecHandler(FileSystemHandler):  # type: ignore[misc]
+    fs: FileSystem
+    def __init__(self, fs: FileSystem) -> None: ...
+
+__all__ = [
+    # _fs
+    "FileSelector",
+    "FileType",
+    "FileInfo",
+    "FileSystem",
+    "LocalFileSystem",
+    "SubTreeFileSystem",
+    "_MockFileSystem",
+    "FileSystemHandler",
+    "PyFileSystem",
+    # _azurefs
+    "AzureFileSystem",
+    # _hdfs
+    "HadoopFileSystem",
+    # _gcsfs
+    "GcsFileSystem",
+    # _s3fs
+    "AwsDefaultS3RetryStrategy",
+    "AwsStandardS3RetryStrategy",
+    "S3FileSystem",
+    "S3LogLevel",
+    "S3RetryStrategy",
+    "ensure_s3_initialized",
+    "finalize_s3",
+    "ensure_s3_finalized",
+    "initialize_s3",
+    "resolve_s3_region",
+    # fs
+    "FileStats",
+    "copy_files",
+    "FSSpecHandler",
+]

@@ -1,3 +1,3 @@
-from pyarrow._json import ParseOptions as ParseOptions
-from pyarrow._json import ReadOptions as ReadOptions
-from pyarrow._json import read_json as read_json
+from pyarrow._json import ParseOptions, ReadOptions, read_json
+
+__all__ = ["ParseOptions", "ReadOptions", "read_json"]

@@ -1,18 +1,12 @@
-from io import IOBase
+from typing import IO, Literal, Self
 
-from pyarrow._orc import ORCReader as _ORCReader
-from pyarrow._orc import ORCWriter as _ORCWriter
-from pyarrow.lib import KeyValueMetadata
-from pyarrow.lib import NativeFile
-from pyarrow.lib import RecordBatch
-from pyarrow.lib import Schema
-from pyarrow.lib import Table
-
+from . import _orc
 from ._fs import FileSystem
+from .lib import KeyValueMetadata, NativeFile, RecordBatch, Schema, Table
 
 class ORCFile:
-    reader: _ORCReader
-    def __init__(self, source: str | NativeFile | IOBase) -> None: ...
+    reader: _orc.ORCReader
+    def __init__(self, source: str | NativeFile | IO) -> None: ...
     @property
     def metadata(self) -> KeyValueMetadata: ...
     @property
@@ -26,11 +20,11 @@ class ORCFile:
     @property
     def software_version(self) -> str: ...
     @property
-    def compression(self) -> str: ...
+    def compression(self) -> Literal["UNCOMPRESSED", "ZLIB", "SNAPPY", "LZ4", "ZSTD"]: ...
     @property
     def compression_size(self) -> int: ...
     @property
-    def writer(self) -> str | int: ...
+    def writer(self) -> str: ...
     @property
     def writer_version(self) -> str: ...
     @property
@@ -47,53 +41,51 @@ class ORCFile:
     def file_postscript_length(self) -> int: ...
     @property
     def file_length(self) -> int: ...
-    def read_stripe(self, n: int, columns: list[str] | None = ...) -> RecordBatch: ...
-    def read(self, columns: list[str] | None = ...) -> Table: ...
+    def read_stripe(self, n: int, columns: list[str] | None = None) -> RecordBatch: ...
+    def read(self, columns: list[str] | None = None) -> Table: ...
 
 class ORCWriter:
-    __doc__: str
+    writer: _orc.ORCWriter
     is_open: bool
-    writer: _ORCWriter
     def __init__(
         self,
-        where: str | NativeFile | IOBase,
+        where: str | NativeFile | IO,
         *,
-        file_version: str = ...,
-        batch_size: int = ...,
-        stripe_size: int = ...,
-        compression: str = ...,
-        compression_block_size: int = ...,
-        compression_strategy: str = ...,
-        row_index_stride: int = ...,
-        padding_tolerance: float = ...,
-        dictionary_key_size_threshold: float = ...,
-        bloom_filter_columns: list[str] | None = ...,
-        bloom_filter_fpp: float = ...,
-    ) -> None: ...
-    def __del__(self) -> None: ...
-    def __enter__(self) -> ORCWriter: ...
+        file_version: str = "0.12",
+        batch_size: int = 1024,
+        stripe_size: int = 64 * 1024 * 1024,
+        compression: Literal["UNCOMPRESSED", "ZLIB", "SNAPPY", "LZ4", "ZSTD"] = "UNCOMPRESSED",
+        compression_block_size: int = 65536,
+        compression_strategy: Literal["COMPRESSION", "SPEED"] = "SPEED",
+        row_index_stride: int = 10000,
+        padding_tolerance: float = 0.0,
+        dictionary_key_size_threshold: float = 0.0,
+        bloom_filter_columns: list[int] | None = None,
+        bloom_filter_fpp: float = 0.05,
+    ): ...
+    def __enter__(self) -> Self: ...
     def __exit__(self, *args, **kwargs) -> None: ...
     def write(self, table: Table) -> None: ...
     def close(self) -> None: ...
 
 def read_table(
-    source: str | NativeFile | IOBase,
-    columns: list[str] | None = ...,
-    filesystem: str | FileSystem | None = ...,
+    source: str | NativeFile | IO,
+    columns: list[str] | None = None,
+    filesystem: FileSystem | None = None,
 ) -> Table: ...
 def write_table(
     table: Table,
-    where: str | NativeFile | IOBase,
+    where: str | NativeFile | IO,
     *,
-    file_version: str = ...,
-    batch_size: int = ...,
-    stripe_size: int = ...,
-    compression: str = ...,
-    compression_block_size: int = ...,
-    compression_strategy: str = ...,
-    row_index_stride: int = ...,
-    padding_tolerance: float = ...,
-    dictionary_key_size_threshold: float = ...,
-    bloom_filter_columns: list[str] | None = ...,
-    bloom_filter_fpp: float = ...,
+    file_version: str = "0.12",
+    batch_size: int = 1024,
+    stripe_size: int = 64 * 1024 * 1024,
+    compression: Literal["UNCOMPRESSED", "ZLIB", "SNAPPY", "LZ4", "ZSTD"] = "UNCOMPRESSED",
+    compression_block_size: int = 65536,
+    compression_strategy: Literal["COMPRESSION", "SPEED"] = "SPEED",
+    row_index_stride: int = 10000,
+    padding_tolerance: float = 0.0,
+    dictionary_key_size_threshold: float = 0.0,
+    bloom_filter_columns: list[int] | None = None,
+    bloom_filter_fpp: float = 0.05,
 ) -> None: ...

@@ -1,63 +1,74 @@
 import enum
-import importlib._bootstrap  # type: ignore
 
-from typing import Any
-from typing import ClassVar
+from typing import Literal, NotRequired, Required, TypedDict
 
-import pyarrow._fs
-import pyarrow.lib
+from ._fs import FileSystem
+from .lib import KeyValueMetadata
 
-Debug: importlib._bootstrap.S3LogLevel
-Error: importlib._bootstrap.S3LogLevel
-Fatal: importlib._bootstrap.S3LogLevel
-Info: importlib._bootstrap.S3LogLevel
-Off: importlib._bootstrap.S3LogLevel
-Trace: importlib._bootstrap.S3LogLevel
-Warn: importlib._bootstrap.S3LogLevel
+class _ProxyOptions(TypedDict):
+    schema: Required[Literal["http", "https"]]
+    host: Required[str]
+    port: Required[int]
+    username: NotRequired[str]
+    password: NotRequired[str]
 
-class AwsDefaultS3RetryStrategy(S3RetryStrategy): ...
+class S3LogLevel(enum.IntEnum):
+    Off = enum.auto()
+    Fatal = enum.auto()
+    Error = enum.auto()
+    Warn = enum.auto()
+    Info = enum.auto()
+    Debug = enum.auto()
+    Trace = enum.auto()
+
+Off = S3LogLevel.Off
+Fatal = S3LogLevel.Fatal
+Error = S3LogLevel.Error
+Warn = S3LogLevel.Warn
+Info = S3LogLevel.Info
+Debug = S3LogLevel.Debug
+Trace = S3LogLevel.Trace
+
+def initialize_s3(
+    log_level: S3LogLevel = S3LogLevel.Fatal, num_event_loop_threads: int = 1
+) -> None: ...
+def ensure_s3_initialized() -> None: ...
+def finalize_s3() -> None: ...
+def ensure_s3_finalized() -> None: ...
+def resolve_s3_region(bucket: str) -> str: ...
+
+class S3RetryStrategy:
+    max_attempts: int
+    def __init__(self, max_attempts=3) -> None: ...
+
 class AwsStandardS3RetryStrategy(S3RetryStrategy): ...
+class AwsDefaultS3RetryStrategy(S3RetryStrategy): ...
 
-class S3FileSystem(pyarrow._fs.FileSystem):
-    region: str
+class S3FileSystem(FileSystem):
     def __init__(
         self,
         *,
-        access_key: str | None = ...,
-        secret_key: str | None = ...,
-        session_token: str | None = ...,
-        anonymous: bool = ...,
-        role_arn: str | None = ...,
-        session_name: str | None = ...,
-        external_id: str | None = ...,
-        load_frequency: int = ...,
-        region: str = ...,
-        request_timeout: float | None = ...,
-        connect_timeout: float | None = ...,
-        scheme: str = ...,
-        endpoint_override: str | None = ...,
-        background_writes: bool = ...,
-        default_metadata: dict | pyarrow.lib.KeyValueMetadata = ...,
-        proxy_options: dict | str | None = ...,
-        allow_bucket_creation: bool = ...,
-        allow_bucket_deletion: bool = ...,
-        retry_strategy: S3RetryStrategy = ...,
-    ) -> None: ...
-    @classmethod
-    def _reconstruct(cls, kwargs: Any) -> S3FileSystem: ...
-
-class S3LogLevel(enum.IntEnum):
-    Debug: ClassVar[importlib._bootstrap.S3LogLevel] = ...
-    Error: ClassVar[importlib._bootstrap.S3LogLevel] = ...
-    Fatal: ClassVar[importlib._bootstrap.S3LogLevel] = ...
-    Info: ClassVar[importlib._bootstrap.S3LogLevel] = ...
-    Off: ClassVar[importlib._bootstrap.S3LogLevel] = ...
-    Trace: ClassVar[importlib._bootstrap.S3LogLevel] = ...
-    Warn: ClassVar[importlib._bootstrap.S3LogLevel] = ...
-
-class S3RetryStrategy:
-    def __init__(self, max_attempts: int = ...) -> None: ...
-
-def finalize_s3() -> None: ...
-def initialize_s3(log_level: S3LogLevel = ...) -> Any: ...
-def resolve_s3_region(bucket: str) -> str: ...
+        access_key: str | None = None,
+        secret_key: str | None = None,
+        session_token: str | None = None,
+        anonymous: bool = False,
+        region: str | None = None,
+        request_timeout: float | None = None,
+        connect_timeout: float | None = None,
+        scheme: Literal["http", "https"] = "https",
+        endpoint_override: str | None = None,
+        background_writes: bool = True,
+        default_metadata: dict | KeyValueMetadata | None = None,
+        role_arn: str | None = None,
+        session_name: str | None = None,
+        external_id: str | None = None,
+        load_frequency: int = 900,
+        proxy_options: _ProxyOptions | str | None = None,
+        allow_bucket_creation: bool = False,
+        allow_bucket_deletion: bool = False,
+        check_directory_existence_before_creation: bool = False,
+        retry_strategy: S3RetryStrategy = AwsStandardS3RetryStrategy(max_attempts=3),
+        force_virtual_addressing: bool = False,
+    ): ...
+    @property
+    def region(self) -> str: ...
