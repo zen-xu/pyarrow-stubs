@@ -11,6 +11,7 @@ from pandas.core.dtypes.base import ExtensionDtype
 from pyarrow._compute import CastOptions
 from pyarrow._stubs_typing import (
     ArrayLike,
+    Indices,
     Mask,
     Order,
     SupportArrowArray,
@@ -1163,7 +1164,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     @overload
     def __getitem__(self, key: slice) -> Self: ...
     def slice(self, offset: int = 0, length: int | None = None) -> Self: ...
-    def take(self, indices: list[int] | Array | ArrayLike) -> Self: ...
+    def take(self, indices: Indices) -> Self: ...
     def drop_null(self) -> Self: ...
     def filter(
         self,
@@ -1497,7 +1498,7 @@ class DictionaryArray(Array[scalar.DictionaryScalar[_IndexT, _ValueT]]):
     ) -> DictionaryArray[Any, _ValueT]: ...
     @staticmethod
     def from_arrays(
-        indices: Array | np.ndarray | pd.Series | list[int],
+        indices: Indices,
         dictionary: Array | np.ndarray | pd.Series,
         mask: np.ndarray | pd.Series | BooleanArray | None = None,
         ordered: bool = False,

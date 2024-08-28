@@ -79,6 +79,7 @@ from pyarrow._compute import register_aggregate_function as register_aggregate_f
 from pyarrow._compute import register_scalar_function as register_scalar_function
 from pyarrow._compute import register_tabular_function as register_tabular_function
 from pyarrow._compute import register_vector_function as register_vector_function
+from pyarrow._stubs_typing import Indices
 
 from . import lib
 
@@ -102,7 +103,7 @@ _DataT = TypeVar("_DataT", bound=lib.Array | lib.ChunkedArray | lib.RecordBatch 
 
 def take(
     data: _DataT,
-    indices: lib.Array | lib.ChunkedArray | list[int],
+    indices: Indices,
     *,
     boundscheck: bool = True,
     memory_pool: lib.MemoryPool | None = None,

@@ -14,7 +14,7 @@ from typing import (
 
 from . import _csv, _json, _parquet, lib
 from ._fs import FileSelector, FileSystem
-from ._stubs_typing import ArrayLike, JoinType, Order
+from ._stubs_typing import ArrayLike, Indices, JoinType, Order
 from .acero import ExecNodeOptions
 from .compute import Expression
 from .ipc import IpcWriteOptions, RecordBatchReader
@@ -59,7 +59,7 @@ class Dataset(lib._Weakrefable):
     ) -> lib.Table: ...
     def take(
         self,
-        indices: lib.Array | ArrayLike,
+        indices: Indices,
         columns: list[str] | None = None,
         filter: Expression | None = None,
         batch_size: int = ...,
@@ -216,7 +216,7 @@ class Fragment(lib._Weakrefable):
     ) -> lib.Table: ...
     def take(
         self,
-        indices: lib.Array | ArrayLike,
+        indices: Indices,
         columns: list[str] | None = None,
         filter: Expression | None = None,
         batch_size: int = ...,
@@ -489,7 +489,7 @@ class Scanner(lib._Weakrefable):
     def to_batches(self) -> Iterator[lib.RecordBatch]: ...
     def scan_batches(self) -> TaggedRecordBatchIterator: ...
     def to_table(self) -> lib.Table: ...
-    def take(self, indices: lib.Array | ArrayLike) -> lib.Table: ...
+    def take(self, indices: Indices) -> lib.Table: ...
     def head(self, num_rows: int) -> lib.Table: ...
     def count_rows(self) -> int: ...
     def to_reader(self) -> RecordBatchReader: ...
