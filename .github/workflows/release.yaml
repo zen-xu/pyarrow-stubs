@@ -5,10 +5,6 @@ on:
     tags:
       - "*"
 
-env:
-  HATCH_INDEX_USER: __token__
-  HATCH_INDEX_AUTH: ${{ secrets.PYPI_TOKEN }}
-
 jobs:
   release:
     name: "release ${{github.ref_name}}"
@@ -25,4 +21,4 @@ jobs:
       - name: Build dist
         run: hatch build
       - name: Publish on PyPI
-        run: hatch publish
+        run: hatch publish -u __token__ -a ${{ secrets.PYPI_TOKEN }}
