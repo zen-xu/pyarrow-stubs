@@ -3,7 +3,7 @@ from io import IOBase
 from os import PathLike
 from typing import Any, Literal, Self, SupportsIndex, TypeAlias, overload
 
-from pyarrow._stubs_typing import SupportPyBuffer
+from pyarrow._stubs_typing import Compression, SupportPyBuffer
 from pyarrow.lib import MemoryPool, _Weakrefable
 
 from .device import Device, DeviceAllocationType, MemoryManager
@@ -184,17 +184,108 @@ def foreign_buffer(address: int, size: int, base: Any | None = None) -> Buffer: 
 def as_buffer(o: Buffer | SupportPyBuffer) -> Buffer: ...
 
 # ---------------------------------------------------------------------
+
+class CacheOptions(_Weakrefable):
+    hole_size_limit: int
+    range_size_limit: int
+    lazy: bool
+    prefetch_limit: int
+    def __init__(
+        self,
+        *,
+        hole_size_limit: int | None = None,
+        range_size_limit: int | None = None,
+        lazy: bool = True,
+        prefetch_limit: int = 0,
+    ) -> None: ...
+    @classmethod
+    def from_network_metrics(
+        cls,
+        time_to_first_byte_millis: int,
+        transfer_bandwidth_mib_per_sec: int,
+        ideal_bandwidth_utilization_frac: float = 0.9,
+        max_ideal_request_size_mib: int = 64,
+    ) -> Self: ...
+
+class Codec(_Weakrefable):
+    def __init__(self, compression: Compression, compression_level: int | None = None) -> None: ...
+    @classmethod
+    def detect(cls, path: str | PathLike) -> Self: ...
+    @staticmethod
+    def is_available(compression: Compression) -> bool: ...
+    @staticmethod
+    def supports_compression_level(compression: Compression) -> int: ...
+    @staticmethod
+    def default_compression_level(compression: Compression) -> int: ...
+    @staticmethod
+    def minimum_compression_level(compression: Compression) -> int: ...
+    @staticmethod
+    def maximum_compression_level(compression: Compression) -> int: ...
+    @property
+    def name(self) -> Compression: ...
+    @property
+    def compression_level(self) -> int: ...
+    @overload
+    def compress(
+        self,
+        buf: Buffer | bytes | SupportPyBuffer,
+        *,
+        memory_pool: MemoryPool | None = None,
+    ) -> Buffer: ...
+    @overload
+    def compress(
+        self,
+        buf: Buffer | bytes | SupportPyBuffer,
+        *,
+        asbytes: Literal[False],
+        memory_pool: MemoryPool | None = None,
+    ) -> Buffer: ...
+    @overload
+    def compress(
+        self,
+        buf: Buffer | bytes | SupportPyBuffer,
+        *,
+        asbytes: Literal[True],
+        memory_pool: MemoryPool | None = None,
+    ) -> bytes: ...
+    @overload
+    def decompress(
+        self,
+        buf: Buffer | bytes | SupportPyBuffer,
+        decompressed_size: int | None = None,
+        *,
+        memory_pool: MemoryPool | None = None,
+    ) -> Buffer: ...
+    @overload
+    def decompress(
+        self,
+        buf: Buffer | bytes | SupportPyBuffer,
+        decompressed_size: int | None = None,
+        *,
+        asbytes: Literal[False],
+        memory_pool: MemoryPool | None = None,
+    ) -> Buffer: ...
+    @overload
+    def decompress(
+        self,
+        buf: Buffer | bytes | SupportPyBuffer,
+        decompressed_size: int | None = None,
+        *,
+        asbytes: Literal[True],
+        memory_pool: MemoryPool | None = None,
+    ) -> bytes: ...
+
 @overload
 def compress(
     buf: Buffer | bytes | SupportPyBuffer,
-    codec: Literal["brotli", "gzip", "lz4", "lz4_raw", "snappy", "zstd"] = "lz4",
+    codec: Compression = "lz4",
     *,
     memory_pool: MemoryPool | None = None,
 ) -> Buffer: ...
 @overload
 def compress(
     buf: Buffer | bytes | SupportPyBuffer,
-    codec: Literal["brotli", "gzip", "lz4", "lz4_raw", "snappy", "zstd"] = "lz4",
+    codec: Compression = "lz4",
     *,
     asbytes: Literal[False],
     memory_pool: MemoryPool | None = None,
@@ -202,7 +293,7 @@ def compress(
 @overload
 def compress(
     buf: Buffer | bytes | SupportPyBuffer,
-    codec: Literal["brotli", "gzip", "lz4", "lz4_raw", "snappy", "zstd"] = "lz4",
+    codec: Compression = "lz4",
     *,
     asbytes: Literal[True],
     memory_pool: MemoryPool | None = None,
@@ -211,7 +302,7 @@ def compress(
 def decompress(
     buf: Buffer | bytes | SupportPyBuffer,
     decompressed_size: int | None = None,
-    codec: Literal["brotli", "gzip", "lz4", "lz4_raw", "snappy", "zstd"] = "lz4",
+    codec: Compression = "lz4",
     *,
     memory_pool: MemoryPool | None = None,
 ) -> Buffer: ...
@@ -219,7 +310,7 @@ def decompress(
 def decompress(
     buf: Buffer | bytes | SupportPyBuffer,
     decompressed_size: int | None = None,
-    codec: Literal["brotli", "gzip", "lz4", "lz4_raw", "snappy", "zstd"] = "lz4",
+    codec: Compression = "lz4",
     *,
     asbytes: Literal[False],
     memory_pool: MemoryPool | None = None,
@@ -228,7 +319,7 @@ def decompress(
 def decompress(
     buf: Buffer | bytes | SupportPyBuffer,
     decompressed_size: int | None = None,
-    codec: Literal["brotli", "gzip", "lz4", "lz4_raw", "snappy", "zstd"] = "lz4",
+    codec: Compression = "lz4",
     *,
     asbytes: Literal[True],
     memory_pool: MemoryPool | None = None,
@@ -271,6 +362,8 @@ __all__ = [
     "py_buffer",
     "foreign_buffer",
     "as_buffer",
+    "CacheOptions",
+    "Codec",
     "compress",
     "decompress",
     "input_stream",

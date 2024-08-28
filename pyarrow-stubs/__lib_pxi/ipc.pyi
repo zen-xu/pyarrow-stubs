@@ -1,6 +1,5 @@
 import enum
 
-from codecs import Codec
 from io import IOBase
 from typing import Iterable, Iterator, Literal, Mapping, NamedTuple, Self
 
@@ -9,7 +8,7 @@ import pandas as pd
 from pyarrow._stubs_typing import SupportArrowStream, SupportPyBuffer
 from pyarrow.lib import MemoryPool, RecordBatch, Schema, Table, Tensor, _Weakrefable
 
-from .io import Buffer, NativeFile
+from .io import Buffer, Codec, NativeFile
 from .types import DictionaryMemo, KeyValueMetadata
 
 class MetadataVersion(enum.IntEnum):
