@@ -1,62 +1,49 @@
-from io import IOBase
-from typing import overload
+from typing import IO, Literal
 
 import pandas as pd
 
-from pyarrow._feather import FeatherError as FeatherError
-from pyarrow.lib import ChunkedArray
-from pyarrow.lib import Codec as Codec
-from pyarrow.lib import NativeFile
-from pyarrow.lib import Schema
-from pyarrow.lib import Table as Table
-from pyarrow.lib import concat_tables as concat_tables
-from pyarrow.lib import schema as schema
-from pyarrow.vendored.version import Version as Version
-from typing_extensions import Literal
+from pyarrow._feather import FeatherError
+from pyarrow.lib import Table
+
+__all__ = [
+    "FeatherError",
+    "FeatherDataset",
+    "check_chunked_overflow",
+    "write_feather",
+    "read_feather",
+    "read_table",
+]
 
 class FeatherDataset:
-    paths: list[str]
+    path_or_paths: str | list[str]
     validate_schema: bool
-    schema: Schema
-    def __init__(self, path_or_paths: list[str], validate_schema: bool = ...) -> None: ...
-    def read_table(self, columns: list[str] | None = ...) -> Table: ...
-    def validate_schemas(self, piece: str, table: Table) -> None: ...
+
+    def __init__(self, path_or_paths: str | list[str], validate_schema: bool = True) -> None: ...
+    def read_table(self, columns: list[str] | None = None) -> Table: ...
+    def validate_schemas(self, piece, table: Table) -> None: ...
     def read_pandas(
-        self, columns: list[str] | None = ..., use_threads: bool = ...
+        self, columns: list[str] | None = None, use_threads: bool = True
     ) -> pd.DataFrame: ...
 
-def check_chunked_overflow(name: str, col: ChunkedArray) -> None: ...
+def check_chunked_overflow(name: str, col) -> None: ...
 def write_feather(
-    df: pd.DataFrame,
+    df: pd.DataFrame | Table,
     dest: str,
-    compression: Literal["zstd", "lz4", "uncompressed"] | None = ...,
-    compression_level: int | None = ...,
-    chunksize: int | None = ...,
-    version: int = ...,
+    compression: Literal["zstd", "lz4", "uncompressed"] | None = None,
+    compression_level: int | None = None,
+    chunksize: int | None = None,
+    version: Literal[1, 2] = 2,
 ) -> None: ...
-@overload
 def read_feather(
-    source: str,
-    columns: list[str] | None = ...,
-    use_threads: bool = ...,
-    memory_map: Literal[True] = ...,
+    source: str | IO,
+    columns: list[str] | None = None,
+    use_threads: bool = True,
+    memory_map: bool = False,
+    **kwargs,
 ) -> pd.DataFrame: ...
-@overload
-def read_feather(
-    source: str | NativeFile | IOBase,
-    columns: list[str] | None = ...,
-    use_threads: bool = ...,
-) -> pd.DataFrame: ...
-@overload
 def read_table(
-    source: str | NativeFile | IOBase,
-    columns: list[str] | None = ...,
-    use_threads: bool = ...,
-) -> Table: ...
-@overload
-def read_table(
-    source: str,
-    columns: list[str] | None = ...,
-    memory_map: Literal[True] = ...,
-    use_threads: bool = ...,
+    source: str | IO,
+    columns: list[str] | None = None,
+    memory_map: bool = False,
+    use_threads: bool = True,
 ) -> Table: ...

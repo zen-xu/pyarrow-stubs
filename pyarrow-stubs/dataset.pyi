@@ -1,97 +1,214 @@
-from os import PathLike
-from typing import Callable
-from typing import Iterable
+from pathlib import Path
+from typing import Callable, Iterable, Literal, TypeAlias, overload
 
-from pyarrow._dataset import CsvFileFormat as CsvFileFormat
-from pyarrow._dataset import CsvFragmentScanOptions as CsvFragmentScanOptions
-from pyarrow._dataset import Dataset as Dataset
-from pyarrow._dataset import DatasetFactory as DatasetFactory
-from pyarrow._dataset import DirectoryPartitioning as DirectoryPartitioning
-from pyarrow._dataset import FeatherFileFormat as FeatherFileFormat
-from pyarrow._dataset import FileFormat as FileFormat
-from pyarrow._dataset import FileFragment as FileFragment
-from pyarrow._dataset import FilenamePartitioning as FilenamePartitioning
-from pyarrow._dataset import FileSystemDataset as FileSystemDataset
-from pyarrow._dataset import FileSystemDatasetFactory as FileSystemDatasetFactory
-from pyarrow._dataset import FileSystemFactoryOptions as FileSystemFactoryOptions
-from pyarrow._dataset import FileWriteOptions as FileWriteOptions
-from pyarrow._dataset import Fragment as Fragment
-from pyarrow._dataset import FragmentScanOptions as FragmentScanOptions
-from pyarrow._dataset import HivePartitioning as HivePartitioning
-from pyarrow._dataset import InMemoryDataset as InMemoryDataset
-from pyarrow._dataset import IpcFileFormat as IpcFileFormat
-from pyarrow._dataset import IpcFileWriteOptions as IpcFileWriteOptions
-from pyarrow._dataset import Partitioning as Partitioning
-from pyarrow._dataset import PartitioningFactory as PartitioningFactory
-from pyarrow._dataset import Scanner as Scanner
-from pyarrow._dataset import TaggedRecordBatch as TaggedRecordBatch
-from pyarrow._dataset import UnionDataset as UnionDataset
-from pyarrow._dataset import UnionDatasetFactory as UnionDatasetFactory
-from pyarrow._dataset import WrittenFile as WrittenFile
-from pyarrow._dataset_orc import OrcFileFormat as OrcFileFormat
-from pyarrow._dataset_parquet import ParquetDatasetFactory as ParquetDatasetFactory
-from pyarrow._dataset_parquet import ParquetFactoryOptions as ParquetFactoryOptions
-from pyarrow._dataset_parquet import ParquetFileFormat as ParquetFileFormat
-from pyarrow._dataset_parquet import ParquetFileFragment as ParquetFileFragment
-from pyarrow._dataset_parquet import ParquetFileWriteOptions as ParquetFileWriteOptions
-from pyarrow._dataset_parquet import ParquetFragmentScanOptions as ParquetFragmentScanOptions
-from pyarrow._dataset_parquet import ParquetReadOptions as ParquetReadOptions
-from pyarrow._dataset_parquet import RowGroupInfo as RowGroupInfo
-from pyarrow.compute import Expression as Expression
-from pyarrow.compute import field as field
-from pyarrow.compute import scalar as scalar
-from pyarrow.dataset import Dataset
-from pyarrow.filesystem import FileSystem
-from pyarrow.lib import Array
-from pyarrow.lib import RecordBatch
-from pyarrow.lib import RecordBatchReader
-from pyarrow.lib import Schema
-from pyarrow.lib import Table
-from typing_extensions import Literal
+from pyarrow._dataset import (
+    CsvFileFormat,
+    CsvFragmentScanOptions,
+    Dataset,
+    DatasetFactory,
+    DirectoryPartitioning,
+    FeatherFileFormat,
+    FileFormat,
+    FileFragment,
+    FilenamePartitioning,
+    FileSystemDataset,
+    FileSystemDatasetFactory,
+    FileSystemFactoryOptions,
+    FileWriteOptions,
+    Fragment,
+    FragmentScanOptions,
+    HivePartitioning,
+    InMemoryDataset,
+    IpcFileFormat,
+    IpcFileWriteOptions,
+    JsonFileFormat,
+    JsonFragmentScanOptions,
+    Partitioning,
+    PartitioningFactory,
+    Scanner,
+    TaggedRecordBatch,
+    UnionDataset,
+    UnionDatasetFactory,
+    WrittenFile,
+    get_partition_keys,
+)
+from pyarrow._dataset_orc import OrcFileFormat
+from pyarrow._dataset_parquet import (
+    ParquetDatasetFactory,
+    ParquetFactoryOptions,
+    ParquetFileFormat,
+    ParquetFileFragment,
+    ParquetFileWriteOptions,
+    ParquetFragmentScanOptions,
+    ParquetReadOptions,
+    RowGroupInfo,
+)
+from pyarrow._dataset_parquet_encryption import (
+    ParquetDecryptionConfig,
+    ParquetEncryptionConfig,
+)
+from pyarrow.compute import Expression, field, scalar
+from pyarrow.lib import Array, RecordBatch, RecordBatchReader, Schema, Table
 
-def __getattr__(name: str) -> None: ...
+from ._fs import FileSystem
+
+_orc_available: bool
+_parquet_available: bool
+
+__all__ = [
+    "CsvFileFormat",
+    "CsvFragmentScanOptions",
+    "Dataset",
+    "DatasetFactory",
+    "DirectoryPartitioning",
+    "FeatherFileFormat",
+    "FileFormat",
+    "FileFragment",
+    "FilenamePartitioning",
+    "FileSystemDataset",
+    "FileSystemDatasetFactory",
+    "FileSystemFactoryOptions",
+    "FileWriteOptions",
+    "Fragment",
+    "FragmentScanOptions",
+    "HivePartitioning",
+    "InMemoryDataset",
+    "IpcFileFormat",
+    "IpcFileWriteOptions",
+    "JsonFileFormat",
+    "JsonFragmentScanOptions",
+    "Partitioning",
+    "PartitioningFactory",
+    "Scanner",
+    "TaggedRecordBatch",
+    "UnionDataset",
+    "UnionDatasetFactory",
+    "WrittenFile",
+    "get_partition_keys",
+    # Orc
+    "OrcFileFormat",
+    # Parquet
+    "ParquetDatasetFactory",
+    "ParquetFactoryOptions",
+    "ParquetFileFormat",
+    "ParquetFileFragment",
+    "ParquetFileWriteOptions",
+    "ParquetFragmentScanOptions",
+    "ParquetReadOptions",
+    "RowGroupInfo",
+    # Parquet Encryption
+    "ParquetDecryptionConfig",
+    "ParquetEncryptionConfig",
+    # Compute
+    "Expression",
+    "field",
+    "scalar",
+    # Dataset
+    "partitioning",
+    "parquet_dataset",
+    "write_dataset",
+]
+
+_DatasetFormat: TypeAlias = Literal["parquet", "ipc", "arrow", "feather", "csv"]
+
+@overload
 def partitioning(
-    schema: Schema | None = ...,
-    field_names: list[str] | None = ...,
-    flavor: str | None = ...,
-    dictionaries: dict[str, Array] | None = ...,
-) -> Partitioning | PartitioningFactory: ...
+    schema: Schema,
+    *,
+    flavor: Literal["filename"],
+    dictionaries: dict[str, Array] | None = None,
+) -> Partitioning: ...
+@overload
+def partitioning(
+    schema: Schema,
+    *,
+    flavor: Literal["filename"],
+    dictionaries: Literal["infer"],
+) -> PartitioningFactory: ...
+@overload
+def partitioning(
+    field_names: list[str],
+    *,
+    flavor: Literal["filename"],
+) -> PartitioningFactory: ...
+@overload
+def partitioning(
+    schema: Schema,
+    *,
+    flavor: Literal["hive"],
+    dictionaries: Literal["infer"],
+) -> PartitioningFactory: ...
+@overload
+def partitioning(
+    *,
+    flavor: Literal["hive"],
+) -> PartitioningFactory: ...
+@overload
+def partitioning(
+    schema: Schema,
+    *,
+    flavor: Literal["hive"],
+    dictionaries: dict[str, Array] | None = None,
+) -> Partitioning: ...
 def parquet_dataset(
-    metadata_path: str | PathLike,
-    schema: Schema | None = ...,
-    filesystem: FileSystem | str | None = ...,
-    format: ParquetFileFormat | str | None = ...,
-    partitioning: Partitioning | PartitioningFactory | str | list[str] | None = ...,
-    partition_base_dir: str | None = ...,
+    metadata_path: str | Path,
+    schema: Schema | None = None,
+    filesystem: FileSystem | None = None,
+    format: ParquetFileFormat | None = None,
+    partitioning: Partitioning | PartitioningFactory | None = None,
+    partition_base_dir: str | None = None,
 ) -> FileSystemDataset: ...
+@overload
 def dataset(
-    source: str | Dataset | Iterable[str | Dataset | RecordBatch | RecordBatchReader],
-    schema: Schema | None = ...,
-    format: FileFormat | str | None = ...,
-    filesystem: FileSystem | str | None = ...,
-    partitioning: Partitioning | PartitioningFactory | str | list[str] | None = ...,
-    partition_base_dir: str | None = ...,
-    exclude_invalid_files: bool | None = ...,
-    ignore_prefixes: list[str] | None = ...,
-) -> Dataset: ...
+    source: str | list[str] | Path | list[Path],
+    schema: Schema | None = None,
+    format: FileFormat | _DatasetFormat | None = None,
+    filesystem: FileSystem | str | None = None,
+    partitioning: Partitioning | PartitioningFactory | str | list[str] | None = None,
+    partition_base_dir: str | None = None,
+    exclude_invalid_files: bool | None = None,
+    ignore_prefixes: list[str] | None = None,
+) -> FileSystemDataset: ...
+@overload
+def dataset(
+    source: list[Dataset],
+    schema: Schema | None = None,
+    format: FileFormat | _DatasetFormat | None = None,
+    filesystem: FileSystem | str | None = None,
+    partitioning: Partitioning | PartitioningFactory | str | list[str] | None = None,
+    partition_base_dir: str | None = None,
+    exclude_invalid_files: bool | None = None,
+    ignore_prefixes: list[str] | None = None,
+) -> UnionDataset: ...
+@overload
+def dataset(
+    source: Iterable[RecordBatch] | Iterable[Table] | RecordBatchReader,
+    schema: Schema | None = None,
+    format: FileFormat | _DatasetFormat | None = None,
+    filesystem: FileSystem | str | None = None,
+    partitioning: Partitioning | PartitioningFactory | str | list[str] | None = None,
+    partition_base_dir: str | None = None,
+    exclude_invalid_files: bool | None = None,
+    ignore_prefixes: list[str] | None = None,
+) -> InMemoryDataset: ...
 def write_dataset(
-    data: Dataset | Table | RecordBatch | RecordBatchReader | Iterable[Table | RecordBatch],
+    data: Dataset | Table | RecordBatch | RecordBatchReader | list[Table] | Iterable[RecordBatch],
     base_dir: str,
     *,
-    basename_template: str | None = ...,
-    format: FileFormat | str | None = ...,
-    partitioning: Partitioning | list[str] | None = ...,
-    partitioning_flavor: str | None = ...,
-    schema: Schema | None = ...,
-    filesystem: FileSystem | None = ...,
-    file_options: FileWriteOptions | None = ...,
-    use_threads: bool = ...,
-    max_partitions: int | None = ...,
-    max_open_files: int | None = ...,
-    max_rows_per_file: int | None = ...,
-    min_rows_per_group: int | None = ...,
-    max_rows_per_group: int | None = ...,
-    file_visitor: Callable[[WrittenFile], None] | None = ...,
-    existing_data_behavior: Literal["error", "overwrite_or_ignore", "delete_matching"] = ...,
-    create_dir: bool = ...,
-) -> None: ...
+    basename_template: str | None = None,
+    format: FileFormat | _DatasetFormat | None = None,
+    partitioning: Partitioning | list[str] | None = None,
+    partitioning_flavor: str | None = None,
+    schema: Schema | None = None,
+    filesystem: FileSystem | None = None,
+    file_options: FileWriteOptions | None = None,
+    use_threads: bool = True,
+    max_partitions: int = 1024,
+    max_open_files: int = 1024,
+    max_rows_per_file: int = 0,
+    min_rows_per_group: int = 0,
+    max_rows_per_group: int = 1024 * 1024,
+    file_visitor: Callable[[str], None] | None = None,
+    existing_data_behavior: Literal["error", "overwrite_or_ignore", "delete_matching"] = "error",
+    create_dir: bool = True,
+): ...

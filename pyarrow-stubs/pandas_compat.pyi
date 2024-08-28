@@ -1,31 +1,28 @@
-from typing import Any
-from typing import Callable
+from typing import Any, TypedDict, TypeVar
 
-import numpy as np
 import pandas as pd
 
-from pandas.core.internals import BlockManager
-from pyarrow.lib import Array
-from pyarrow.lib import DataType
-from pyarrow.lib import Schema
-from pyarrow.lib import Table
-from pyarrow.lib import _ArrowType
-from pyarrow.lib import frombytes as frombytes
-from typing_extensions import TypedDict
+from pandas import DatetimeTZDtype
 
-class _SerializedDict(TypedDict):
-    blocks: list[Any]
-    axes: list[Any]
+from .lib import Array, DataType, Schema, Table
 
-def get_logical_type_map() -> dict[_ArrowType, str]: ...
-def get_logical_type(arrow_type: _ArrowType) -> str: ...
-def get_logical_type_from_numpy(pandas_collection: pd.Series | pd.Index) -> str: ...
-def get_extension_dtype_info(
-    column: pd.Series | pd.Index,
-) -> tuple[str, dict[str, Any] | None]: ...
+_T = TypeVar("_T")
+
+def get_logical_type_map() -> dict[int, str]: ...
+def get_logical_type(arrow_type: DataType) -> str: ...
+def get_logical_type_from_numpy(pandas_collection) -> str: ...
+def get_extension_dtype_info(column) -> tuple[str, dict[str, Any]]: ...
+
+class _ColumnMetadata(TypedDict):
+    name: str
+    field_name: str
+    pandas_type: int
+    numpy_type: str
+    metadata: dict | None
+
 def get_column_metadata(
     column: pd.Series | pd.Index, name: str, arrow_type: DataType, field_name: str
-) -> dict[str, Any]: ...
+) -> _ColumnMetadata: ...
 def construct_metadata(
     columns_to_convert: list[pd.Series],
     df: pd.DataFrame,
@@ -36,27 +33,19 @@ def construct_metadata(
     types: list[DataType],
 ) -> dict[bytes, bytes]: ...
 def dataframe_to_types(
-    df: pd.DataFrame, preserve_index: bool, columns: list[str] | None = ...
+    df: pd.DataFrame, preserve_index: bool | None, columns: list[str] | None = None
 ) -> tuple[list[str], list[DataType], dict[bytes, bytes]]: ...
 def dataframe_to_arrays(
     df: pd.DataFrame,
     schema: Schema,
-    preserve_index: bool,
-    nthreads: int = ...,
-    columns: list[str] | None = ...,
-    safe: bool = ...,
-) -> tuple[Array, Schema, int | None]: ...
-def get_datetimetz_type(
-    values: pd.Series | pd.Index, dtype: np.dtype, type_: DataType | None
-) -> tuple[pd.Series | pd.Index, DataType]: ...
-def dataframe_to_serialized_dict(frame: pd.DataFrame) -> _SerializedDict: ...
-def serialized_dict_to_dataframe(data: _SerializedDict) -> pd.DataFrame: ...
-def make_datetimetz(tz: str) -> pd.DatetimeTZDtype: ...
-def table_to_blockmanager(
-    options: dict,
-    table: Table,
-    categories: list[str] | None = ...,
-    ignore_metadata: bool = ...,
-    types_mapper: Callable[[DataType], np.generic] | None = ...,
-) -> BlockManager: ...
+    preserve_index: bool | None,
+    nthreads: int = 1,
+    columns: list[str] | None = None,
+    safe: bool = True,
+) -> tuple[Array, Schema, int]: ...
+def get_datetimetz_type(values: _T, dtype, type_) -> tuple[_T, DataType]: ...
+def make_datetimetz(unit: str, tz: str) -> DatetimeTZDtype: ...
+def table_to_dataframe(
+    options, table: Table, categories=None, ignore_metadata: bool = False, types_mapper=None
+) -> pd.DataFrame: ...
 def make_tz_aware(series: pd.Series, tz: str) -> pd.Series: ...

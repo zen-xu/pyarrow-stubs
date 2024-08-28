@@ -18,6 +18,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 requires-python = ">=3.8,<4"
+dependencies = ["pyarrow >=17"]
 
 [project.urls]
 homepage   = "https://github.com/zen-xu/pyarrow-stubs"
@@ -37,9 +38,14 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
 [tool.pixi.pypi-dependencies]
 pyarrow-stubs = { path = ".", editable = true }
+ipython       = "*"
+scipy         = "*"
 pre-commit    = "*"
 mypy          = ">=1.11"
 ruff          = ">=0.5"
+types-cffi    = "*"
+pandas-stubs  = "*"
+hatchling     = "*"
 
 [tool.ruff]
 fix            = true
@@ -47,12 +53,18 @@ line-length    = 99
 target-version = "py38"
 
 [tool.ruff.lint]
-select = [
-  "I", # isort
+extend-select = [
+  "I",   # isort
+  "N",   # pep8-naming
+  "PYI", # flake8-pyi
+]
+ignore = [
+  "PYI015", # assignment-default-in-stub
+  "PYI011", # typed-argument-default-in-stub
+  "N818",   # error-suffix-on-exception-name
 ]
 
 [tool.ruff.lint.isort]
-force-single-line   = true
 lines-after-imports = 2
 lines-between-types = 1
 
