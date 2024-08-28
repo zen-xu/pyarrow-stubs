@@ -5,19 +5,14 @@ on:
     tags:
       - "*.*.*"
 
+env:
+  HATCH_INDEX_USER: __token__
+  HATCH_INDEX_AUTH: ${{ secrets.PYPI_TOKEN }}
+
 jobs:
   release:
     name: "release ${{github.ref_name}}"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.7"
-      - uses: abatilo/actions-poetry@v2
-        with:
-          poetry-version: "1.4.2"
-      - name: publish
-        run: |
-          poetry build -f wheel
-          poetry publish -u __token__ -p ${{ secrets.PYPI_TOKEN }}
+      - uses: quality-specialist/hatch-action@v1
