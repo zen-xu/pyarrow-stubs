@@ -14,7 +14,7 @@ from typing import (
 
 from . import _csv, _json, _parquet, lib
 from ._fs import FileSelector, FileSystem
-from ._stubs_typing import ArrayLike, Indices, JoinType, Order
+from ._stubs_typing import Indices, JoinType, Order
 from .acero import ExecNodeOptions
 from .compute import Expression
 from .ipc import IpcWriteOptions, RecordBatchReader

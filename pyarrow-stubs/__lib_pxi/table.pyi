@@ -1,3 +1,5 @@
+# mypy: disable-error-code="overload-overlap"
+
 import datetime as dt
 
 from decimal import Decimal

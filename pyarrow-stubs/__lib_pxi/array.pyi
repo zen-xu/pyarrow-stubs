@@ -1,3 +1,5 @@
+# mypy: disable-error-code="overload-overlap"
+
 import datetime as dt
 
 from collections.abc import Callable
@@ -8,7 +10,6 @@ from typing import (
     Iterable,
     Iterator,
     Literal,
-    Optional,
     Self,
     TypeAlias,
     TypeVar,
@@ -520,7 +521,7 @@ def array(
     safe: bool = True,
     memory_pool: MemoryPool | None = None,
 ) -> Array[scalar.MonthDayNanoIntervalScalar]: ...
-@overload  # type: ignore[overload-overlap]
+@overload
 def asarray(values: NullableIterable[bool]) -> BooleanArray: ...
 @overload
 def asarray(values: NullableIterable[int]) -> Int64Array: ...

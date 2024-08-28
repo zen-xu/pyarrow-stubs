@@ -1,3 +1,4 @@
+# mypy: disable-error-code="overload-overlap"
 import collections.abc
 import datetime as dt
 
@@ -280,7 +281,7 @@ def scalar(
     value: bytes, *, from_pandas: bool | None = None, memory_pool: MemoryPool | None = None
 ) -> BinaryScalar: ...
 @overload
-def scalar(  # type: ignore[overload-overlap]
+def scalar(
     value: bool, *, from_pandas: bool | None = None, memory_pool: MemoryPool | None = None
 ) -> BooleanScalar: ...
 @overload
