@@ -142,6 +142,26 @@ def array(
 ) -> MonthDayNanoIntervalArray: ...
 @overload
 def array(
+    values: NullableIterable[str],
+    type: None = None,
+    mask: Mask | None = None,
+    size: int | None = None,
+    from_pandas: bool | None = None,
+    safe: bool = True,
+    memory_pool: MemoryPool | None = None,
+) -> StringArray: ...
+@overload
+def array(
+    values: NullableIterable[bytes],
+    type: None = None,
+    mask: Mask | None = None,
+    size: int | None = None,
+    from_pandas: bool | None = None,
+    safe: bool = True,
+    memory_pool: MemoryPool | None = None,
+) -> BinaryArray: ...
+@overload
+def array(
     values: NullableIterable[list],
     type: None = None,
     mask: Mask | None = None,

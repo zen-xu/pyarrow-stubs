@@ -33,7 +33,7 @@ from pyarrow.interchange.dataframe import _PyArrowDataFrame
 from pyarrow.lib import Field, MemoryPool, MonthDayNano, Schema
 
 from . import scalar
-from .array import Array, StructArray, _CastAs, _PandasConvertible
+from .array import Array, NullableIterable, StructArray, _CastAs, _PandasConvertible
 from .device import DeviceAllocationType
 from .io import Buffer
 from .ipc import RecordBatchReader
@@ -134,52 +134,62 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_ScalarT]):
 
 @overload  # type: ignore[overload-overlap]
 def chunked_array(
-    values: Iterable[bool],
+    values: NullableIterable[bool],
     type: None = None,
 ) -> ChunkedArray[scalar.BooleanScalar]: ...
 @overload
 def chunked_array(
-    values: Iterable[int],
+    values: NullableIterable[int],
     type: None = None,
 ) -> ChunkedArray[scalar.Int64Scalar]: ...
 @overload
 def chunked_array(
-    values: Iterable[float],
+    values: NullableIterable[float],
     type: None = None,
 ) -> ChunkedArray[scalar.DoubleScalar]: ...
 @overload
 def chunked_array(
-    values: Iterable[Decimal],
+    values: NullableIterable[Decimal],
     type: None = None,
 ) -> ChunkedArray[scalar.Decimal128Scalar]: ...
 @overload
 def chunked_array(
-    values: Iterable[dict[str, Any]],
+    values: NullableIterable[dict[str, Any]],
     type: None = None,
 ) -> ChunkedArray[scalar.StructScalar]: ...
 @overload
 def chunked_array(
-    values: Iterable[dt.date],
+    values: NullableIterable[dt.date],
     type: None = None,
 ) -> ChunkedArray[scalar.Date32Scalar]: ...
 @overload
 def chunked_array(
-    values: Iterable[dt.time],
+    values: NullableIterable[dt.time],
     type: None = None,
 ) -> ChunkedArray[scalar.Time64Scalar]: ...
 @overload
 def chunked_array(
-    values: Iterable[dt.timedelta],
+    values: NullableIterable[dt.timedelta],
     type: None = None,
 ) -> ChunkedArray[scalar.DurationScalar]: ...
 @overload
 def chunked_array(
-    values: Iterable[MonthDayNano],
+    values: NullableIterable[MonthDayNano],
     type: None = None,
 ) -> ChunkedArray[scalar.MonthDayNanoIntervalScalar]: ...
 @overload
 def chunked_array(
-    values: Iterable[list],
+    values: NullableIterable[str],
+    type: None = None,
+) -> ChunkedArray[scalar.StringScalar]: ...
+@overload
+def chunked_array(
+    values: NullableIterable[bytearray],
+    type: None = None,
+) -> ChunkedArray[scalar.BinaryScalar]: ...
+@overload
+def chunked_array(
+    values: NullableIterable[list],
     type: None = None,
 ) -> ChunkedArray[scalar.ListScalar]: ...
 @overload
