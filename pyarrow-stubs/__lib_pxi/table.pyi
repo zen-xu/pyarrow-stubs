@@ -572,3 +572,16 @@ class TableGroupBy:
     def aggregate(
         self, aggregations: list[tuple[str, str]] | list[tuple[str, str, FunctionOptions]]
     ) -> Table: ...
+
+__all__ = [
+    "ChunkedArray",
+    "chunked_array",
+    "_Tabular",
+    "RecordBatch",
+    "table_to_blocks",
+    "Table",
+    "record_batch",
+    "table",
+    "concat_tables",
+    "TableGroupBy",
+]

@@ -167,3 +167,11 @@ class SparseCSFTensor(_Weakrefable):
     def dim_names(self) -> list[str]: ...
     @property
     def non_zero_length(self) -> int: ...
+
+__all__ = [
+    "Tensor",
+    "SparseCOOTensor",
+    "SparseCSRMatrix",
+    "SparseCSCMatrix",
+    "SparseCSFTensor",
+]

@@ -28,3 +28,21 @@ class SignalStopHandler:
     def __dealloc__(self) -> None: ...
     @property
     def stop_token(self) -> StopToken: ...
+
+__all__ = [
+    "ArrowException",
+    "ArrowInvalid",
+    "ArrowMemoryError",
+    "ArrowKeyError",
+    "ArrowTypeError",
+    "ArrowNotImplementedError",
+    "ArrowCapacityError",
+    "ArrowIndexError",
+    "ArrowSerializationError",
+    "ArrowCancelled",
+    "ArrowIOError",
+    "StopToken",
+    "enable_signal_handlers",
+    "have_signal_refcycle",
+    "SignalStopHandler",
+]

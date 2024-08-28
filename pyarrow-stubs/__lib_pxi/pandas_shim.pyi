@@ -47,3 +47,5 @@ class _PandasAPIShim:
     def get_rangeindex_attribute(self, level, name): ...
 
 _pandas_api: _PandasAPIShim
+
+__all__ = ["_PandasAPIShim", "_pandas_api"]

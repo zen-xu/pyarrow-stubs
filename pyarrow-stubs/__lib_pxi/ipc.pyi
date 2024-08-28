@@ -168,3 +168,28 @@ def read_schema(
 def read_record_batch(
     obj: Message | SupportPyBuffer, schema: Schema, dictionary_memo: DictionaryMemo | None = None
 ) -> RecordBatch: ...
+
+__all__ = [
+    "MetadataVersion",
+    "WriteStats",
+    "ReadStats",
+    "IpcReadOptions",
+    "IpcWriteOptions",
+    "Message",
+    "MessageReader",
+    "_CRecordBatchWriter",
+    "_RecordBatchStreamWriter",
+    "_ReadPandasMixin",
+    "RecordBatchReader",
+    "_RecordBatchStreamReader",
+    "_RecordBatchFileWriter",
+    "RecordBatchWithMetadata",
+    "_RecordBatchFileReader",
+    "get_tensor_size",
+    "get_record_batch_size",
+    "write_tensor",
+    "read_tensor",
+    "read_message",
+    "read_schema",
+    "read_record_batch",
+]
