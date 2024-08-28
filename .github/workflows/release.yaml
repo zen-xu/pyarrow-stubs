@@ -10,7 +10,7 @@ jobs:
     name: "release ${{github.ref_name}}"
     runs-on: ubuntu-latest
     environment:
-      name: Release    
+      name: Release
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
