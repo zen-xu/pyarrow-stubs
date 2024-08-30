@@ -1,4 +1,9 @@
-from typing import Literal, Sequence, TypeVar, overload
+# mypy: disable-error-code="misc"
+# ruff: noqa: I001
+from decimal import Decimal
+from typing import Literal, Sequence, TypeAlias, TypeVar, overload
+
+import numpy as np
 
 # Option classes
 from pyarrow._compute import ArraySortOptions as ArraySortOptions
@@ -79,7 +84,7 @@ from pyarrow._compute import register_aggregate_function as register_aggregate_f
 from pyarrow._compute import register_scalar_function as register_scalar_function
 from pyarrow._compute import register_tabular_function as register_tabular_function
 from pyarrow._compute import register_vector_function as register_vector_function
-from pyarrow._stubs_typing import Indices
+from pyarrow._stubs_typing import Indices, NullSelectionBehavior, Order
 
 from . import lib
 
@@ -148,3 +153,622 @@ def random(
 ) -> lib.DoubleArray: ...
 def field(*name_or_index: str | tuple[str, ...] | int) -> Expression: ...
 def scalar(value: bool | float | str) -> Expression: ...
+
+# ============= compute functions =============
+NumericScalar: TypeAlias = (
+    lib.Scalar[lib.Int8Type]
+    | lib.Scalar[lib.Int16Type]
+    | lib.Scalar[lib.Int32Type]
+    | lib.Scalar[lib.Int64Type]
+    | lib.Scalar[lib.Uint8Type]
+    | lib.Scalar[lib.Uint16Type]
+    | lib.Scalar[lib.Uint32Type]
+    | lib.Scalar[lib.Uint64Type]
+    | lib.Scalar[lib.Float16Type]
+    | lib.Scalar[lib.Float32Type]
+    | lib.Scalar[lib.Float64Type]
+    | lib.Scalar[lib.Decimal128Type]
+    | lib.Scalar[lib.Decimal256Type]
+)
+_NumericScalarT = TypeVar("_NumericScalarT", bound=NumericScalar)
+_NumericArrayT = TypeVar("_NumericArrayT", bound=lib.NumericArray)
+Number: TypeAlias = int | float | Decimal
+_T = TypeVar("_T")
+NullableList: TypeAlias = list[_T] | list[_T | None]
+NullableNumbers: TypeAlias = NullableList[int] | NullableList[float] | NullableList[Decimal]
+_ArrayT = TypeVar("_ArrayT", bound=lib.Array)
+
+@overload
+def abs(x: int, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Int64Scalar: ...
+@overload
+def abs(x: float, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.DoubleScalar: ...
+@overload
+def abs(x: Decimal, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Decimal128Scalar: ...
+@overload
+def abs(
+    x: NullableList[int], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int64Array: ...
+@overload
+def abs(
+    x: NullableList[float], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.DoubleArray: ...
+@overload
+def abs(
+    x: NullableList[Decimal], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Decimal128Array: ...
+@overload
+def abs(
+    x: NullableList[_NumericScalarT], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.NumericArray[_NumericScalarT]: ...
+@overload
+def abs(
+    x: _NumericScalarT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericScalarT: ...
+@overload
+def abs(x: _NumericArrayT, /, *, memory_pool: lib.MemoryPool | None = None) -> _NumericArrayT: ...
+@overload
+def abs(x: np.ndarray, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.NumericArray: ...
+
+abs_checked = abs
+
+@overload
+def acos(
+    x: NumericScalar | Number, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.DoubleScalar: ...
+@overload
+def acos(
+    x: NullableList[Number] | lib.Array[NumericScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.DoubleArray: ...
+
+acos_checked = acos
+asin = acos
+asin_checked = acos
+atan = acos
+
+@overload
+def atan2(y: int, x: int, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Int64Scalar: ...
+@overload
+def atan2(
+    y: Decimal, x: int, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Decimal128Scalar: ...
+@overload
+def atan2(
+    y: int, x: Decimal, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Decimal128Scalar: ...
+@overload
+def atan2(
+    y: Decimal, x: Decimal, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Decimal128Scalar: ...
+@overload
+def atan2(
+    y: float, x: float, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.DoubleScalar: ...
+@overload
+def atan2(
+    y: Decimal, x: float, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.DoubleScalar: ...
+@overload
+def atan2(
+    y: float, x: Decimal, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.DoubleScalar: ...
+@overload
+def atan2(
+    y: NumericScalar, x: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> NumericScalar: ...
+@overload
+def atan2(
+    y: NullableList[int], x: NullableList[int], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int16Array: ...
+@overload
+def atan2(
+    y: NullableList[Decimal], x: NullableList[int], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Decimal128Array: ...
+@overload
+def atan2(
+    y: NullableList[int], x: NullableList[Decimal], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Decimal128Array: ...
+@overload
+def atan2(
+    y: NullableList[Decimal],
+    x: NullableList[Decimal],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Decimal128Array: ...
+@overload
+def atan2(
+    y: NullableList[float], x: NullableList[float], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.DoubleArray: ...
+@overload
+def atan2(
+    y: NullableList[Decimal],
+    x: NullableList[float],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.DoubleArray: ...
+@overload
+def atan2(
+    y: NullableList[float],
+    x: NullableList[Decimal],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.DoubleArray: ...
+@overload
+def atan2(
+    y: lib.Array[NumericScalar],
+    x: lib.Array[NumericScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[NumericScalar]: ...
+@overload
+def atan2(
+    y: Number,
+    x: lib.Array[NumericScalar] | NullableNumbers,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[NumericScalar]: ...
+@overload
+def atan2(
+    y: lib.Array[NumericScalar] | NullableNumbers,
+    x: Number,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[NumericScalar]: ...
+@overload
+def add(x: int, y: int, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Int64Scalar: ...
+@overload
+def add(
+    x: Decimal, y: int, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Decimal128Scalar: ...
+@overload
+def add(
+    x: int, y: Decimal, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Decimal128Scalar: ...
+@overload
+def add(
+    x: Decimal, y: Decimal, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Decimal128Scalar: ...
+@overload
+def add(
+    x: float, y: float, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.DoubleScalar: ...
+@overload
+def add(
+    x: Decimal, y: float, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.DoubleScalar: ...
+@overload
+def add(
+    x: float, y: Decimal, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.DoubleScalar: ...
+@overload
+def add(
+    x: NumericScalar, y: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> NumericScalar: ...
+@overload
+def add(
+    x: NullableList[int], y: NullableList[int], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int16Array: ...
+@overload
+def add(
+    x: NullableList[Decimal], y: NullableList[int], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Decimal128Array: ...
+@overload
+def add(
+    x: NullableList[int], y: NullableList[Decimal], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Decimal128Array: ...
+@overload
+def add(
+    x: NullableList[Decimal],
+    y: NullableList[Decimal],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Decimal128Array: ...
+@overload
+def add(
+    x: NullableList[float], y: NullableList[float], /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.DoubleArray: ...
+@overload
+def add(
+    x: NullableList[Decimal],
+    y: NullableList[float],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.DoubleArray: ...
+@overload
+def add(
+    x: NullableList[float],
+    y: NullableList[Decimal],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.DoubleArray: ...
+@overload
+def add(
+    x: lib.Array[NumericScalar],
+    y: lib.Array[NumericScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[NumericScalar]: ...
+@overload
+def add(
+    x: Number,
+    y: lib.Array[NumericScalar] | NullableNumbers,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[NumericScalar]: ...
+@overload
+def add(
+    x: lib.Array[NumericScalar] | NullableNumbers,
+    y: Number,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[NumericScalar]: ...
+
+add_checked = add
+
+def all(
+    array: NullableList[bool] | lib.BooleanArray,
+    /,
+    *,
+    skip_nulls: bool = True,
+    min_count: int = 1,
+    options: ScalarAggregateOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanScalar: ...
+def and_(
+    x: NullableList[bool] | lib.BooleanArray,
+    y: NullableList[bool] | lib.BooleanArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+
+and_kleene = and_
+and_not = and_
+and_not_kleene = and_
+any = all
+
+def approximate_median(
+    array: lib.NumericArray | NullableNumbers,
+    /,
+    *,
+    skip_nulls: bool = True,
+    min_count: int = 1,
+    options: ScalarAggregateOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.DoubleScalar: ...
+@overload
+def array_filter(
+    array: NullableList[int],
+    selection_filter: NullableList[bool] | lib.BooleanArray,
+    /,
+    null_selection_behavior: NullSelectionBehavior = "drop",
+    *,
+    options: FilterOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Array: ...
+@overload
+def array_filter(
+    array: NullableList[float],
+    selection_filter: NullableList[bool] | lib.BooleanArray,
+    /,
+    null_selection_behavior: NullSelectionBehavior = "drop",
+    *,
+    options: FilterOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.DoubleArray: ...
+@overload
+def array_filter(
+    array: NullableList[Decimal],
+    selection_filter: NullableList[bool] | lib.BooleanArray,
+    /,
+    null_selection_behavior: NullSelectionBehavior = "drop",
+    *,
+    options: FilterOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Decimal128Array: ...
+@overload
+def array_filter(
+    array: _ArrayT,
+    selection_filter: NullableList[bool] | lib.BooleanArray,
+    /,
+    null_selection_behavior: NullSelectionBehavior = "drop",
+    *,
+    options: FilterOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _ArrayT: ...
+def array_sort_indices(
+    array: list | lib.Array,
+    /,
+    order: Order = "ascending",
+    *,
+    null_placement: Literal["at_start", "at_end"] = "at_end",
+    options: ArraySortOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.UInt64Array: ...
+@overload
+def array_take(
+    array: NullableList[int],
+    indices: Indices,
+    /,
+    *,
+    boundscheck: bool = True,
+    options: TakeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Array: ...
+@overload
+def array_take(
+    array: NullableList[float],
+    indices: Indices,
+    /,
+    *,
+    boundscheck: bool = True,
+    options: TakeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.DoubleArray: ...
+@overload
+def array_take(
+    array: NullableList[Decimal],
+    indices: Indices,
+    /,
+    *,
+    boundscheck: bool = True,
+    options: TakeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Decimal128Array: ...
+@overload
+def array_take(
+    array: _ArrayT,
+    indices: Indices,
+    /,
+    *,
+    boundscheck: bool = True,
+    options: TakeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _ArrayT: ...
+@overload
+def ascii_capitalize(
+    strings: str | lib.StringScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.StringScalar: ...
+@overload
+def ascii_capitalize(
+    strings: NullableList[str] | lib.StringArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.StringArray: ...
+
+ascii_lower = ascii_capitalize
+ascii_upper = ascii_capitalize
+ascii_reverse = ascii_capitalize
+ascii_swapcase = ascii_capitalize
+ascii_title = ascii_capitalize
+
+@overload
+def ascii_center(
+    strings: str | lib.StringScalar,
+    /,
+    width: int,
+    padding: str = " ",
+    lean_left_on_odd_padding: bool = True,
+    *,
+    options: PadOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.StringScalar: ...
+@overload
+def ascii_center(
+    strings: NullableList[str] | lib.StringArray,
+    /,
+    width: int,
+    padding: str = " ",
+    lean_left_on_odd_padding: bool = True,
+    *,
+    options: PadOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.StringArray: ...
+@overload
+def ascii_is_alnum(
+    strings: str | lib.StringScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanScalar: ...
+@overload
+def ascii_is_alnum(
+    strings: NullableList[str] | lib.StringArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanArray: ...
+
+ascii_is_alpha = ascii_is_alnum
+ascii_is_decimal = ascii_is_alnum
+ascii_is_lower = ascii_is_alnum
+ascii_is_printable = ascii_is_alnum
+ascii_is_space = ascii_is_alnum
+ascii_is_title = ascii_is_alnum
+ascii_is_upper = ascii_is_alnum
+
+ascii_lpad = ascii_center
+ascii_rpad = ascii_center
+
+@overload
+def ascii_trim(
+    strings: str | lib.StringScalar,
+    /,
+    characters: str,
+    *,
+    options: TrimOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.StringScalar: ...
+@overload
+def ascii_trim(
+    strings: NullableList[str] | lib.StringArray,
+    /,
+    characters: str,
+    *,
+    options: TrimOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.StringArray: ...
+
+ascii_ltrim = ascii_trim
+ascii_rtrim = ascii_trim
+ascii_trim_whitespace = ascii_capitalize
+ascii_rtrim_whitespace = ascii_capitalize
+ascii_ltrim_whitespace = ascii_capitalize
+
+@overload
+def ascii_split_whitespace(
+    strings: str | lib.StringScalar,
+    /,
+    *,
+    max_splits: int | None = None,
+    reverse: bool = False,
+    options: SplitOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[lib.StringScalar]: ...
+@overload
+def ascii_split_whitespace(
+    strings: NullableList[str] | lib.StringArray,
+    /,
+    *,
+    max_splits: int | None = None,
+    reverse: bool = False,
+    options: SplitOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[lib.ListScalar[lib.StringType]]: ...
+def binary_join(
+    strings: lib.BinaryArray, separator: lib.BinaryArray, /, *, memory_pool=None
+) -> lib.BinaryArray: ...
+@overload
+def binary_join_element_wise(
+    *strings: bytes | lib.BinaryScalar,
+    null_handling: Literal["emit_null", "skip", "replace"] = "emit_null",
+    null_replacement: str = "",
+    options: JoinOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BinaryScalar: ...
+@overload
+def binary_join_element_wise(
+    *strings: NullableList[bytes] | lib.BinaryArray,
+    null_handling: Literal["emit_null", "skip", "replace"] = "emit_null",
+    null_replacement: str = "",
+    options: JoinOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BinaryArray: ...
+@overload
+def binary_length(
+    strings: bytes | lib.BinaryScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int32Scalar: ...
+@overload
+def binary_length(
+    strings: NullableList[bytes] | lib.BinaryArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int32Array: ...
+@overload
+def binary_repeat(
+    strings: bytes | lib.BinaryScalar,
+    num_repeats: int,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BinaryScalar: ...
+@overload
+def binary_repeat(
+    strings: bytes | lib.BinaryScalar,
+    num_repeats: NullableList[int],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BinaryArray: ...
+@overload
+def binary_repeat(
+    strings: NullableList[bytes] | lib.BinaryScalar,
+    num_repeats: int | NullableList[int],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BinaryArray: ...
+@overload
+def binary_replace_slice(
+    strings: bytes | lib.BinaryScalar,
+    /,
+    start: int,
+    stop: int,
+    replacement: str,
+    *,
+    options: ReplaceSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BinaryScalar: ...
+@overload
+def binary_replace_slice(
+    strings: NullableList[bytes] | lib.BinaryArray,
+    /,
+    start: int,
+    stop: int,
+    replacement: str,
+    *,
+    options: ReplaceSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BinaryArray: ...
+@overload
+def binary_slice(
+    strings: bytes | lib.BinaryScalar,
+    /,
+    start: int,
+    stop: int | None = None,
+    step: int = 1,
+    *,
+    options: ReplaceSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BinaryScalar: ...
+@overload
+def binary_slice(
+    strings: NullableList[bytes] | lib.BinaryArray,
+    /,
+    start: int,
+    stop: int | None = None,
+    step: int = 1,
+    *,
+    options: ReplaceSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BinaryArray: ...
+@overload
+def binary_reverse(
+    strings: bytes | lib.BinaryScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BinaryScalar: ...
+@overload
+def binary_reverse(
+    strings: NullableList[bytes] | lib.BinaryArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BinaryArray: ...
+@overload
+def assume_timezone(
+    timestamps: lib.TimestampScalar,
+    /,
+    timezone: str,
+    *,
+    ambiguous: Literal["raise", "earliest", "latest"] = "raise",
+    nonexistent: Literal["raise", "earliest", "latest"] = "raise",
+    options: AssumeTimezoneOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.TimestampScalar: ...
+@overload
+def assume_timezone(
+    timestamps: lib.TimestampArray,
+    /,
+    timezone: str,
+    *,
+    ambiguous: Literal["raise", "earliest", "latest"] = "raise",
+    nonexistent: Literal["raise", "earliest", "latest"] = "raise",
+    options: AssumeTimezoneOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.TimestampArray: ...
