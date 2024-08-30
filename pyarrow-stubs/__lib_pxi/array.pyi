@@ -1,4 +1,4 @@
-# mypy: disable-error-code="overload-overlap"
+# mypy: disable-error-code="overload-overlap,misc"
 
 import datetime as dt
 
@@ -1189,8 +1189,8 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def is_nan(self) -> BooleanArray: ...
     def is_valid(self) -> BooleanArray: ...
     def fill_null(
-        self: Array[Scalar[_BasicDataType[_AsPyType], Any]], fill_value: _AsPyType
-    ) -> Array[Scalar[_BasicDataType[_AsPyType], Any]]: ...
+        self: Array[Scalar[_BasicDataType[_AsPyType]]], fill_value: _AsPyType
+    ) -> Array[Scalar[_BasicDataType[_AsPyType]]]: ...
     @overload
     def __getitem__(self, key: int) -> _ScalarT: ...
     @overload
@@ -1215,7 +1215,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     ) -> scalar.Int64Scalar: ...
     @overload
     def index(
-        self: Array[Scalar[_BasicDataType[_AsPyType], Any]],
+        self: Array[Scalar[_BasicDataType[_AsPyType]]],
         value: _AsPyType,
         start: int | None = None,
         end: int | None = None,
@@ -1226,7 +1226,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def __array__(self, dtype: np.dtype | None = None, copy: bool | None = None) -> np.ndarray: ...
     def to_numpy(self, zero_copy_only: bool = True, writable: bool = False) -> np.ndarray: ...
     def to_pylist(
-        self: Array[Scalar[_BasicDataType[_AsPyType], Any]],
+        self: Array[Scalar[_BasicDataType[_AsPyType]]],
     ) -> list[_AsPyType | None]: ...
     tolist = to_pylist
     def validate(self, *, full: bool = False) -> None: ...

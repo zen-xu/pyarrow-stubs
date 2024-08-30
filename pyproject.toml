@@ -76,3 +76,4 @@ explicit_package_bases = true
 files                  = "pyarrow-stubs"
 namespace_packages     = true
 show_error_codes       = true
+disable_error_code     = ["overload-overlap", "import-not-found"]

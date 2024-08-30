@@ -100,7 +100,7 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def filter(self, mask: Mask, null_selection_behavior: NullSelectionBehavior = "drop"): ...
     @overload
     def index(
-        self: ChunkedArray[Scalar[_BasicDataType[_AsPyType], Any]],
+        self: ChunkedArray[Scalar[_BasicDataType[_AsPyType]]],
         value: Scalar[_DataTypeT] | _AsPyType,
         start: int | None = None,
         end: int | None = None,
@@ -128,7 +128,7 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def iterchunks(self) -> Generator[Array[_ScalarT], None, None]: ...
     def __iter__(self) -> Iterator[Array[_ScalarT]]: ...
     def to_pylist(
-        self: ChunkedArray[Scalar[_BasicDataType[_AsPyType], Any]],
+        self: ChunkedArray[Scalar[_BasicDataType[_AsPyType]]],
     ) -> list[_AsPyType | None]: ...
     def __arrow_c_stream__(self, requested_schema=None) -> Any: ...
     @classmethod
