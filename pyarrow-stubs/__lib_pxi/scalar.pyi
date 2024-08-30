@@ -294,6 +294,13 @@ def scalar(
 ) -> DurationScalar: ...
 @overload
 def scalar(
+    value: MonthDayNano,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> MonthDayNanoIntervalScalar: ...
+@overload
+def scalar(
     value: Mapping[str, Any],
     *,
     from_pandas: bool | None = None,
@@ -362,13 +369,6 @@ def scalar(
     from_pandas: bool | None = None,
     memory_pool: MemoryPool | None = None,
 ) -> ListScalar[types.ListType[types.DurationType]]: ...
-@overload
-def scalar(
-    value: MonthDayNano,
-    *,
-    from_pandas: bool | None = None,
-    memory_pool: MemoryPool | None = None,
-) -> MonthDayNanoIntervalScalar: ...
 @overload
 def scalar(
     value: CollectionValue[MonthDayNano],
