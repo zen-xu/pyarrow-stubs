@@ -1,8 +1,6 @@
 # mypy: disable-error-code="misc"
 # ruff: noqa: I001
-from decimal import Decimal
-from typing import Literal, Sequence, TypeAlias, TypeVar, overload, Any
-import datetime as dt
+from typing import Literal, Sequence, TypeAlias, TypeVar, overload, Any, Iterable
 
 # Option classes
 from pyarrow._compute import ArraySortOptions as ArraySortOptions
@@ -184,20 +182,13 @@ TemporalScalar: TypeAlias = (
     | lib.DurationScalar
     | lib.MonthDayNanoIntervalScalar
 )
-_NumericScalarT = TypeVar("_NumericScalarT", bound=NumericScalar)
-_NumericArrayT = TypeVar("_NumericArrayT", bound=lib.NumericArray)
-Number: TypeAlias = int | float | Decimal
-_T = TypeVar("_T")
-nullable_list: TypeAlias = list[_T] | list[_T | None]  # noqa: PYI042
-NullableNumbers: TypeAlias = nullable_list[int] | nullable_list[float] | nullable_list[Decimal]
-_ScalarT = TypeVar("_ScalarT", bound=lib.Scalar)
 
 # =============================== 1. Aggregation ===============================
 
 # ========================= 1.1 functions =========================
 
 def all(
-    array: nullable_list[bool] | lib.BooleanArray,
+    array,
     /,
     *,
     skip_nulls: bool = True,
@@ -209,7 +200,7 @@ def all(
 any = all
 
 def approximate_median(
-    array: lib.NumericArray | NullableNumbers,
+    array,
     /,
     *,
     skip_nulls: bool = True,
@@ -218,7 +209,7 @@ def approximate_median(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.DoubleScalar: ...
 def count(
-    array: lib.Array,
+    array,
     /,
     mode: Literal["only_valid", "only_null", "all"] = "only_valid",
     *,
@@ -226,85 +217,24 @@ def count(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Scalar: ...
 def count_distinct(
-    array: lib.Array,
+    array,
     /,
     mode: Literal["only_valid", "only_null", "all"] = "only_valid",
     *,
     options: CountOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Scalar: ...
-@overload
 def first(
-    array: int | nullable_list[int],
+    array,
     /,
     *,
     skip_nulls: bool = True,
     min_count: int = 1,
     options: ScalarAggregateOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.Int64Scalar: ...
-@overload
-def first(
-    array: float | nullable_list[float],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.DoubleScalar: ...
-@overload
-def first(
-    array: bool | nullable_list[bool],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.BooleanScalar: ...
-@overload
-def first(
-    array: Decimal | nullable_list[Decimal],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Decimal128Scalar: ...
-@overload
-def first(
-    array: dt.date | nullable_list[dt.date],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Date32Scalar: ...
-@overload
-def first(
-    array: dt.datetime | nullable_list[dt.datetime],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.TimestampScalar: ...
-@overload
-def first(
-    array: _ScalarT | lib.Array[_ScalarT],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> _ScalarT: ...
+) -> lib.Scalar: ...
 def first_last(
-    array: Any,
+    array,
     /,
     *,
     skip_nulls: bool = True,
@@ -326,78 +256,17 @@ max = first
 min = first
 min_max = first_last
 
-@overload
 def mean(
-    array: int | nullable_list[int],
+    array,
     /,
     *,
     skip_nulls: bool = True,
     min_count: int = 1,
     options: ScalarAggregateOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.DoubleScalar: ...
-@overload
-def mean(
-    array: float | nullable_list[float],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.DoubleScalar: ...
-@overload
-def mean(
-    array: bool | nullable_list[bool],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.DoubleScalar: ...
-@overload
-def mean(
-    array: Decimal | nullable_list[Decimal],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Decimal128Scalar: ...
-@overload
-def mean(
-    array: lib.Array[lib.Decimal128Scalar] | lib.Decimal128Scalar,
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Decimal128Scalar: ...
-@overload
-def mean(
-    array: lib.Array[lib.Decimal256Scalar] | lib.Decimal256Scalar,
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Decimal256Scalar: ...
-@overload
-def mean(
-    array: lib.Array[NumericScalar],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.DoubleScalar: ...
+) -> lib.DoubleScalar | lib.Decimal128Scalar: ...
 def mode(
-    array: lib.Array[NumericScalar] | NullableNumbers,
+    array,
     /,
     n: int = 1,
     *,
@@ -406,46 +275,15 @@ def mode(
     options: ModeOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.StructArray: ...
-@overload
 def product(
-    array: int | nullable_list[int],
+    array,
     /,
     *,
     skip_nulls=True,
     min_count=1,
     options=None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.Int64Scalar: ...
-@overload
-def product(
-    array: float | nullable_list[float],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.DoubleScalar: ...
-@overload
-def product(
-    array: Decimal | nullable_list[Decimal],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Decimal128Scalar: ...
-@overload
-def product(
-    array: _NumericScalarT | nullable_list[_NumericArrayT] | lib.Array[_NumericScalarT],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> _NumericScalarT: ...
+) -> NumericScalar: ...
 def quantile(
     array,
     /,
@@ -467,46 +305,15 @@ def stddev(
     options: VarianceOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.DoubleScalar: ...
-@overload
 def sum(
-    array: int | nullable_list[int],
+    array,
     /,
     *,
     skip_nulls: bool = True,
     min_count: int = 1,
     options: ScalarAggregateOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.Int64Scalar: ...
-@overload
-def sum(
-    array: float | nullable_list[float],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.DoubleScalar: ...
-@overload
-def sum(
-    array: Decimal | nullable_list[Decimal],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Decimal128Scalar: ...
-@overload
-def sum(
-    array: _NumericScalarT | nullable_list[_NumericScalarT] | lib.Array[_NumericScalarT],
-    /,
-    *,
-    skip_nulls: bool = True,
-    min_count: int = 1,
-    options: ScalarAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> _NumericScalarT: ...
+) -> NumericScalar: ...
 def tdigest(
     array,
     /,
@@ -529,3 +336,88 @@ def variance(
     options: VarianceOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.DoubleScalar: ...
+
+# ========================= 2. Element-wise (“scalar”) functions =========================
+
+# ========================= 2.1 Arithmetic =========================
+@overload
+def abs(x: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+@overload
+def abs(x, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+
+abs_checked = abs
+
+@overload
+def add(x: Iterable, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+@overload
+def add(x, y: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+@overload
+def add(x, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+
+add_checked = add
+
+@overload
+def divide(
+    dividend: Iterable, divisor, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Array: ...
+@overload
+def divide(
+    dividend, divisor: Iterable, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Array: ...
+@overload
+def divide(dividend, divisor, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+
+divide_checked = divide
+
+@overload
+def exp(exponent: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+@overload
+def exp(exponent, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+@overload
+def multiply(x: Iterable, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+@overload
+def multiply(x, y: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+@overload
+def multiply(x, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+
+multiply_checked = multiply
+
+@overload
+def negate(x: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+@overload
+def negate(x, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+
+negate_checked = negate
+
+@overload
+def power(
+    base: Iterable, exponent, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Array: ...
+@overload
+def power(
+    base, exponent: Iterable, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Array: ...
+@overload
+def power(base, exponent, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+
+power_checked = power
+
+@overload
+def sign(x: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+@overload
+def sign(x, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+@overload
+def sqrt(x: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+@overload
+def sqrt(x, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+
+sqrt_checked = sqrt
+
+@overload
+def subtract(x: Iterable, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+@overload
+def subtract(x, y: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+@overload
+def subtract(x, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+
+subtract_checked = subtract
