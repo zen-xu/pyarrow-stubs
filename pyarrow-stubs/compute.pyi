@@ -162,6 +162,20 @@ _NumericScalar: TypeAlias = (
 )
 _NumericScalarT = TypeVar("_NumericScalarT", bound=_NumericScalar)
 _NumericArrayT = TypeVar("_NumericArrayT", bound=lib.NumericArray)
+_FloatScalarT = TypeVar(
+    "_FloatScalarT",
+    bound=lib.Scalar[lib.Float32Type]
+    | lib.Scalar[lib.Float64Type]
+    | lib.Scalar[lib.Decimal128Type]
+    | lib.Scalar[lib.Decimal256Type],
+)
+_FloatArrayT = TypeVar(
+    "_FloatArrayT",
+    bound=lib.Array[lib.FloatScalar]
+    | lib.Array[lib.DoubleScalar]
+    | lib.Array[lib.Decimal128Scalar]
+    | lib.Array[lib.Decimal256Scalar],
+)
 BinaryScalar: TypeAlias = (
     lib.Scalar[lib.BinaryType]
     | lib.Scalar[lib.LargeBinaryType]
@@ -464,3 +478,161 @@ shift_left = bit_wise_and
 shift_left_checked = bit_wise_and
 shift_right = bit_wise_and
 shift_right_checked = bit_wise_and
+
+# ========================= 2.2 Rounding functions =========================
+@overload
+def ceil(x: _FloatScalarT, /, *, memory_pool: lib.MemoryPool | None = None) -> _FloatScalarT: ...
+@overload
+def ceil(x: _FloatArrayT, /, *, memory_pool: lib.MemoryPool | None = None) -> _FloatArrayT: ...
+
+floor = ceil
+
+@overload
+def round(
+    x: _NumericScalarT,
+    /,
+    ndigits: int = 0,
+    round_mode: Literal[
+        "down",
+        "up",
+        "towards_zero",
+        "towards_infinity",
+        "half_down",
+        "half_up",
+        "half_towards_zero",
+        "half_towards_infinity",
+        "half_to_even",
+        "half_to_odd",
+    ] = "half_to_even",
+    *,
+    options: RoundOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericScalarT: ...
+@overload
+def round(
+    x: _NumericArrayT,
+    /,
+    ndigits: int = 0,
+    round_mode: Literal[
+        "down",
+        "up",
+        "towards_zero",
+        "towards_infinity",
+        "half_down",
+        "half_up",
+        "half_towards_zero",
+        "half_towards_infinity",
+        "half_to_even",
+        "half_to_odd",
+    ] = "half_to_even",
+    *,
+    options: RoundOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericArrayT: ...
+@overload
+def round_to_multiple(
+    x: _NumericScalarT,
+    /,
+    multiple: int = 0,
+    round_mode: Literal[
+        "down",
+        "up",
+        "towards_zero",
+        "towards_infinity",
+        "half_down",
+        "half_up",
+        "half_towards_zero",
+        "half_towards_infinity",
+        "half_to_even",
+        "half_to_odd",
+    ] = "half_to_even",
+    *,
+    options: RoundToMultipleOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericScalarT: ...
+@overload
+def round_to_multiple(
+    x: _NumericArrayT,
+    /,
+    multiple: int = 0,
+    round_mode: Literal[
+        "down",
+        "up",
+        "towards_zero",
+        "towards_infinity",
+        "half_down",
+        "half_up",
+        "half_towards_zero",
+        "half_towards_infinity",
+        "half_to_even",
+        "half_to_odd",
+    ] = "half_to_even",
+    *,
+    options: RoundToMultipleOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericArrayT: ...
+@overload
+def round_binary(
+    x: _NumericScalarT,
+    s: int | lib.Int8Scalar | lib.Int16Scalar | lib.Int32Scalar | lib.Int64Scalar,
+    /,
+    round_mode: Literal[
+        "down",
+        "up",
+        "towards_zero",
+        "towards_infinity",
+        "half_down",
+        "half_up",
+        "half_towards_zero",
+        "half_towards_infinity",
+        "half_to_even",
+        "half_to_odd",
+    ] = "half_to_even",
+    *,
+    options: RoundBinaryOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericScalarT: ...
+@overload
+def round_binary(
+    x: _NumericScalarT,
+    s: Iterable,
+    /,
+    round_mode: Literal[
+        "down",
+        "up",
+        "towards_zero",
+        "towards_infinity",
+        "half_down",
+        "half_up",
+        "half_towards_zero",
+        "half_towards_infinity",
+        "half_to_even",
+        "half_to_odd",
+    ] = "half_to_even",
+    *,
+    options: RoundBinaryOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[_NumericScalarT]: ...
+@overload
+def round_binary(
+    x: _NumericArrayT,
+    s: int | lib.Int8Scalar | lib.Int16Scalar | lib.Int32Scalar | lib.Int64Scalar | Iterable,
+    /,
+    round_mode: Literal[
+        "down",
+        "up",
+        "towards_zero",
+        "towards_infinity",
+        "half_down",
+        "half_up",
+        "half_towards_zero",
+        "half_towards_infinity",
+        "half_to_even",
+        "half_to_odd",
+    ] = "half_to_even",
+    *,
+    options: RoundBinaryOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericArrayT: ...
+
+trunc = ceil
