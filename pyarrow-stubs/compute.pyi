@@ -84,6 +84,7 @@ from pyarrow._compute import register_vector_function as register_vector_functio
 from pyarrow._stubs_typing import Indices
 
 from . import lib
+import typing_extensions
 
 def cast(
     arr: lib.Array,
@@ -193,21 +194,20 @@ _NumericDurationArrayT = TypeVar(
 _NumericTemporalArrayT = TypeVar(
     "_NumericTemporalArrayT", bound=lib.NumericArray | lib.Array[_TemporalScalar]
 )
-
-_FloatScalarT = TypeVar(
-    "_FloatScalarT",
-    bound=lib.Scalar[lib.Float32Type]
+_FloatScalar: typing_extensions.TypeAlias = (
+    lib.Scalar[lib.Float32Type]
     | lib.Scalar[lib.Float64Type]
     | lib.Scalar[lib.Decimal128Type]
-    | lib.Scalar[lib.Decimal256Type],
+    | lib.Scalar[lib.Decimal256Type]
 )
-_FloatArrayT = TypeVar(
-    "_FloatArrayT",
-    bound=lib.Array[lib.FloatScalar]
+_FloatScalarT = TypeVar("_FloatScalarT", bound=_FloatScalar)
+_FloatArray: typing_extensions.TypeAlias = (
+    lib.Array[lib.FloatScalar]
     | lib.Array[lib.DoubleScalar]
     | lib.Array[lib.Decimal128Scalar]
-    | lib.Array[lib.Decimal256Scalar],
+    | lib.Array[lib.Decimal256Scalar]
 )
+_FloatArrayT = TypeVar("_FloatArrayT", bound=_FloatArray)
 _ScalarT = TypeVar("_ScalarT", bound=lib.Scalar)
 # =============================== 1. Aggregation ===============================
 
@@ -688,3 +688,39 @@ def round_binary(
 ) -> _NumericArrayT: ...
 
 trunc = ceil
+
+# ========================= 2.3 Logarithmic functions =========================
+@overload
+def ln(x: _FloatScalarT, /, *, memory_pool: lib.MemoryPool | None = None) -> _FloatScalarT: ...
+@overload
+def ln(x: _FloatArrayT, /, *, memory_pool: lib.MemoryPool | None = None) -> _FloatArrayT: ...
+
+ln_checked = ln
+log10 = ln
+log10_checked = ln
+log1p = ln
+log1p_checked = ln
+log2 = ln
+log2_checked = ln
+
+@overload
+def logb(
+    x: _FloatScalarT, b: _FloatScalarT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _FloatScalarT: ...
+@overload
+def logb(
+    x: _FloatArrayT, b: _FloatArrayT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _FloatArrayT: ...
+@overload
+def logb(
+    x: _FloatScalar | Iterable,
+    b: _FloatScalar | Iterable,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.NumericArray: ...
+def logb(
+    x: _FloatScalar, b: _FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericScalar: ...
+
+logb_checked = logb
