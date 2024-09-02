@@ -145,7 +145,7 @@ def scalar(value: bool | float | str) -> Expression: ...
 
 # ============= compute functions =============
 _DataTypeT = TypeVar("_DataTypeT", bound=lib.DataType)
-NumericScalar: TypeAlias = (
+_NumericScalar: TypeAlias = (
     lib.Scalar[lib.Int8Type]
     | lib.Scalar[lib.Int16Type]
     | lib.Scalar[lib.Int32Type]
@@ -160,6 +160,8 @@ NumericScalar: TypeAlias = (
     | lib.Scalar[lib.Decimal128Type]
     | lib.Scalar[lib.Decimal256Type]
 )
+_NumericScalarT = TypeVar("_NumericScalarT", bound=_NumericScalar)
+_NumericArrayT = TypeVar("_NumericArrayT", bound=lib.NumericArray)
 BinaryScalar: TypeAlias = (
     lib.Scalar[lib.BinaryType]
     | lib.Scalar[lib.LargeBinaryType]
@@ -283,7 +285,7 @@ def product(
     min_count=1,
     options=None,
     memory_pool: lib.MemoryPool | None = None,
-) -> NumericScalar: ...
+) -> _NumericScalar: ...
 def quantile(
     array,
     /,
@@ -313,7 +315,7 @@ def sum(
     min_count: int = 1,
     options: ScalarAggregateOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> NumericScalar: ...
+) -> _NumericScalar: ...
 def tdigest(
     array,
     /,
@@ -421,3 +423,44 @@ def subtract(x, y: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) ->
 def subtract(x, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
 
 subtract_checked = subtract
+
+# ========================= 2.1 Bit-wise functions =========================
+@overload
+def bit_wise_and(
+    x: _NumericScalarT, y: _NumericScalarT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericScalarT: ...
+@overload
+def bit_wise_and(
+    x: _NumericArrayT,
+    y: _NumericArrayT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericArrayT: ...
+@overload
+def bit_wise_and(
+    x: _NumericScalar, y: _NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericScalar: ...
+@overload
+def bit_wise_and(
+    x: lib.NumericArray | _NumericScalar,
+    y: lib.NumericArray | _NumericScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.NumericArray: ...
+@overload
+def bit_wise_not(
+    x: _NumericScalarT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericScalarT: ...
+@overload
+def bit_wise_not(
+    x: _NumericArrayT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericArrayT: ...
+
+bit_wise_or = bit_wise_and
+bit_wise_xor = bit_wise_and
+shift_left = bit_wise_and
+shift_left_checked = bit_wise_and
+shift_right = bit_wise_and
+shift_right_checked = bit_wise_and
