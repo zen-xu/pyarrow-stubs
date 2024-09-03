@@ -1,6 +1,7 @@
-# mypy: disable-error-code="misc,type-var"
+# mypy: disable-error-code="misc,type-var,var-annotated"
 # ruff: noqa: I001
-from typing import Literal, Sequence, TypeAlias, TypeVar, overload, Any, Iterable
+from typing import Literal, TypeAlias, TypeVar, overload, Any, Iterable, ParamSpec
+from collections.abc import Callable
 
 # Option classes
 from pyarrow._compute import ArraySortOptions as ArraySortOptions
@@ -81,72 +82,18 @@ from pyarrow._compute import register_aggregate_function as register_aggregate_f
 from pyarrow._compute import register_scalar_function as register_scalar_function
 from pyarrow._compute import register_tabular_function as register_tabular_function
 from pyarrow._compute import register_vector_function as register_vector_function
-from pyarrow._stubs_typing import Indices
 
 from . import lib
 import typing_extensions
 
-def cast(
-    arr: lib.Array,
-    target_type: str | lib.DataType,
-    safe: bool = True,
-    options: CastOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Array: ...
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
 
-_DataT = TypeVar("_DataT", bound=lib.Array | lib.ChunkedArray | lib.RecordBatch | lib.Table)
-
-def take(
-    data: _DataT,
-    indices: Indices,
-    *,
-    boundscheck: bool = True,
-    memory_pool: lib.MemoryPool | None = None,
-) -> _DataT: ...
-def fill_null(values: _DataT, fill_value: lib.Array | lib.ChunkedArray | lib.Scalar) -> _DataT: ...
-@overload
-def top_k_unstable(
-    values: lib.Array | lib.ChunkedArray | lib.RecordBatch,
-    k: int,
-    *,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Array: ...
-@overload
-def top_k_unstable(
-    values: lib.Table,
-    k: int,
-    sort_keys: Sequence[str],
-    *,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Array: ...
-@overload
-def bottom_k_unstable(
-    values: lib.Array | lib.ChunkedArray | lib.RecordBatch,
-    k: int,
-    *,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Array: ...
-@overload
-def bottom_k_unstable(
-    values: lib.Table,
-    k: int,
-    sort_keys: Sequence[str],
-    *,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.Array: ...
-def random(
-    n: int,
-    *,
-    initializer: Literal["system"] | int = "system",
-    options: RandomOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.DoubleArray: ...
-def field(*name_or_index: str | tuple[str, ...] | int) -> Expression: ...
-def scalar(value: bool | float | str) -> Expression: ...
+def _clone_signature(f: Callable[_P, _R]) -> Callable[_P, _R]: ...
 
 # ============= compute functions =============
 _DataTypeT = TypeVar("_DataTypeT", bound=lib.DataType)
-_NumericScalar: TypeAlias = (
+NumericScalar: TypeAlias = (
     lib.Scalar[lib.Int8Type]
     | lib.Scalar[lib.Int16Type]
     | lib.Scalar[lib.Int32Type]
@@ -161,7 +108,6 @@ _NumericScalar: TypeAlias = (
     | lib.Scalar[lib.Decimal128Type]
     | lib.Scalar[lib.Decimal256Type]
 )
-
 BinaryScalar: TypeAlias = (
     lib.Scalar[lib.BinaryType]
     | lib.Scalar[lib.LargeBinaryType]
@@ -175,7 +121,7 @@ ListScalar: TypeAlias = (
     | lib.LargeListViewScalar[_DataTypeT]
     | lib.FixedSizeListScalar[_DataTypeT, Any]
 )
-_TemporalScalar: TypeAlias = (
+TemporalScalar: TypeAlias = (
     lib.Date32Scalar
     | lib.Date64Scalar
     | lib.Time32Scalar
@@ -184,37 +130,39 @@ _TemporalScalar: TypeAlias = (
     | lib.DurationScalar
     | lib.MonthDayNanoIntervalScalar
 )
-_NumericT = TypeVar("_NumericT", bound=_NumericScalar)
-_NumericDurationT = TypeVar("_NumericDurationT", bound=_NumericScalar | lib.DurationScalar)
-_NumericTemporalT = TypeVar("_NumericTemporalT", bound=_NumericScalar | _TemporalScalar)
+_NumericScalarT = TypeVar("_NumericScalarT", bound=NumericScalar)
+NumericOrDurationScalar: TypeAlias = NumericScalar | lib.DurationScalar
+_NumericOrDurationT = TypeVar("_NumericOrDurationT", bound=NumericOrDurationScalar)
+NumericOrTemporalScalar: TypeAlias = NumericScalar | TemporalScalar
+_NumericOrTemporalT = TypeVar("_NumericOrTemporalT", bound=NumericOrTemporalScalar)
+NumericArray: TypeAlias = lib.NumericArray
 _NumericArrayT = TypeVar("_NumericArrayT", bound=lib.NumericArray)
-_NumericDurationArrayT = TypeVar(
-    "_NumericDurationArrayT", bound=lib.NumericArray | lib.Array[lib.DurationScalar]
-)
-_NumericTemporalArrayT = TypeVar(
-    "_NumericTemporalArrayT", bound=lib.NumericArray | lib.Array[_TemporalScalar]
-)
-_FloatScalar: typing_extensions.TypeAlias = (
+NumericOrDurationArray: TypeAlias = lib.NumericArray | lib.Array[lib.DurationScalar]
+_NumericOrDurationArrayT = TypeVar("_NumericOrDurationArrayT", bound=NumericOrDurationArray)
+NumericOrTemporalArray: TypeAlias = lib.NumericArray | lib.Array[TemporalScalar]
+_NumericOrTemporalArrayT = TypeVar("_NumericOrTemporalArrayT", bound=NumericOrTemporalArray)
+FloatScalar: typing_extensions.TypeAlias = (
     lib.Scalar[lib.Float32Type]
     | lib.Scalar[lib.Float64Type]
     | lib.Scalar[lib.Decimal128Type]
     | lib.Scalar[lib.Decimal256Type]
 )
-_FloatScalarT = TypeVar("_FloatScalarT", bound=_FloatScalar)
-_FloatArray: typing_extensions.TypeAlias = (
-    lib.Array[lib.FloatScalar]
-    | lib.Array[lib.DoubleScalar]
-    | lib.Array[lib.Decimal128Scalar]
-    | lib.Array[lib.Decimal256Scalar]
+_FloatScalarT = TypeVar("_FloatScalarT", bound=FloatScalar)
+FloatArray: typing_extensions.TypeAlias = (
+    lib.NumericArray[lib.FloatScalar]
+    | lib.NumericArray[lib.DoubleScalar]
+    | lib.NumericArray[lib.Decimal128Scalar]
+    | lib.NumericArray[lib.Decimal256Scalar]
 )
-_FloatArrayT = TypeVar("_FloatArrayT", bound=_FloatArray)
+_FloatArrayT = TypeVar("_FloatArrayT", bound=FloatArray)
 _ScalarT = TypeVar("_ScalarT", bound=lib.Scalar)
+
 # =============================== 1. Aggregation ===============================
 
 # ========================= 1.1 functions =========================
 
 def all(
-    array: lib.BooleanArray | lib.BooleanScalar,
+    array: lib.BooleanScalar | lib.BooleanArray,
     /,
     *,
     skip_nulls: bool = True,
@@ -223,10 +171,10 @@ def all(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanScalar: ...
 
-any = all
+any = _clone_signature(all)
 
 def approximate_median(
-    array: lib.NumericArray | _NumericScalar,
+    array: NumericScalar | lib.NumericArray,
     /,
     *,
     skip_nulls: bool = True,
@@ -277,13 +225,13 @@ def index(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Scalar: ...
 
-last = first
-max = first
-min = first
-min_max = first_last
+last = _clone_signature(first)
+max = _clone_signature(first)
+min = _clone_signature(first)
+min_max = _clone_signature(first_last)
 
 def mean(
-    array: lib.NumericArray,
+    array: NumericScalar | lib.NumericArray,
     /,
     *,
     skip_nulls: bool = True,
@@ -292,7 +240,7 @@ def mean(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.DoubleScalar | lib.Decimal128Scalar: ...
 def mode(
-    array: lib.NumericArray,
+    array: NumericScalar | lib.NumericArray,
     /,
     n: int = 1,
     *,
@@ -302,7 +250,7 @@ def mode(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.StructArray: ...
 def product(
-    array: lib.NumericArray[_ScalarT],
+    array: _ScalarT | lib.NumericArray[_ScalarT],
     /,
     *,
     skip_nulls=True,
@@ -311,7 +259,7 @@ def product(
     memory_pool: lib.MemoryPool | None = None,
 ) -> _ScalarT: ...
 def quantile(
-    array: lib.NumericArray,
+    array: NumericScalar | lib.NumericArray,
     /,
     q: float = 0.5,
     *,
@@ -322,7 +270,7 @@ def quantile(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.DoubleArray: ...
 def stddev(
-    array: lib.NumericArray,
+    array: NumericScalar | lib.NumericArray,
     /,
     *,
     ddof: float = 0,
@@ -332,16 +280,16 @@ def stddev(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.DoubleScalar: ...
 def sum(
-    array: _NumericT,
+    array: _NumericScalarT | lib.NumericArray[_NumericScalarT],
     /,
     *,
     skip_nulls: bool = True,
     min_count: int = 1,
     options: ScalarAggregateOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> _NumericT: ...
+) -> _NumericScalarT: ...
 def tdigest(
-    array: lib.NumericArray,
+    array: NumericScalar | lib.NumericArray,
     /,
     q: float = 0.5,
     *,
@@ -353,7 +301,7 @@ def tdigest(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.DoubleArray: ...
 def variance(
-    array: lib.NumericArray,
+    array: NumericScalar | lib.NumericArray,
     /,
     *,
     ddof: int = 0,
@@ -368,135 +316,154 @@ def variance(
 # ========================= 2.1 Arithmetic =========================
 @overload
 def abs(
-    x: _NumericDurationT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericDurationT: ...
+    x: _NumericOrDurationT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericOrDurationT: ...
 @overload
 def abs(
-    x: _NumericDurationArrayT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericDurationArrayT: ...
+    x: _NumericOrDurationArrayT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericOrDurationArrayT: ...
 
-abs_checked = abs
+abs_checked = _clone_signature(abs)
 
 @overload
 def add(
-    x: _NumericTemporalT, y: _NumericTemporalT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericTemporalT: ...
+    x: _NumericOrTemporalT, y: _NumericOrTemporalT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericOrTemporalT: ...
 @overload
 def add(
-    x: _NumericTemporalArrayT,
-    y: _NumericTemporalArrayT,
+    x: _NumericOrTemporalArrayT,
+    y: _NumericOrTemporalArrayT,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> _NumericTemporalArrayT: ...
+) -> _NumericOrTemporalArrayT: ...
 @overload
-def add(x: Iterable, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+def add(
+    x: NumericScalar, y: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> NumericScalar: ...
 @overload
-def add(x, y: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
+def add(
+    x: TemporalScalar, y: TemporalScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> TemporalScalar: ...
 @overload
-def add(x, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+def add(
+    x: NumericOrTemporalArray | NumericOrTemporalScalar,
+    y: NumericOrTemporalArray | NumericOrTemporalScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> NumericOrTemporalArray: ...
 
-add_checked = add
+add_checked = _clone_signature(add)
 
 @overload
 def divide(
-    dividend: Iterable, divisor, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.Array: ...
+    dividend: NumericScalar,
+    divisor: NumericScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> NumericScalar: ...
 @overload
 def divide(
-    dividend, divisor: Iterable, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.Array: ...
-@overload
-def divide(dividend, divisor, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
-
-divide_checked = divide
-
-@overload
-def exp(exponent: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
-@overload
-def exp(exponent, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
-@overload
-def multiply(
-    x: _NumericTemporalT, y: _NumericTemporalT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericTemporalT: ...
-@overload
-def multiply(
-    x: _NumericTemporalArrayT,
-    y: _NumericTemporalArrayT,
+    dividend: TemporalScalar,
+    divisor: TemporalScalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> _NumericTemporalArrayT: ...
+) -> TemporalScalar: ...
 @overload
-def multiply(x: Iterable, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
-@overload
-def multiply(x, y: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
-@overload
-def multiply(x, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
-
-multiply_checked = multiply
-
-@overload
-def negate(
-    x: _NumericDurationT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericDurationT: ...
-@overload
-def negate(
-    x: _NumericDurationArrayT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericDurationArrayT: ...
-
-negate_checked = negate
-
-@overload
-def power(
-    base: Iterable, exponent, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.Array: ...
-@overload
-def power(
-    base, exponent: Iterable, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.Array: ...
-@overload
-def power(base, exponent, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
-
-power_checked = power
-
-@overload
-def sign(x: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
-@overload
-def sign(x, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
-@overload
-def sqrt(x: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
-@overload
-def sqrt(x, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
-
-sqrt_checked = sqrt
-
-@overload
-def subtract(
-    x: _NumericTemporalT, y: _NumericTemporalT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericTemporalT: ...
-@overload
-def subtract(
-    x: _NumericTemporalArrayT,
-    y: _NumericTemporalArrayT,
+def divide(
+    dividend: NumericOrTemporalArray | NumericOrTemporalScalar,
+    divisor: NumericOrTemporalArray | NumericOrTemporalScalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> _NumericTemporalArrayT: ...
-@overload
-def subtract(x: Iterable, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
-@overload
-def subtract(x, y: Iterable, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Array: ...
-@overload
-def subtract(x, y, /, *, memory_pool: lib.MemoryPool | None = None) -> lib.Scalar: ...
+) -> NumericArray: ...
 
-subtract_checked = subtract
+divide_checked = _clone_signature(divide)
+
+@overload
+def exp(
+    exponent: NumericArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.FloatArray | lib.DoubleArray: ...
+@overload
+def exp(
+    exponent: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.FloatScalar | lib.DoubleScalar: ...
+
+multiply = _clone_signature(add)
+multiply_checked = _clone_signature(multiply)
+
+@overload
+def negate(
+    x: _NumericOrDurationT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericOrDurationT: ...
+@overload
+def negate(
+    x: _NumericOrDurationArrayT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericOrDurationArrayT: ...
+
+negate_checked = _clone_signature(negate)
+
+@overload
+def power(
+    base: _NumericScalarT,
+    exponent: _NumericScalarT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericScalarT: ...
+@overload
+def power(
+    base: NumericScalar, exponent: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> NumericScalar: ...
+@overload
+def power(
+    base: _NumericArrayT,
+    exponent: _NumericArrayT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericArrayT: ...
+@overload
+def power(
+    base: NumericScalar | NumericArray,
+    exponent: NumericScalar | NumericArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> NumericArray: ...
+
+power_checked = _clone_signature(power)
+
+@overload
+def sign(
+    x: NumericOrDurationArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> (
+    lib.NumericArray[lib.Int8Scalar]
+    | lib.NumericArray[lib.FloatScalar]
+    | lib.NumericArray[lib.DoubleScalar]
+): ...
+@overload
+def sign(
+    x: NumericOrDurationScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int8Scalar | lib.FloatScalar | lib.DoubleScalar: ...
+@overload
+def sqrt(x: NumericArray, /, *, memory_pool: lib.MemoryPool | None = None) -> FloatArray: ...
+@overload
+def sqrt(x: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None) -> FloatScalar: ...
+
+sqrt_checked = _clone_signature(sqrt)
+
+subtract = _clone_signature(add)
+subtract_checked = _clone_signature(subtract)
 
 # ========================= 2.1 Bit-wise functions =========================
 @overload
 def bit_wise_and(
-    x: _NumericT, y: _NumericT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericT: ...
+    x: _NumericScalarT, y: _NumericScalarT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericScalarT: ...
 @overload
 def bit_wise_and(
     x: _NumericArrayT,
@@ -507,29 +474,31 @@ def bit_wise_and(
 ) -> _NumericArrayT: ...
 @overload
 def bit_wise_and(
-    x: _NumericScalar, y: _NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericScalar: ...
+    x: NumericScalar, y: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> NumericScalar: ...
 @overload
 def bit_wise_and(
-    x: lib.NumericArray | _NumericScalar,
-    y: lib.NumericArray | _NumericScalar,
+    x: NumericArray | NumericScalar,
+    y: NumericArray | NumericScalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.NumericArray: ...
+) -> NumericArray: ...
 @overload
-def bit_wise_not(x: _NumericT, /, *, memory_pool: lib.MemoryPool | None = None) -> _NumericT: ...
+def bit_wise_not(
+    x: _NumericScalarT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericScalarT: ...
 @overload
 def bit_wise_not(
     x: _NumericArrayT, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> _NumericArrayT: ...
 
-bit_wise_or = bit_wise_and
-bit_wise_xor = bit_wise_and
-shift_left = bit_wise_and
-shift_left_checked = bit_wise_and
-shift_right = bit_wise_and
-shift_right_checked = bit_wise_and
+bit_wise_or = _clone_signature(bit_wise_and)
+bit_wise_xor = _clone_signature(bit_wise_and)
+shift_left = _clone_signature(bit_wise_and)
+shift_left_checked = _clone_signature(bit_wise_and)
+shift_right = _clone_signature(bit_wise_and)
+shift_right_checked = _clone_signature(bit_wise_and)
 
 # ========================= 2.2 Rounding functions =========================
 @overload
@@ -537,11 +506,11 @@ def ceil(x: _FloatScalarT, /, *, memory_pool: lib.MemoryPool | None = None) -> _
 @overload
 def ceil(x: _FloatArrayT, /, *, memory_pool: lib.MemoryPool | None = None) -> _FloatArrayT: ...
 
-floor = ceil
+floor = _clone_signature(ceil)
 
 @overload
 def round(
-    x: _NumericT,
+    x: _NumericScalarT,
     /,
     ndigits: int = 0,
     round_mode: Literal[
@@ -559,7 +528,7 @@ def round(
     *,
     options: RoundOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> _NumericT: ...
+) -> _NumericScalarT: ...
 @overload
 def round(
     x: _NumericArrayT,
@@ -583,7 +552,7 @@ def round(
 ) -> _NumericArrayT: ...
 @overload
 def round_to_multiple(
-    x: _NumericT,
+    x: _NumericScalarT,
     /,
     multiple: int = 0,
     round_mode: Literal[
@@ -601,7 +570,7 @@ def round_to_multiple(
     *,
     options: RoundToMultipleOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> _NumericT: ...
+) -> _NumericScalarT: ...
 @overload
 def round_to_multiple(
     x: _NumericArrayT,
@@ -625,7 +594,7 @@ def round_to_multiple(
 ) -> _NumericArrayT: ...
 @overload
 def round_binary(
-    x: _NumericT,
+    x: _NumericScalarT,
     s: int | lib.Int8Scalar | lib.Int16Scalar | lib.Int32Scalar | lib.Int64Scalar,
     /,
     round_mode: Literal[
@@ -643,10 +612,10 @@ def round_binary(
     *,
     options: RoundBinaryOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> _NumericT: ...
+) -> _NumericScalarT: ...
 @overload
 def round_binary(
-    x: _NumericT,
+    x: _NumericScalarT,
     s: Iterable,
     /,
     round_mode: Literal[
@@ -664,7 +633,7 @@ def round_binary(
     *,
     options: RoundBinaryOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.Array[_NumericT]: ...
+) -> lib.NumericArray[_NumericScalarT]: ...
 @overload
 def round_binary(
     x: _NumericArrayT,
@@ -687,40 +656,77 @@ def round_binary(
     memory_pool: lib.MemoryPool | None = None,
 ) -> _NumericArrayT: ...
 
-trunc = ceil
+trunc = _clone_signature(ceil)
 
 # ========================= 2.3 Logarithmic functions =========================
 @overload
-def ln(x: _FloatScalarT, /, *, memory_pool: lib.MemoryPool | None = None) -> _FloatScalarT: ...
+def ln(
+    x: FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.FloatScalar | lib.DoubleScalar: ...
 @overload
-def ln(x: _FloatArrayT, /, *, memory_pool: lib.MemoryPool | None = None) -> _FloatArrayT: ...
+def ln(
+    x: FloatArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
 
-ln_checked = ln
-log10 = ln
-log10_checked = ln
-log1p = ln
-log1p_checked = ln
-log2 = ln
-log2_checked = ln
+ln_checked = _clone_signature(ln)
+log10 = _clone_signature(ln)
+log10_checked = _clone_signature(ln)
+log1p = _clone_signature(ln)
+log1p_checked = _clone_signature(ln)
+log2 = _clone_signature(ln)
+log2_checked = _clone_signature(ln)
 
 @overload
 def logb(
-    x: _FloatScalarT, b: _FloatScalarT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _FloatScalarT: ...
+    x: FloatScalar, b: FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.FloatScalar | lib.DoubleScalar: ...
 @overload
 def logb(
-    x: _FloatArrayT, b: _FloatArrayT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _FloatArrayT: ...
+    x: FloatArray, b: FloatArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
 @overload
 def logb(
-    x: _FloatScalar | Iterable,
-    b: _FloatScalar | Iterable,
+    x: FloatScalar | FloatArray,
+    b: FloatScalar | FloatArray,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.NumericArray: ...
+) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
 def logb(
-    x: _FloatScalar, b: _FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericScalar: ...
+    x: FloatScalar, b: FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.FloatScalar | lib.DoubleScalar: ...
 
-logb_checked = logb
+logb_checked = _clone_signature(logb)
+
+# ========================= 2.4 Trigonometric functions =========================
+acos = _clone_signature(ln)
+acos_checked = _clone_signature(ln)
+asin = _clone_signature(ln)
+asin_checked = _clone_signature(ln)
+atan = _clone_signature(ln)
+cos = _clone_signature(ln)
+cos_checked = _clone_signature(ln)
+sin = _clone_signature(ln)
+sin_checked = _clone_signature(ln)
+tan = _clone_signature(ln)
+tan_checked = _clone_signature(ln)
+
+@overload
+def atan2(
+    y: FloatScalar, x: FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.FloatScalar | lib.DoubleScalar: ...
+@overload
+def atan2(
+    y: FloatArray, x: FloatArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
+@overload
+def atan2(
+    y: FloatScalar | FloatArray,
+    x: FloatScalar | FloatArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
+def atan2(
+    y: FloatScalar, x: FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.FloatScalar | lib.DoubleScalar: ...
