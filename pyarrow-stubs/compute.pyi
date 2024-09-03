@@ -767,3 +767,36 @@ def max_element_wise(
 ) -> _ArrayT: ...
 
 min_element_wise = _clone_signature(equal)
+
+# ========================= 2.6 Logical functions =========================
+@overload
+def and_(
+    x: lib.BooleanScalar, y: lib.BooleanScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanScalar: ...
+@overload
+def and_(
+    x: lib.BooleanScalar | lib.BooleanArray,
+    y: lib.BooleanScalar | lib.BooleanArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+
+and_kleene = _clone_signature(and_)
+and_not = _clone_signature(and_)
+and_not_kleene = _clone_signature(and_)
+or_ = _clone_signature(and_)
+or_kleene = _clone_signature(and_)
+xor = _clone_signature(and_)
+
+@overload
+def invert(
+    x: lib.BooleanScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanScalar: ...
+@overload
+def invert(
+    x: lib.BooleanArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
