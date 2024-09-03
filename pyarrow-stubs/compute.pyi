@@ -156,7 +156,7 @@ FloatArray: typing_extensions.TypeAlias = (
 )
 _FloatArrayT = TypeVar("_FloatArrayT", bound=FloatArray)
 _ScalarT = TypeVar("_ScalarT", bound=lib.Scalar)
-
+_ArrayT = TypeVar("_ArrayT", bound=lib.Array)
 # =============================== 1. Aggregation ===============================
 
 # ========================= 1.1 functions =========================
@@ -730,3 +730,40 @@ def atan2(
 def atan2(
     y: FloatScalar, x: FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.FloatScalar | lib.DoubleScalar: ...
+
+# ========================= 2.5 Comparisons functions =========================
+@overload
+def equal(
+    x: lib.Scalar, y: lib.Scalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanScalar: ...
+@overload
+def equal(
+    x: lib.Scalar | lib.Array,
+    y: lib.Scalar | lib.Array,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+
+greater = _clone_signature(equal)
+greater_equal = _clone_signature(equal)
+less = _clone_signature(equal)
+less_equal = _clone_signature(equal)
+not_equal = _clone_signature(equal)
+
+@overload
+def max_element_wise(
+    *args: _ScalarT,
+    skip_nulls: bool = True,
+    options: ElementWiseAggregateOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _ScalarT: ...
+@overload
+def max_element_wise(
+    *args: _ArrayT,
+    skip_nulls: bool = True,
+    options: ElementWiseAggregateOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _ArrayT: ...
+
+min_element_wise = _clone_signature(equal)
