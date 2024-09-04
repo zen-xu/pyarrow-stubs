@@ -167,6 +167,7 @@ StringOrBinaryArray: TypeAlias = StringArray | BinaryArray
 _StringOrBinaryArrayT = TypeVar("_StringOrBinaryArrayT", bound=StringOrBinaryArray)
 _ScalarT = TypeVar("_ScalarT", bound=lib.Scalar)
 _ArrayT = TypeVar("_ArrayT", bound=lib.Array)
+_ScalarOrArrayT = TypeVar("_ScalarOrArrayT", bound=lib.Array | lib.Scalar)
 # =============================== 1. Aggregation ===============================
 
 # ========================= 1.1 functions =========================
@@ -1386,3 +1387,46 @@ def is_valid(
 ) -> lib.BooleanArray: ...
 
 true_unless_null = _clone_signature(is_valid)
+
+# ========================= 2.10 Selecting / multiplexing =========================
+def case_when(cond, /, *cases, memory_pool: lib.MemoryPool | None = None): ...
+def choose(indices, /, *values, memory_pool: lib.MemoryPool | None = None): ...
+def coalesce(
+    *values: _ScalarOrArrayT, memory_pool: lib.MemoryPool | None = None
+) -> _ScalarOrArrayT: ...
+def if_else(cond, left, right, /, *, memory_pool: lib.MemoryPool | None = None): ...
+
+# ========================= 2.11 Structural transforms =========================
+
+@overload
+def list_value_length(
+    lists: lib.ListArray | lib.ListViewArray | lib.FixedSizeListArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int32Array: ...
+@overload
+def list_value_length(
+    lists: lib.LargeListArray | lib.LargeListViewArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Array: ...
+@overload
+def make_struct(
+    *args: lib.Scalar,
+    field_names: list[str] | tuple[str, ...] = (),
+    field_nullability: bool | None = None,
+    field_metadata: list[lib.KeyValueMetadata] | None = None,
+    options: MakeStructOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.StructScalar: ...
+@overload
+def make_struct(
+    *args: lib.Array,
+    field_names: list[str] | tuple[str, ...] = (),
+    field_nullability: bool | None = None,
+    field_metadata: list[lib.KeyValueMetadata] | None = None,
+    options: MakeStructOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.StructArray: ...
