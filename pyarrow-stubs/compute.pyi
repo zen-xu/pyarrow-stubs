@@ -1344,3 +1344,45 @@ match_like = _clone_signature(ends_with)
 match_substring = _clone_signature(ends_with)
 match_substring_regex = _clone_signature(ends_with)
 starts_with = _clone_signature(ends_with)
+
+# ========================= 2.10 Categorizations =========================
+@overload
+def is_finite(
+    values: NumericScalar | lib.NullScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanScalar: ...
+@overload
+def is_finite(
+    values: NumericArray | lib.NullArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanArray: ...
+
+is_inf = _clone_signature(is_finite)
+is_nan = _clone_signature(is_finite)
+
+@overload
+def is_null(
+    values: lib.Scalar,
+    /,
+    *,
+    nan_is_null: bool = False,
+    options: NullOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanScalar: ...
+@overload
+def is_null(
+    values: lib.Array,
+    /,
+    *,
+    nan_is_null: bool = False,
+    options: NullOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+@overload
+def is_valid(
+    values: lib.Scalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanScalar: ...
+@overload
+def is_valid(
+    values: lib.Array, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanArray: ...
+
+true_unless_null = _clone_signature(is_valid)
