@@ -1047,3 +1047,52 @@ ascii_rpad = _clone_signature(ascii_center)
 utf8_center = _clone_signature(ascii_center)
 utf8_lpad = _clone_signature(ascii_center)
 utf8_rpad = _clone_signature(ascii_center)
+
+# ========================= 2.7 String trimming =========================
+@overload
+def ascii_ltrim(
+    strings: _StringScalarT,
+    /,
+    characters: str,
+    *,
+    options: TrimOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringScalarT: ...
+@overload
+def ascii_ltrim(
+    strings: _StringArrayT,
+    /,
+    characters: str,
+    *,
+    options: TrimOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringArrayT: ...
+
+ascii_rtrim = _clone_signature(ascii_ltrim)
+ascii_trim = _clone_signature(ascii_ltrim)
+utf8_ltrim = _clone_signature(ascii_ltrim)
+utf8_rtrim = _clone_signature(ascii_ltrim)
+utf8_trim = _clone_signature(ascii_ltrim)
+
+@overload
+def ascii_ltrim_whitespace(
+    strings: _StringScalarT,
+    /,
+    *,
+    options: TrimOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringScalarT: ...
+@overload
+def ascii_ltrim_whitespace(
+    strings: _StringArrayT,
+    /,
+    *,
+    options: TrimOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringArrayT: ...
+
+ascii_rtrim_whitespace = _clone_signature(ascii_ltrim_whitespace)
+ascii_trim_whitespace = _clone_signature(ascii_ltrim_whitespace)
+utf8_ltrim_whitespace = _clone_signature(ascii_ltrim_whitespace)
+utf8_rtrim_whitespace = _clone_signature(ascii_ltrim_whitespace)
+utf8_trim_whitespace = _clone_signature(ascii_ltrim_whitespace)
