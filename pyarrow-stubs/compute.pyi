@@ -1555,3 +1555,126 @@ def strptime(
     options: StrptimeOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.TimestampArray: ...
+
+# ========================= 2.11 Temporal component extraction =========================
+@overload
+def day(
+    values: TemporalScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int64Scalar: ...
+@overload
+def day(
+    values: TemporalArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int64Array: ...
+@overload
+def day_of_week(
+    values: TemporalScalar,
+    /,
+    *,
+    count_from_zero: bool = True,
+    week_start: int = 1,
+    options: DayOfWeekOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Scalar: ...
+@overload
+def day_of_week(
+    values: TemporalArray,
+    /,
+    *,
+    count_from_zero: bool = True,
+    week_start: int = 1,
+    options: DayOfWeekOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Array: ...
+
+day_of_year = _clone_signature(day)
+
+@overload
+def hour(
+    values: lib.TimestampScalar | lib.Time32Scalar | lib.Time64Scalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Scalar: ...
+@overload
+def hour(
+    values: lib.TimestampArray | lib.Time32Array | lib.Time64Array,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Array: ...
+@overload
+def is_dst(
+    values: lib.TimestampScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanScalar: ...
+@overload
+def is_dst(
+    values: lib.TimestampArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanArray: ...
+@overload
+def iso_week(
+    values: lib.TimestampScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int64Scalar: ...
+@overload
+def iso_week(
+    values: lib.TimestampArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int64Array: ...
+
+iso_year = _clone_signature(iso_week)
+
+@overload
+def is_leap_year(
+    values: lib.TimestampScalar | lib.Date32Scalar | lib.Date64Scalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanScalar: ...
+@overload
+def is_leap_year(
+    values: lib.TimestampArray | lib.Date32Array | lib.Date64Array,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+
+microsecond = _clone_signature(iso_week)
+millisecond = _clone_signature(iso_week)
+minute = _clone_signature(iso_week)
+month = _clone_signature(day_of_week)
+nanosecond = _clone_signature(hour)
+quarter = _clone_signature(day_of_week)
+second = _clone_signature(hour)
+subsecond = _clone_signature(hour)
+us_week = _clone_signature(iso_week)
+us_year = _clone_signature(iso_week)
+year = _clone_signature(iso_week)
+
+@overload
+def week(
+    values: lib.TimestampScalar,
+    /,
+    *,
+    week_starts_monday: bool = True,
+    count_from_zero: bool = False,
+    first_week_is_fully_in_year: bool = False,
+    options: WeekOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Scalar: ...
+@overload
+def week(
+    values: lib.TimestampArray,
+    /,
+    *,
+    week_starts_monday: bool = True,
+    count_from_zero: bool = False,
+    first_week_is_fully_in_year: bool = False,
+    options: WeekOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Array: ...
+@overload
+def year_month_day(
+    values: TemporalScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.StructScalar: ...
+@overload
+def year_month_day(
+    values: TemporalArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.StructArray: ...
