@@ -165,6 +165,17 @@ StringOrBinaryScalar: TypeAlias = StringScalar | BinaryScalar
 _StringOrBinaryScalarT = TypeVar("_StringOrBinaryScalarT", bound=StringOrBinaryScalar)
 StringOrBinaryArray: TypeAlias = StringArray | BinaryArray
 _StringOrBinaryArrayT = TypeVar("_StringOrBinaryArrayT", bound=StringOrBinaryArray)
+_TemporalScalarT = TypeVar("_TemporalScalarT", bound=TemporalScalar)
+TemporalArray: TypeAlias = (
+    lib.Date32Array
+    | lib.Date64Array
+    | lib.Time32Array
+    | lib.Time64Array
+    | lib.TimestampArray
+    | lib.DurationArray
+    | lib.MonthDayNanoIntervalArray
+)
+_TemporalArrayT = TypeVar("_TemporalArrayT", bound=TemporalArray)
 _ScalarT = TypeVar("_ScalarT", bound=lib.Scalar)
 _ArrayT = TypeVar("_ArrayT", bound=lib.Array)
 _ScalarOrArrayT = TypeVar("_ScalarOrArrayT", bound=lib.Array | lib.Scalar)
@@ -1430,3 +1441,117 @@ def make_struct(
     options: MakeStructOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.StructArray: ...
+
+# ========================= 2.11 Conversions =========================
+@overload
+def ceil_temporal(
+    timestamps: _TemporalScalarT,
+    /,
+    multiple: int = 1,
+    unit: Literal[
+        "year",
+        "quarter",
+        "month",
+        "week",
+        "day",
+        "hour",
+        "minute",
+        "second",
+        "millisecond",
+        "microsecond",
+        "nanosecond",
+    ] = "day",
+    *,
+    week_starts_monday: bool = True,
+    ceil_is_strictly_greater: bool = False,
+    calendar_based_origin: bool = False,
+    options: RoundTemporalOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _TemporalScalarT: ...
+@overload
+def ceil_temporal(
+    timestamps: _TemporalArrayT,
+    /,
+    multiple: int = 1,
+    unit: Literal[
+        "year",
+        "quarter",
+        "month",
+        "week",
+        "day",
+        "hour",
+        "minute",
+        "second",
+        "millisecond",
+        "microsecond",
+        "nanosecond",
+    ] = "day",
+    *,
+    week_starts_monday: bool = True,
+    ceil_is_strictly_greater: bool = False,
+    calendar_based_origin: bool = False,
+    options: RoundTemporalOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _TemporalArrayT: ...
+
+floor_temporal = _clone_signature(ceil_temporal)
+round_temporal = _clone_signature(ceil_temporal)
+
+@overload
+def cast(
+    arr: lib.Scalar,
+    target_type: _DataTypeT,
+    safe: bool | None = None,
+    options: CastOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Scalar[_DataTypeT]: ...
+@overload
+def cast(
+    arr: lib.Array,
+    target_type: _DataTypeT,
+    safe: bool | None = None,
+    options: CastOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[lib.Scalar[_DataTypeT]]: ...
+@overload
+def strftime(
+    timestamps: TemporalScalar,
+    /,
+    format: str = "%Y-%m-%dT%H:%M:%S",
+    locale: str = "C",
+    *,
+    options: StrftimeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.StringScalar: ...
+@overload
+def strftime(
+    timestamps: TemporalArray,
+    /,
+    format: str = "%Y-%m-%dT%H:%M:%S",
+    locale: str = "C",
+    *,
+    options: StrftimeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.StringArray: ...
+@overload
+def strptime(
+    strings: StringScalar,
+    /,
+    format: str,
+    unit: Literal["s", "ms", "us", "ns"],
+    error_is_null: bool = False,
+    *,
+    options: StrptimeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.TimestampScalar: ...
+@overload
+def strptime(
+    strings: StringArray,
+    /,
+    format: str,
+    unit: Literal["s", "ms", "us", "ns"],
+    error_is_null: bool = False,
+    *,
+    options: StrptimeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.TimestampArray: ...
