@@ -2,7 +2,7 @@
 
 [project]
 name = "pyarrow-stubs"
-version = "2024.9.3"
+version = "2024.9.4"
 description = "Type annotations for pyarrow"
 authors = [{ name = "ZhengYu, Xu", email = "zen-xu@outlook.com" }]
 license = "BSD-2-Clause"
