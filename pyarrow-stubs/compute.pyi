@@ -823,7 +823,7 @@ def invert(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
 
-# ========================= 2.7 String predicates =========================
+# ========================= 2.10 String predicates =========================
 @overload
 def ascii_is_alnum(
     strings: StringScalar, /, *, memory_pool: lib.MemoryPool | None = None
@@ -852,7 +852,7 @@ ascii_is_title = _clone_signature(ascii_is_alnum)
 utf8_is_title = _clone_signature(ascii_is_alnum)
 string_is_ascii = _clone_signature(ascii_is_alnum)
 
-# ========================= 2.7 String transforms =========================
+# ========================= 2.11 String transforms =========================
 @overload
 def ascii_capitalize(
     strings: _StringScalarT, /, *, memory_pool: lib.MemoryPool | None = None
@@ -1030,7 +1030,7 @@ utf8_swapcase = _clone_signature(utf8_capitalize)
 utf8_title = _clone_signature(utf8_capitalize)
 utf8_upper = _clone_signature(utf8_capitalize)
 
-# ========================= 2.7 String padding =========================
+# ========================= 2.12 String padding =========================
 @overload
 def ascii_center(
     strings: _StringScalarT,
@@ -1060,7 +1060,7 @@ utf8_center = _clone_signature(ascii_center)
 utf8_lpad = _clone_signature(ascii_center)
 utf8_rpad = _clone_signature(ascii_center)
 
-# ========================= 2.7 String trimming =========================
+# ========================= 2.13 String trimming =========================
 @overload
 def ascii_ltrim(
     strings: _StringScalarT,
@@ -1109,7 +1109,7 @@ utf8_ltrim_whitespace = _clone_signature(ascii_ltrim_whitespace)
 utf8_rtrim_whitespace = _clone_signature(ascii_ltrim_whitespace)
 utf8_trim_whitespace = _clone_signature(ascii_ltrim_whitespace)
 
-# ========================= 2.8 String splitting =========================
+# ========================= 2.14 String splitting =========================
 @overload
 def ascii_split_whitespace(
     strings: _StringScalarT,
@@ -1156,7 +1156,7 @@ def split_pattern(
 split_pattern_regex = _clone_signature(split_pattern)
 utf8_split_whitespace = _clone_signature(ascii_split_whitespace)
 
-# ========================= 2.9 String component extraction =========================
+# ========================= 2.15 String component extraction =========================
 @overload
 def extract_regex(
     strings: StringOrBinaryScalar,
@@ -1176,7 +1176,7 @@ def extract_regex(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.StructArray: ...
 
-# ========================= 2.9 String join =========================
+# ========================= 2.16 String join =========================
 def binary_join(
     strings, separator, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> StringScalar | StringArray: ...
@@ -1197,7 +1197,7 @@ def binary_join_element_wise(
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringOrBinaryArrayT: ...
 
-# ========================= 2.9 String Slicing =========================
+# ========================= 2.17 String Slicing =========================
 @overload
 def binary_slice(
     strings: _BinaryScalarT,
@@ -1243,7 +1243,7 @@ def utf8_slice_codeunits(
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringArrayT: ...
 
-# ========================= 2.10 Containment tests =========================
+# ========================= 2.18 Containment tests =========================
 @overload
 def count_substring(
     strings: lib.StringScalar | lib.BinaryScalar,
@@ -1357,7 +1357,7 @@ match_substring = _clone_signature(ends_with)
 match_substring_regex = _clone_signature(ends_with)
 starts_with = _clone_signature(ends_with)
 
-# ========================= 2.10 Categorizations =========================
+# ========================= 2.19 Categorizations =========================
 @overload
 def is_finite(
     values: NumericScalar | lib.NullScalar, /, *, memory_pool: lib.MemoryPool | None = None
@@ -1399,7 +1399,7 @@ def is_valid(
 
 true_unless_null = _clone_signature(is_valid)
 
-# ========================= 2.10 Selecting / multiplexing =========================
+# ========================= 2.20 Selecting / multiplexing =========================
 def case_when(cond, /, *cases, memory_pool: lib.MemoryPool | None = None): ...
 def choose(indices, /, *values, memory_pool: lib.MemoryPool | None = None): ...
 def coalesce(
@@ -1407,7 +1407,7 @@ def coalesce(
 ) -> _ScalarOrArrayT: ...
 def if_else(cond, left, right, /, *, memory_pool: lib.MemoryPool | None = None): ...
 
-# ========================= 2.11 Structural transforms =========================
+# ========================= 2.21 Structural transforms =========================
 
 @overload
 def list_value_length(
@@ -1442,7 +1442,7 @@ def make_struct(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.StructArray: ...
 
-# ========================= 2.11 Conversions =========================
+# ========================= 2.22 Conversions =========================
 @overload
 def ceil_temporal(
     timestamps: _TemporalScalarT,
@@ -1556,7 +1556,7 @@ def strptime(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.TimestampArray: ...
 
-# ========================= 2.11 Temporal component extraction =========================
+# ========================= 2.23 Temporal component extraction =========================
 @overload
 def day(
     values: TemporalScalar, /, *, memory_pool: lib.MemoryPool | None = None
@@ -1678,3 +1678,77 @@ def year_month_day(
 def year_month_day(
     values: TemporalArray, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.StructArray: ...
+
+# ========================= 2.24 Temporal difference =========================
+def day_time_interval_between(start, end, /, *, memory_pool: lib.MemoryPool | None = None): ...
+def days_between(
+    start, end, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int64Scalar | lib.Int64Array: ...
+
+hours_between = _clone_signature(days_between)
+microseconds_between = _clone_signature(days_between)
+milliseconds_between = _clone_signature(days_between)
+minutes_between = _clone_signature(days_between)
+
+def month_day_nano_interval_between(
+    start, end, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.MonthDayNanoIntervalScalar | lib.MonthDayNanoIntervalArray: ...
+def month_interval_between(start, end, /, *, memory_pool: lib.MemoryPool | None = None): ...
+
+nanoseconds_between = _clone_signature(days_between)
+quarters_between = _clone_signature(days_between)
+seconds_between = _clone_signature(days_between)
+
+def weeks_between(
+    start,
+    end,
+    /,
+    *,
+    count_from_zero: bool = True,
+    week_start: int = 1,
+    options: DayOfWeekOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Scalar | lib.Int64Array: ...
+
+years_between = _clone_signature(days_between)
+
+# ========================= 2.25 Timezone handling =========================
+@overload
+def assume_timezone(
+    timestamps: lib.TimestampScalar,
+    /,
+    timezone: str,
+    *,
+    ambiguous: Literal["raise", "earliest", "latest"] = "raise",
+    nonexistent: Literal["raise", "earliest", "latest"] = "raise",
+    options: AssumeTimezoneOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.TimestampScalar: ...
+@overload
+def assume_timezone(
+    timestamps: lib.TimestampArray,
+    /,
+    timezone: str,
+    *,
+    ambiguous: Literal["raise", "earliest", "latest"] = "raise",
+    nonexistent: Literal["raise", "earliest", "latest"] = "raise",
+    options: AssumeTimezoneOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.TimestampArray: ...
+@overload
+def local_timestamp(
+    timestamps: lib.TimestampScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.TimestampScalar: ...
+@overload
+def local_timestamp(
+    timestamps: lib.TimestampArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.TimestampArray: ...
+
+# ========================= 2.26 Random number generation =========================
+def random(
+    n: int,
+    *,
+    initializer: Literal["system"] | int = "system",
+    options: RandomOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.DoubleArray: ...
