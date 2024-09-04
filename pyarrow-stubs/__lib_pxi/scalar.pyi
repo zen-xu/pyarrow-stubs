@@ -1,4 +1,4 @@
-# mypy: disable-error-code="overload-overlap,misc"
+# mypy: disable-error-code="overload-overlap,misc,type-arg"
 import collections.abc
 import datetime as dt
 
@@ -282,6 +282,10 @@ def scalar(
 ) -> Decimal128Scalar: ...
 @overload
 def scalar(
+    value: dt.datetime, *, from_pandas: bool | None = None, memory_pool: MemoryPool | None = None
+) -> TimestampScalar: ...
+@overload
+def scalar(
     value: dt.date, *, from_pandas: bool | None = None, memory_pool: MemoryPool | None = None
 ) -> Date32Scalar: ...
 @overload
@@ -348,6 +352,13 @@ def scalar(
     from_pandas: bool | None = None,
     memory_pool: MemoryPool | None = None,
 ) -> ListScalar[types.ListType[types.Decimal128Type]]: ...
+@overload
+def scalar(
+    value: CollectionValue[dt.datetime],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> ListScalar[types.ListType[types.TimestampType]]: ...
 @overload
 def scalar(
     value: CollectionValue[dt.date],

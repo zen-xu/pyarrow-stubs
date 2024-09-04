@@ -1,4 +1,4 @@
-# mypy: disable-error-code="overload-overlap"
+# mypy: disable-error-code="overload-overlap,type-arg,misc"
 
 import datetime as dt
 
@@ -161,6 +161,11 @@ def chunked_array(
     values: NullableIterable[dict[str, Any]],
     type: None = None,
 ) -> ChunkedArray[scalar.StructScalar]: ...
+@overload
+def chunked_array(
+    values: NullableIterable[dt.datetime],
+    type: None = None,
+) -> ChunkedArray[scalar.TimestampScalar]: ...
 @overload
 def chunked_array(
     values: NullableIterable[dt.date],
