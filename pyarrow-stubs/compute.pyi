@@ -1752,3 +1752,191 @@ def random(
     options: RandomOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.DoubleArray: ...
+
+# ========================= 3. Array-wise (“vector”) functions =========================
+
+# ========================= 3.1 Cumulative Functions =========================
+
+def cumulative_sum(
+    values: _NumericArrayT,
+    /,
+    start: lib.Scalar | None = None,
+    *,
+    skip_nulls: bool = False,
+    options: CumulativeSumOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericArrayT: ...
+
+cumulative_sum_checked = _clone_signature(cumulative_sum)
+cumulative_prod = _clone_signature(cumulative_sum)
+cumulative_prod_checked = _clone_signature(cumulative_sum)
+cumulative_max = _clone_signature(cumulative_sum)
+cumulative_min = _clone_signature(cumulative_sum)
+cumulative_mean = _clone_signature(cumulative_sum)
+
+# ========================= 3.2 Associative transforms =========================
+
+def dictionary_encode(
+    array: _ScalarOrArrayT,
+    /,
+    null_encoding: Literal["mask", "encode"] = "mask",
+    *,
+    options=None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _ScalarOrArrayT: ...
+def unique(array: _ArrayT, /, *, memory_pool: lib.MemoryPool | None = None) -> _ArrayT: ...
+def value_counts(
+    array: lib.Array, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.StructArray: ...
+
+# ========================= 3.3 Selections =========================
+
+def array_filter(
+    array: _ArrayT,
+    selection_filter: list[bool] | list[bool | None] | lib.BooleanArray,
+    /,
+    null_selection_behavior: Literal["drop", "emit_null"] = "drop",
+    *,
+    options: FilterOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _ArrayT: ...
+def array_take(
+    array: _ArrayT,
+    indices: list[int] | list[int | None] | lib.Int16Array | lib.Int32Array | lib.Int64Array,
+    /,
+    *,
+    boundscheck: bool = True,
+    options: TakeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _ArrayT: ...
+def drop_null(input: _ArrayT, /, *, memory_pool: lib.MemoryPool | None = None) -> _ArrayT: ...
+
+filter = array_filter
+take = array_take
+
+# ========================= 3.4 Containment tests  =========================
+
+def indices_nonzero(
+    values: lib.BooleanArray
+    | lib.NullArray
+    | NumericArray
+    | lib.Decimal128Array
+    | lib.Decimal256Array,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.UInt64Array: ...
+
+# ========================= 3.5 Sorts and partitions  =========================
+def array_sort_indices(
+    array: lib.Array,
+    /,
+    order: Literal["ascending", "descending"] = "ascending",
+    *,
+    null_placement: Literal["at_start", "at_end"] = "at_end",
+    options: ArraySortOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.UInt64Array: ...
+def partition_nth_indices(
+    array: lib.Array,
+    /,
+    pivot: int,
+    *,
+    null_placement: Literal["at_start", "at_end"] = "at_end",
+    options: PartitionNthOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.UInt64Array: ...
+def rank(
+    input: lib.Array,
+    /,
+    sort_keys: Literal["ascending", "descending"] = "ascending",
+    *,
+    null_placement: Literal["at_start", "at_end"] = "at_end",
+    tiebreaker: Literal["min", "max", "first", "dense"] = "first",
+    options: RankOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.UInt64Array: ...
+def select_k_unstable(
+    input: lib.Array,
+    /,
+    k: int,
+    sort_keys: list[tuple[str, Literal["ascending", "descending"]]],
+    *,
+    options: SelectKOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.UInt64Array: ...
+def sort_indices(
+    array: lib.Array | lib.ChunkedArray | lib.RecordBatch | lib.Table,
+    /,
+    order: Literal["ascending", "descending"] = "ascending",
+    *,
+    null_placement: Literal["at_start", "at_end"] = "at_end",
+    options: SortOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.UInt64Array: ...
+
+# ========================= 3.6 Structural transforms =========================
+def list_element(
+    lists, index, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.ListArray: ...
+def list_flatten(
+    lists,
+    /,
+    recursive: bool = False,
+    *,
+    options: ListFlattenOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray: ...
+def list_parent_indices(
+    lists, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int64Array: ...
+def list_slice(
+    lists,
+    /,
+    start: int,
+    stop: int | None = None,
+    step: int = 1,
+    return_fixed_size_list: bool | None = None,
+    *,
+    options: ListSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray: ...
+def map_lookup(
+    container,
+    /,
+    query_key,
+    occurrence: str,
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+): ...
+def struct_field(
+    values,
+    /,
+    indices,
+    *,
+    options: StructFieldOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+): ...
+def fill_null_backward(values, /, *, memory_pool: lib.MemoryPool | None = None): ...
+def fill_null_forward(values, /, *, memory_pool: lib.MemoryPool | None = None): ...
+def replace_with_mask(
+    values,
+    mask: list[bool] | list[bool | None] | lib.BooleanArray,
+    replacements,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+): ...
+
+# ========================= 3.7 Pairwise functions =========================
+def pairwise_diff(
+    input: _NumericOrTemporalArrayT,
+    /,
+    period: int = 1,
+    *,
+    options: PairwiseOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericOrTemporalArrayT: ...
+
+pairwise_diff_checked = _clone_signature(pairwise_diff)
