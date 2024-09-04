@@ -1017,3 +1017,33 @@ utf8_reverse = _clone_signature(utf8_capitalize)
 utf8_swapcase = _clone_signature(utf8_capitalize)
 utf8_title = _clone_signature(utf8_capitalize)
 utf8_upper = _clone_signature(utf8_capitalize)
+
+# ========================= 2.7 String padding =========================
+@overload
+def ascii_center(
+    strings: _StringScalarT,
+    /,
+    width: int,
+    padding: str = " ",
+    lean_left_on_odd_padding: bool = True,
+    *,
+    options: PadOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringScalarT: ...
+@overload
+def ascii_center(
+    strings: _StringArrayT,
+    /,
+    width: int,
+    padding: str = " ",
+    lean_left_on_odd_padding: bool = True,
+    *,
+    options: PadOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringArrayT: ...
+
+ascii_lpad = _clone_signature(ascii_center)
+ascii_rpad = _clone_signature(ascii_center)
+utf8_center = _clone_signature(ascii_center)
+utf8_lpad = _clone_signature(ascii_center)
+utf8_rpad = _clone_signature(ascii_center)
