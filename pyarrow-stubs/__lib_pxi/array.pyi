@@ -1,4 +1,4 @@
-# mypy: disable-error-code="overload-overlap,misc"
+# mypy: disable-error-code="overload-overlap,misc,type-arg"
 
 import datetime as dt
 
@@ -172,6 +172,16 @@ def array(
     safe: bool = True,
     memory_pool: MemoryPool | None = None,
 ) -> ListArray: ...
+@overload
+def array(
+    values: NullableIterable[_Scalar_CoT],
+    type: None = None,
+    mask: Mask | None = None,
+    size: int | None = None,
+    from_pandas: bool | None = None,
+    safe: bool = True,
+    memory_pool: MemoryPool | None = None,
+) -> Array[_Scalar_CoT]: ...
 @overload
 def array(
     values: Iterable | SupportArrowArray | SupportArrowDeviceArray,

@@ -203,6 +203,11 @@ def chunked_array(
 ) -> ChunkedArray[scalar.ListScalar]: ...
 @overload
 def chunked_array(
+    values: NullableIterable[_Scalar_CoT],
+    type: None = None,
+) -> ChunkedArray[_Scalar_CoT]: ...
+@overload
+def chunked_array(
     values: Iterable | SupportArrowStream | SupportArrowArray,
     type: _DataTypeT,
 ) -> ChunkedArray[Scalar[_DataTypeT]]: ...
