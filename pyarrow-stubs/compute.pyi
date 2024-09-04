@@ -1096,3 +1096,70 @@ ascii_trim_whitespace = _clone_signature(ascii_ltrim_whitespace)
 utf8_ltrim_whitespace = _clone_signature(ascii_ltrim_whitespace)
 utf8_rtrim_whitespace = _clone_signature(ascii_ltrim_whitespace)
 utf8_trim_whitespace = _clone_signature(ascii_ltrim_whitespace)
+
+# ========================= 2.8 String splitting =========================
+@overload
+def ascii_split_whitespace(
+    strings: _StringScalarT,
+    /,
+    *,
+    max_splits: int | None = None,
+    reverse: bool = False,
+    options: SplitOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[_StringScalarT]: ...
+@overload
+def ascii_split_whitespace(
+    strings: lib.Array[lib.Scalar[_DataTypeT]],
+    /,
+    *,
+    max_splits: int | None = None,
+    reverse: bool = False,
+    options: SplitOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[lib.ListScalar[_DataTypeT]]: ...
+@overload
+def split_pattern(
+    strings: _StringOrBinaryScalarT,
+    /,
+    pattern: str,
+    *,
+    max_splits: int | None = None,
+    reverse: bool = False,
+    options: SplitOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[_StringOrBinaryScalarT]: ...
+@overload
+def split_pattern(
+    strings: lib.Array[lib.Scalar[_DataTypeT]],
+    /,
+    pattern: str,
+    *,
+    max_splits: int | None = None,
+    reverse: bool = False,
+    options: SplitPatternOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[lib.ListScalar[_DataTypeT]]: ...
+
+split_pattern_regex = _clone_signature(split_pattern)
+utf8_split_whitespace = _clone_signature(ascii_split_whitespace)
+
+# ========================= 2.9 String component extraction =========================
+@overload
+def extract_regex(
+    strings: StringOrBinaryScalar,
+    /,
+    pattern: str,
+    *,
+    options: ExtractRegexOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.StructScalar: ...
+@overload
+def extract_regex(
+    strings: StringOrBinaryArray,
+    /,
+    pattern: str,
+    *,
+    options: ExtractRegexOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.StructArray: ...
