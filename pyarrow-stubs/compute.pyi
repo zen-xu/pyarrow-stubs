@@ -1163,3 +1163,70 @@ def extract_regex(
     options: ExtractRegexOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.StructArray: ...
+
+# ========================= 2.9 String join =========================
+def binary_join(
+    strings, separator, /, *, memory_pool: lib.MemoryPool | None = None
+) -> StringScalar | StringArray: ...
+@overload
+def binary_join_element_wise(
+    *strings: _StringOrBinaryScalarT,
+    null_handling: Literal["emit_null", "skip", "replace"] = "emit_null",
+    null_replacement: str = "",
+    options: JoinOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringOrBinaryScalarT: ...
+@overload
+def binary_join_element_wise(
+    *strings: _StringOrBinaryArrayT,
+    null_handling: Literal["emit_null", "skip", "replace"] = "emit_null",
+    null_replacement: str = "",
+    options: JoinOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringOrBinaryArrayT: ...
+
+# ========================= 2.9 String Slicing =========================
+@overload
+def binary_slice(
+    strings: _BinaryScalarT,
+    /,
+    start: int,
+    stop: int | None = None,
+    step: int = 1,
+    *,
+    options: SliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _BinaryScalarT: ...
+@overload
+def binary_slice(
+    strings: _BinaryArrayT,
+    /,
+    start: int,
+    stop: int | None = None,
+    step: int = 1,
+    *,
+    options: SliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _BinaryArrayT: ...
+@overload
+def utf8_slice_codeunits(
+    strings: _StringScalarT,
+    /,
+    start: int,
+    stop: int | None = None,
+    step: int = 1,
+    *,
+    options: SliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringScalarT: ...
+@overload
+def utf8_slice_codeunits(
+    strings: _StringArrayT,
+    /,
+    start: int,
+    stop: int | None = None,
+    step: int = 1,
+    *,
+    options: SliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringArrayT: ...
