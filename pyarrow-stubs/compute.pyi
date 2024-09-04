@@ -155,6 +155,16 @@ FloatArray: typing_extensions.TypeAlias = (
     | lib.NumericArray[lib.Decimal256Scalar]
 )
 _FloatArrayT = TypeVar("_FloatArrayT", bound=FloatArray)
+_StringScalarT = TypeVar("_StringScalarT", bound=StringScalar)
+StringArray: TypeAlias = lib.StringArray | lib.LargeStringArray
+_StringArrayT = TypeVar("_StringArrayT", bound=StringArray)
+_BinaryScalarT = TypeVar("_BinaryScalarT", bound=BinaryScalar)
+BinaryArray: TypeAlias = lib.BinaryArray | lib.LargeBinaryArray
+_BinaryArrayT = TypeVar("_BinaryArrayT", bound=BinaryArray)
+StringOrBinaryScalar: TypeAlias = StringScalar | BinaryScalar
+_StringOrBinaryScalarT = TypeVar("_StringOrBinaryScalarT", bound=StringOrBinaryScalar)
+StringOrBinaryArray: TypeAlias = StringArray | BinaryArray
+_StringOrBinaryArrayT = TypeVar("_StringOrBinaryArrayT", bound=StringOrBinaryArray)
 _ScalarT = TypeVar("_ScalarT", bound=lib.Scalar)
 _ArrayT = TypeVar("_ArrayT", bound=lib.Array)
 # =============================== 1. Aggregation ===============================
@@ -800,3 +810,210 @@ def invert(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
+
+# ========================= 2.7 String predicates =========================
+@overload
+def ascii_is_alnum(
+    strings: StringScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanScalar: ...
+@overload
+def ascii_is_alnum(
+    strings: StringArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanArray: ...
+
+ascii_is_alpha = _clone_signature(ascii_is_alnum)
+ascii_is_decimal = _clone_signature(ascii_is_alnum)
+ascii_is_lower = _clone_signature(ascii_is_alnum)
+ascii_is_printable = _clone_signature(ascii_is_alnum)
+ascii_is_space = _clone_signature(ascii_is_alnum)
+ascii_is_upper = _clone_signature(ascii_is_alnum)
+utf8_is_alnum = _clone_signature(ascii_is_alnum)
+utf8_is_alpha = _clone_signature(ascii_is_alnum)
+utf8_is_decimal = _clone_signature(ascii_is_alnum)
+utf8_is_digit = _clone_signature(ascii_is_alnum)
+utf8_is_lower = _clone_signature(ascii_is_alnum)
+utf8_is_numeric = _clone_signature(ascii_is_alnum)
+utf8_is_printable = _clone_signature(ascii_is_alnum)
+utf8_is_space = _clone_signature(ascii_is_alnum)
+utf8_is_upper = _clone_signature(ascii_is_alnum)
+ascii_is_title = _clone_signature(ascii_is_alnum)
+utf8_is_title = _clone_signature(ascii_is_alnum)
+string_is_ascii = _clone_signature(ascii_is_alnum)
+
+# ========================= 2.7 String transforms =========================
+@overload
+def ascii_capitalize(
+    strings: _StringScalarT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _StringScalarT: ...
+@overload
+def ascii_capitalize(
+    strings: _StringArrayT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _StringArrayT: ...
+
+ascii_lower = _clone_signature(ascii_capitalize)
+ascii_reverse = _clone_signature(ascii_capitalize)
+ascii_swapcase = _clone_signature(ascii_capitalize)
+ascii_title = _clone_signature(ascii_capitalize)
+ascii_upper = _clone_signature(ascii_capitalize)
+
+@overload
+def binary_length(
+    strings: lib.BinaryScalar | lib.StringScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int32Scalar: ...
+@overload
+def binary_length(
+    strings: lib.LargeBinaryScalar | lib.LargeStringScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Scalar: ...
+@overload
+def binary_length(
+    strings: lib.BinaryArray | lib.StringArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int32Array: ...
+@overload
+def binary_length(
+    strings: lib.LargeBinaryArray | lib.LargeStringArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Array: ...
+@overload
+def binary_repeat(
+    strings: _StringOrBinaryScalarT,
+    num_repeats: int,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringOrBinaryScalarT: ...
+@overload
+def binary_repeat(
+    strings: _StringOrBinaryScalarT,
+    num_repeats: list[int] | list[int | None],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[_StringOrBinaryScalarT]: ...
+@overload
+def binary_repeat(
+    strings: _StringOrBinaryArrayT,
+    num_repeats: int | list[int] | list[int | None],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringOrBinaryArrayT: ...
+@overload
+def binary_replace_slice(
+    strings: _StringOrBinaryScalarT,
+    /,
+    start: int,
+    stop: int,
+    replacement: str | bytes,
+    *,
+    options: ReplaceSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringOrBinaryScalarT: ...
+@overload
+def binary_replace_slice(
+    strings: _StringOrBinaryArrayT,
+    /,
+    start: int,
+    stop: int,
+    replacement: str | bytes,
+    *,
+    options: ReplaceSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringOrBinaryArrayT: ...
+@overload
+def binary_reverse(
+    strings: _BinaryScalarT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _BinaryScalarT: ...
+@overload
+def binary_reverse(
+    strings: _BinaryArrayT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _BinaryArrayT: ...
+@overload
+def replace_substring(
+    strings: _StringScalarT,
+    /,
+    pattern: str | bytes,
+    replacement: str | bytes,
+    *,
+    max_replacements: int | None = None,
+    options: ReplaceSubstringOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringScalarT: ...
+@overload
+def replace_substring(
+    strings: _StringArrayT,
+    /,
+    pattern: str | bytes,
+    replacement: str | bytes,
+    *,
+    max_replacements: int | None = None,
+    options: ReplaceSubstringOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringArrayT: ...
+
+replace_substring_regex = _clone_signature(replace_substring)
+
+@overload
+def utf8_capitalize(
+    strings: _StringScalarT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _StringScalarT: ...
+@overload
+def utf8_capitalize(
+    strings: _StringArrayT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _StringArrayT: ...
+@overload
+def utf8_length(
+    strings: lib.StringScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int32Scalar: ...
+@overload
+def utf8_length(
+    strings: lib.LargeStringScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Scalar: ...
+@overload
+def utf8_length(
+    strings: lib.StringArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.Int32Array: ...
+@overload
+def utf8_length(
+    strings: lib.LargeStringArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Array: ...
+
+utf8_lower = _clone_signature(utf8_capitalize)
+
+@overload
+def utf8_replace_slice(
+    strings: _StringScalarT,
+    /,
+    start: int,
+    stop: int,
+    replacement: str | bytes,
+    *,
+    options: ReplaceSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringScalarT: ...
+@overload
+def utf8_replace_slice(
+    strings: _StringArrayT,
+    /,
+    start: int,
+    stop: int,
+    replacement: str | bytes,
+    *,
+    options: ReplaceSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _StringArrayT: ...
+
+utf8_reverse = _clone_signature(utf8_capitalize)
+utf8_swapcase = _clone_signature(utf8_capitalize)
+utf8_title = _clone_signature(utf8_capitalize)
+utf8_upper = _clone_signature(utf8_capitalize)
