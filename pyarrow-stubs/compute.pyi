@@ -1230,3 +1230,117 @@ def utf8_slice_codeunits(
     options: SliceOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringArrayT: ...
+
+# ========================= 2.10 Containment tests =========================
+@overload
+def count_substring(
+    strings: lib.StringScalar | lib.BinaryScalar,
+    /,
+    pattern: str,
+    *,
+    ignore_case: bool = False,
+    options: MatchSubstringOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int32Scalar: ...
+@overload
+def count_substring(
+    strings: lib.LargeStringScalar | lib.LargeBinaryScalar,
+    /,
+    pattern: str,
+    *,
+    ignore_case: bool = False,
+    options: MatchSubstringOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Scalar: ...
+@overload
+def count_substring(
+    strings: lib.StringArray | lib.BinaryArray,
+    /,
+    pattern: str,
+    *,
+    ignore_case: bool = False,
+    options: MatchSubstringOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int32Array: ...
+@overload
+def count_substring(
+    strings: lib.LargeStringArray | lib.LargeBinaryArray,
+    /,
+    pattern: str,
+    *,
+    ignore_case: bool = False,
+    options: MatchSubstringOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int64Array: ...
+
+count_substring_regex = _clone_signature(count_substring)
+
+@overload
+def ends_with(
+    strings: StringScalar | BinaryScalar,
+    /,
+    pattern: str,
+    *,
+    ignore_case: bool = False,
+    options: MatchSubstringOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanScalar: ...
+@overload
+def ends_with(
+    strings: StringArray | BinaryArray,
+    /,
+    pattern: str,
+    *,
+    ignore_case: bool = False,
+    options: MatchSubstringOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+
+find_substring = _clone_signature(count_substring)
+find_substring_regex = _clone_signature(count_substring)
+
+@overload
+def index_in(
+    values: lib.Scalar,
+    /,
+    value_set: lib.Array,
+    *,
+    skip_nulls: bool = False,
+    options: SetLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int32Scalar: ...
+@overload
+def index_in(
+    values: lib.Array,
+    /,
+    value_set: lib.Array,
+    *,
+    skip_nulls: bool = False,
+    options: SetLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int32Array: ...
+@overload
+def is_in(
+    values: lib.Scalar,
+    /,
+    value_set: lib.Array,
+    *,
+    skip_nulls: bool = False,
+    options: SetLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanScalar: ...
+@overload
+def is_in(
+    values: lib.Array,
+    /,
+    value_set: lib.Array,
+    *,
+    skip_nulls: bool = False,
+    options: SetLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+
+match_like = _clone_signature(ends_with)
+match_substring = _clone_signature(ends_with)
+match_substring_regex = _clone_signature(ends_with)
+starts_with = _clone_signature(ends_with)
