@@ -12,6 +12,7 @@ from typing import (
     Literal,
     Mapping,
     Self,
+    Sequence,
     TypeAlias,
     TypeVar,
     overload,
@@ -411,7 +412,7 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
     @classmethod
     def from_pylist(
         cls,
-        mapping: list[Mapping[str, Any]],
+        mapping: Sequence[Mapping[str, Any]],
         schema: Schema | None = None,
         metadata: Mapping | None = None,
     ) -> Self: ...
