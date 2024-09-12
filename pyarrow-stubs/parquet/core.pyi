@@ -3,7 +3,7 @@ from typing import IO, Callable, Iterator, Literal, Self, Sequence
 
 from pyarrow import _parquet
 from pyarrow._compute import Expression
-from pyarrow._fs import SupportedFileSystem
+from pyarrow._fs import FileSystem, SupportedFileSystem
 from pyarrow._parquet import (
     ColumnChunkMetaData,
     ColumnSchema,

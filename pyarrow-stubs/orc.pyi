@@ -1,7 +1,7 @@
 from typing import IO, Literal, Self
 
 from . import _orc
-from ._fs import FileSystem
+from ._fs import SupportedFileSystem
 from .lib import KeyValueMetadata, NativeFile, RecordBatch, Schema, Table
 
 class ORCFile:
