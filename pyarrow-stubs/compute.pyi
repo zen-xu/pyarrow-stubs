@@ -346,6 +346,8 @@ def abs(
 def abs(
     x: _NumericOrDurationArrayT, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> _NumericOrDurationArrayT: ...
+@overload
+def abs(x: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 
 abs_checked = _clone_signature(abs)
 
@@ -377,6 +379,10 @@ def add(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> NumericOrTemporalArray: ...
+@overload
+def add(
+    x: Expression | Any, y: Expression | Any, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 
 add_checked = _clone_signature(add)
 
@@ -404,6 +410,14 @@ def divide(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> NumericArray: ...
+@overload
+def divide(
+    dividend: Expression | Any,
+    divisor: Expression | Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 divide_checked = _clone_signature(divide)
 
@@ -415,6 +429,8 @@ def exp(
 def exp(
     exponent: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.FloatScalar | lib.DoubleScalar: ...
+@overload
+def exp(exponent: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 
 multiply = _clone_signature(add)
 multiply_checked = _clone_signature(multiply)
@@ -427,6 +443,8 @@ def negate(
 def negate(
     x: _NumericOrDurationArrayT, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> _NumericOrDurationArrayT: ...
+@overload
+def negate(x: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 
 negate_checked = _clone_signature(negate)
 
@@ -458,6 +476,14 @@ def power(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> NumericArray: ...
+@overload
+def power(
+    base: Expression | Any,
+    exponent: Expression | Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 power_checked = _clone_signature(power)
 
@@ -474,9 +500,13 @@ def sign(
     x: NumericOrDurationScalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.Int8Scalar | lib.FloatScalar | lib.DoubleScalar: ...
 @overload
+def sign(x: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
+@overload
 def sqrt(x: NumericArray, /, *, memory_pool: lib.MemoryPool | None = None) -> FloatArray: ...
 @overload
 def sqrt(x: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None) -> FloatScalar: ...
+@overload
+def sqrt(x: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 
 sqrt_checked = _clone_signature(sqrt)
 
@@ -509,6 +539,10 @@ def bit_wise_and(
     memory_pool: lib.MemoryPool | None = None,
 ) -> NumericArray: ...
 @overload
+def bit_wise_and(
+    x: Expression | Any, y: Expression | Any, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
+@overload
 def bit_wise_not(
     x: _NumericScalarT, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> _NumericScalarT: ...
@@ -516,6 +550,8 @@ def bit_wise_not(
 def bit_wise_not(
     x: _NumericArrayT, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> _NumericArrayT: ...
+@overload
+def bit_wise_not(x: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 
 bit_wise_or = _clone_signature(bit_wise_and)
 bit_wise_xor = _clone_signature(bit_wise_and)
@@ -529,6 +565,8 @@ shift_right_checked = _clone_signature(bit_wise_and)
 def ceil(x: _FloatScalarT, /, *, memory_pool: lib.MemoryPool | None = None) -> _FloatScalarT: ...
 @overload
 def ceil(x: _FloatArrayT, /, *, memory_pool: lib.MemoryPool | None = None) -> _FloatArrayT: ...
+@overload
+def ceil(x: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 
 floor = _clone_signature(ceil)
 
@@ -575,6 +613,27 @@ def round(
     memory_pool: lib.MemoryPool | None = None,
 ) -> _NumericArrayT: ...
 @overload
+def round(
+    x: Expression,
+    /,
+    ndigits: int = 0,
+    round_mode: Literal[
+        "down",
+        "up",
+        "towards_zero",
+        "towards_infinity",
+        "half_down",
+        "half_up",
+        "half_towards_zero",
+        "half_towards_infinity",
+        "half_to_even",
+        "half_to_odd",
+    ] = "half_to_even",
+    *,
+    options: RoundOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def round_to_multiple(
     x: _NumericScalarT,
     /,
@@ -616,6 +675,27 @@ def round_to_multiple(
     options: RoundToMultipleOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _NumericArrayT: ...
+@overload
+def round_to_multiple(
+    x: Expression,
+    /,
+    multiple: int = 0,
+    round_mode: Literal[
+        "down",
+        "up",
+        "towards_zero",
+        "towards_infinity",
+        "half_down",
+        "half_up",
+        "half_towards_zero",
+        "half_towards_infinity",
+        "half_to_even",
+        "half_to_odd",
+    ] = "half_to_even",
+    *,
+    options: RoundToMultipleOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 @overload
 def round_binary(
     x: _NumericScalarT,
@@ -679,6 +759,27 @@ def round_binary(
     options: RoundBinaryOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _NumericArrayT: ...
+@overload
+def round_binary(
+    x: Expression,
+    s: Iterable,
+    /,
+    round_mode: Literal[
+        "down",
+        "up",
+        "towards_zero",
+        "towards_infinity",
+        "half_down",
+        "half_up",
+        "half_towards_zero",
+        "half_towards_infinity",
+        "half_to_even",
+        "half_to_odd",
+    ] = "half_to_even",
+    *,
+    options: RoundBinaryOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 trunc = _clone_signature(ceil)
 
@@ -691,6 +792,8 @@ def ln(
 def ln(
     x: FloatArray, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
+@overload
+def ln(x: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 
 ln_checked = _clone_signature(ln)
 log10 = _clone_signature(ln)
@@ -716,9 +819,10 @@ def logb(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
+@overload
 def logb(
-    x: FloatScalar, b: FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.FloatScalar | lib.DoubleScalar: ...
+    x: Expression | Any, b: Expression | Any, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression | Any: ...
 
 logb_checked = _clone_signature(logb)
 
@@ -751,9 +855,10 @@ def atan2(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
+@overload
 def atan2(
-    y: FloatScalar, x: FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.FloatScalar | lib.DoubleScalar: ...
+    y: Expression | Any, x: Expression | Any, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 
 # ========================= 2.5 Comparisons functions =========================
 @overload
@@ -768,6 +873,14 @@ def equal(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
+@overload
+def equal(
+    x: Expression | Any,
+    y: Expression | Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 greater = _clone_signature(equal)
 greater_equal = _clone_signature(equal)
@@ -789,6 +902,13 @@ def max_element_wise(
     options: ElementWiseAggregateOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _ArrayT: ...
+@overload
+def max_element_wise(
+    *args: Expression,
+    skip_nulls: bool = True,
+    options: ElementWiseAggregateOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 min_element_wise = _clone_signature(equal)
 
@@ -805,6 +925,14 @@ def and_(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
+@overload
+def and_(
+    x: Expression | Any,
+    y: Expression | Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 and_kleene = _clone_signature(and_)
 and_not = _clone_signature(and_)
@@ -824,6 +952,13 @@ def invert(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
+@overload
+def invert(
+    x: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 # ========================= 2.10 String predicates =========================
 @overload
@@ -834,6 +969,10 @@ def ascii_is_alnum(
 def ascii_is_alnum(
     strings: StringArray, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.BooleanArray: ...
+@overload
+def ascii_is_alnum(
+    strings: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 
 ascii_is_alpha = _clone_signature(ascii_is_alnum)
 ascii_is_decimal = _clone_signature(ascii_is_alnum)
@@ -863,6 +1002,10 @@ def ascii_capitalize(
 def ascii_capitalize(
     strings: _StringArrayT, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> _StringArrayT: ...
+@overload
+def ascii_capitalize(
+    strings: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 
 ascii_lower = _clone_signature(ascii_capitalize)
 ascii_reverse = _clone_signature(ascii_capitalize)
@@ -893,6 +1036,13 @@ def binary_length(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Array: ...
 @overload
+def binary_length(
+    strings: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def binary_repeat(
     strings: _StringOrBinaryScalarT,
     num_repeats: int,
@@ -917,6 +1067,14 @@ def binary_repeat(
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringOrBinaryArrayT: ...
 @overload
+def binary_repeat(
+    strings: Expression,
+    num_repeats: int | list[int] | list[int | None],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def binary_replace_slice(
     strings: _StringOrBinaryScalarT,
     /,
@@ -939,6 +1097,17 @@ def binary_replace_slice(
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringOrBinaryArrayT: ...
 @overload
+def binary_replace_slice(
+    strings: Expression,
+    /,
+    start: int,
+    stop: int,
+    replacement: str | bytes,
+    *,
+    options: ReplaceSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def binary_reverse(
     strings: _BinaryScalarT, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> _BinaryScalarT: ...
@@ -946,6 +1115,10 @@ def binary_reverse(
 def binary_reverse(
     strings: _BinaryArrayT, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> _BinaryArrayT: ...
+@overload
+def binary_reverse(
+    strings: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 @overload
 def replace_substring(
     strings: _StringScalarT,
@@ -968,6 +1141,17 @@ def replace_substring(
     options: ReplaceSubstringOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringArrayT: ...
+@overload
+def replace_substring(
+    strings: Expression,
+    /,
+    pattern: str | bytes,
+    replacement: str | bytes,
+    *,
+    max_replacements: int | None = None,
+    options: ReplaceSubstringOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 replace_substring_regex = _clone_signature(replace_substring)
 
@@ -979,6 +1163,10 @@ def utf8_capitalize(
 def utf8_capitalize(
     strings: _StringArrayT, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> _StringArrayT: ...
+@overload
+def utf8_capitalize(
+    strings: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 @overload
 def utf8_length(
     strings: lib.StringScalar, /, *, memory_pool: lib.MemoryPool | None = None
@@ -1001,6 +1189,13 @@ def utf8_length(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Array: ...
+@overload
+def utf8_length(
+    strings: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 utf8_lower = _clone_signature(utf8_capitalize)
 
@@ -1026,6 +1221,17 @@ def utf8_replace_slice(
     options: ReplaceSliceOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringArrayT: ...
+@overload
+def utf8_replace_slice(
+    strings: Expression,
+    /,
+    start: int,
+    stop: int,
+    replacement: str | bytes,
+    *,
+    options: ReplaceSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 utf8_reverse = _clone_signature(utf8_capitalize)
 utf8_swapcase = _clone_signature(utf8_capitalize)
@@ -1055,6 +1261,17 @@ def ascii_center(
     options: PadOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringArrayT: ...
+@overload
+def ascii_center(
+    strings: Expression,
+    /,
+    width: int,
+    padding: str = " ",
+    lean_left_on_odd_padding: bool = True,
+    *,
+    options: PadOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 ascii_lpad = _clone_signature(ascii_center)
 ascii_rpad = _clone_signature(ascii_center)
@@ -1081,6 +1298,15 @@ def ascii_ltrim(
     options: TrimOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringArrayT: ...
+@overload
+def ascii_ltrim(
+    strings: Expression,
+    /,
+    characters: str,
+    *,
+    options: TrimOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 ascii_rtrim = _clone_signature(ascii_ltrim)
 ascii_trim = _clone_signature(ascii_ltrim)
@@ -1104,6 +1330,14 @@ def ascii_ltrim_whitespace(
     options: TrimOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringArrayT: ...
+@overload
+def ascii_ltrim_whitespace(
+    strings: Expression,
+    /,
+    *,
+    options: TrimOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 ascii_rtrim_whitespace = _clone_signature(ascii_ltrim_whitespace)
 ascii_trim_whitespace = _clone_signature(ascii_ltrim_whitespace)
@@ -1133,6 +1367,16 @@ def ascii_split_whitespace(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.ListArray[lib.ListScalar[_DataTypeT]]: ...
 @overload
+def ascii_split_whitespace(
+    strings: Expression,
+    /,
+    *,
+    max_splits: int | None = None,
+    reverse: bool = False,
+    options: SplitOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def split_pattern(
     strings: _StringOrBinaryScalarT,
     /,
@@ -1154,6 +1398,17 @@ def split_pattern(
     options: SplitPatternOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.ListArray[lib.ListScalar[_DataTypeT]]: ...
+@overload
+def split_pattern(
+    strings: Expression,
+    /,
+    pattern: str,
+    *,
+    max_splits: int | None = None,
+    reverse: bool = False,
+    options: SplitPatternOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 split_pattern_regex = _clone_signature(split_pattern)
 utf8_split_whitespace = _clone_signature(ascii_split_whitespace)
@@ -1177,6 +1432,15 @@ def extract_regex(
     options: ExtractRegexOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.StructArray: ...
+@overload
+def extract_regex(
+    strings: Expression,
+    /,
+    pattern: str,
+    *,
+    options: ExtractRegexOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 # ========================= 2.16 String join =========================
 def binary_join(
@@ -1198,6 +1462,14 @@ def binary_join_element_wise(
     options: JoinOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringOrBinaryArrayT: ...
+@overload
+def binary_join_element_wise(
+    *strings: Expression,
+    null_handling: Literal["emit_null", "skip", "replace"] = "emit_null",
+    null_replacement: str = "",
+    options: JoinOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 # ========================= 2.17 String Slicing =========================
 @overload
@@ -1223,6 +1495,17 @@ def binary_slice(
     memory_pool: lib.MemoryPool | None = None,
 ) -> _BinaryArrayT: ...
 @overload
+def binary_slice(
+    strings: Expression,
+    /,
+    start: int,
+    stop: int | None = None,
+    step: int = 1,
+    *,
+    options: SliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def utf8_slice_codeunits(
     strings: _StringScalarT,
     /,
@@ -1244,6 +1527,17 @@ def utf8_slice_codeunits(
     options: SliceOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _StringArrayT: ...
+@overload
+def utf8_slice_codeunits(
+    strings: Expression,
+    /,
+    start: int,
+    stop: int | None = None,
+    step: int = 1,
+    *,
+    options: SliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 # ========================= 2.18 Containment tests =========================
 @overload
@@ -1286,6 +1580,16 @@ def count_substring(
     options: MatchSubstringOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Array: ...
+@overload
+def count_substring(
+    strings: Expression,
+    /,
+    pattern: str,
+    *,
+    ignore_case: bool = False,
+    options: MatchSubstringOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 count_substring_regex = _clone_signature(count_substring)
 
@@ -1309,6 +1613,16 @@ def ends_with(
     options: MatchSubstringOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
+@overload
+def ends_with(
+    strings: Expression,
+    /,
+    pattern: str,
+    *,
+    ignore_case: bool = False,
+    options: MatchSubstringOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 find_substring = _clone_signature(count_substring)
 find_substring_regex = _clone_signature(count_substring)
@@ -1334,6 +1648,16 @@ def index_in(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int32Array: ...
 @overload
+def index_in(
+    values: Expression,
+    /,
+    value_set: lib.Array,
+    *,
+    skip_nulls: bool = False,
+    options: SetLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def is_in(
     values: lib.Scalar,
     /,
@@ -1353,6 +1677,16 @@ def is_in(
     options: SetLookupOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
+@overload
+def is_in(
+    values: Expression,
+    /,
+    value_set: lib.Array,
+    *,
+    skip_nulls: bool = False,
+    options: SetLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 match_like = _clone_signature(ends_with)
 match_substring = _clone_signature(ends_with)
@@ -1368,6 +1702,10 @@ def is_finite(
 def is_finite(
     values: NumericArray | lib.NullArray, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.BooleanArray: ...
+@overload
+def is_finite(
+    values: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 
 is_inf = _clone_signature(is_finite)
 is_nan = _clone_signature(is_finite)
@@ -1391,6 +1729,15 @@ def is_null(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
 @overload
+def is_null(
+    values: Expression,
+    /,
+    *,
+    nan_is_null: bool = False,
+    options: NullOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def is_valid(
     values: lib.Scalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.BooleanScalar: ...
@@ -1398,6 +1745,10 @@ def is_valid(
 def is_valid(
     values: lib.Array, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.BooleanArray: ...
+@overload
+def is_valid(
+    values: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 
 true_unless_null = _clone_signature(is_valid)
 
@@ -1426,6 +1777,13 @@ def list_value_length(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Array: ...
 @overload
+def list_value_length(
+    lists: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def make_struct(
     *args: lib.Scalar,
     field_names: list[str] | tuple[str, ...] = (),
@@ -1443,6 +1801,15 @@ def make_struct(
     options: MakeStructOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.StructArray: ...
+@overload
+def make_struct(
+    *args: Expression,
+    field_names: list[str] | tuple[str, ...] = (),
+    field_nullability: bool | None = None,
+    field_metadata: list[lib.KeyValueMetadata] | None = None,
+    options: MakeStructOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 # ========================= 2.22 Conversions =========================
 @overload
@@ -1495,6 +1862,31 @@ def ceil_temporal(
     options: RoundTemporalOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _TemporalArrayT: ...
+@overload
+def ceil_temporal(
+    timestamps: Expression,
+    /,
+    multiple: int = 1,
+    unit: Literal[
+        "year",
+        "quarter",
+        "month",
+        "week",
+        "day",
+        "hour",
+        "minute",
+        "second",
+        "millisecond",
+        "microsecond",
+        "nanosecond",
+    ] = "day",
+    *,
+    week_starts_monday: bool = True,
+    ceil_is_strictly_greater: bool = False,
+    calendar_based_origin: bool = False,
+    options: RoundTemporalOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 floor_temporal = _clone_signature(ceil_temporal)
 round_temporal = _clone_signature(ceil_temporal)
@@ -1536,6 +1928,16 @@ def strftime(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.StringArray: ...
 @overload
+def strftime(
+    timestamps: Expression,
+    /,
+    format: str = "%Y-%m-%dT%H:%M:%S",
+    locale: str = "C",
+    *,
+    options: StrftimeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def strptime(
     strings: StringScalar,
     /,
@@ -1557,6 +1959,17 @@ def strptime(
     options: StrptimeOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.TimestampArray: ...
+@overload
+def strptime(
+    strings: Expression,
+    /,
+    format: str,
+    unit: Literal["s", "ms", "us", "ns"],
+    error_is_null: bool = False,
+    *,
+    options: StrptimeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 # ========================= 2.23 Temporal component extraction =========================
 @overload
@@ -1567,6 +1980,8 @@ def day(
 def day(
     values: TemporalArray, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.Int64Array: ...
+@overload
+def day(values: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 @overload
 def day_of_week(
     values: TemporalScalar,
@@ -1587,6 +2002,16 @@ def day_of_week(
     options: DayOfWeekOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Array: ...
+@overload
+def day_of_week(
+    values: Expression,
+    /,
+    *,
+    count_from_zero: bool = True,
+    week_start: int = 1,
+    options: DayOfWeekOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 day_of_year = _clone_signature(day)
 
@@ -1605,6 +2030,13 @@ def hour(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Array: ...
 @overload
+def hour(
+    values: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def is_dst(
     values: lib.TimestampScalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.BooleanScalar: ...
@@ -1613,6 +2045,8 @@ def is_dst(
     values: lib.TimestampArray, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.BooleanArray: ...
 @overload
+def is_dst(values: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
+@overload
 def iso_week(
     values: lib.TimestampScalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.Int64Scalar: ...
@@ -1620,6 +2054,10 @@ def iso_week(
 def iso_week(
     values: lib.TimestampArray, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.Int64Array: ...
+@overload
+def iso_week(
+    values: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 
 iso_year = _clone_signature(iso_week)
 
@@ -1637,6 +2075,13 @@ def is_leap_year(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
+@overload
+def is_leap_year(
+    values: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 microsecond = _clone_signature(iso_week)
 millisecond = _clone_signature(iso_week)
@@ -1673,6 +2118,17 @@ def week(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Array: ...
 @overload
+def week(
+    values: Expression,
+    /,
+    *,
+    week_starts_monday: bool = True,
+    count_from_zero: bool = False,
+    first_week_is_fully_in_year: bool = False,
+    options: WeekOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def year_month_day(
     values: TemporalScalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.StructScalar: ...
@@ -1680,6 +2136,10 @@ def year_month_day(
 def year_month_day(
     values: TemporalArray, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.StructArray: ...
+@overload
+def year_month_day(
+    values: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 
 # ========================= 2.24 Temporal difference =========================
 def day_time_interval_between(start, end, /, *, memory_pool: lib.MemoryPool | None = None): ...
@@ -1738,6 +2198,17 @@ def assume_timezone(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.TimestampArray: ...
 @overload
+def assume_timezone(
+    timestamps: Expression,
+    /,
+    timezone: str,
+    *,
+    ambiguous: Literal["raise", "earliest", "latest"] = "raise",
+    nonexistent: Literal["raise", "earliest", "latest"] = "raise",
+    options: AssumeTimezoneOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def local_timestamp(
     timestamps: lib.TimestampScalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.TimestampScalar: ...
@@ -1745,6 +2216,10 @@ def local_timestamp(
 def local_timestamp(
     timestamps: lib.TimestampArray, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.TimestampArray: ...
+@overload
+def local_timestamp(
+    timestamps: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 
 # ========================= 2.26 Random number generation =========================
 def random(
@@ -1758,7 +2233,7 @@ def random(
 # ========================= 3. Array-wise (“vector”) functions =========================
 
 # ========================= 3.1 Cumulative Functions =========================
-
+@overload
 def cumulative_sum(
     values: _NumericArrayT,
     /,
@@ -1768,6 +2243,16 @@ def cumulative_sum(
     options: CumulativeSumOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _NumericArrayT: ...
+@overload
+def cumulative_sum(
+    values: Expression,
+    /,
+    start: lib.Scalar | None = None,
+    *,
+    skip_nulls: bool = False,
+    options: CumulativeSumOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 cumulative_sum_checked = _clone_signature(cumulative_sum)
 cumulative_prod = _clone_signature(cumulative_sum)
@@ -1778,6 +2263,7 @@ cumulative_mean = _clone_signature(cumulative_sum)
 
 # ========================= 3.2 Associative transforms =========================
 
+@overload
 def dictionary_encode(
     array: _ScalarOrArrayT,
     /,
@@ -1786,13 +2272,30 @@ def dictionary_encode(
     options=None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _ScalarOrArrayT: ...
+@overload
+def dictionary_encode(
+    array: Expression,
+    /,
+    null_encoding: Literal["mask", "encode"] = "mask",
+    *,
+    options=None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def unique(array: _ArrayT, /, *, memory_pool: lib.MemoryPool | None = None) -> _ArrayT: ...
+@overload
+def unique(array: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
+@overload
 def value_counts(
     array: lib.Array, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.StructArray: ...
+@overload
+def value_counts(
+    array: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 
 # ========================= 3.3 Selections =========================
-
+@overload
 def array_filter(
     array: _ArrayT,
     selection_filter: list[bool] | list[bool | None] | lib.BooleanArray,
@@ -1802,6 +2305,17 @@ def array_filter(
     options: FilterOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _ArrayT: ...
+@overload
+def array_filter(
+    array: Expression,
+    selection_filter: list[bool] | list[bool | None] | lib.BooleanArray,
+    /,
+    null_selection_behavior: Literal["drop", "emit_null"] = "drop",
+    *,
+    options: FilterOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def array_take(
     array: _ArrayT,
     indices: list[int] | list[int | None] | lib.Int16Array | lib.Int32Array | lib.Int64Array,
@@ -1811,13 +2325,28 @@ def array_take(
     options: TakeOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _ArrayT: ...
+@overload
+def array_take(
+    array: Expression,
+    indices: list[int] | list[int | None] | lib.Int16Array | lib.Int32Array | lib.Int64Array,
+    /,
+    *,
+    boundscheck: bool = True,
+    options: TakeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def drop_null(input: _ArrayT, /, *, memory_pool: lib.MemoryPool | None = None) -> _ArrayT: ...
+@overload
+def drop_null(
+    input: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 
 filter = array_filter
 take = array_take
 
 # ========================= 3.4 Containment tests  =========================
-
+@overload
 def indices_nonzero(
     values: lib.BooleanArray
     | lib.NullArray
@@ -1828,8 +2357,16 @@ def indices_nonzero(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.UInt64Array: ...
+@overload
+def indices_nonzero(
+    values: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 # ========================= 3.5 Sorts and partitions  =========================
+@overload
 def array_sort_indices(
     array: lib.Array,
     /,
@@ -1839,6 +2376,17 @@ def array_sort_indices(
     options: ArraySortOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.UInt64Array: ...
+@overload
+def array_sort_indices(
+    array: Expression,
+    /,
+    order: Literal["ascending", "descending"] = "ascending",
+    *,
+    null_placement: Literal["at_start", "at_end"] = "at_end",
+    options: ArraySortOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def partition_nth_indices(
     array: lib.Array,
     /,
@@ -1848,6 +2396,16 @@ def partition_nth_indices(
     options: PartitionNthOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.UInt64Array: ...
+@overload
+def partition_nth_indices(
+    array: Expression,
+    /,
+    pivot: int,
+    *,
+    null_placement: Literal["at_start", "at_end"] = "at_end",
+    options: PartitionNthOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 def rank(
     input: lib.Array,
     /,
@@ -1858,6 +2416,7 @@ def rank(
     options: RankOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.UInt64Array: ...
+@overload
 def select_k_unstable(
     input: lib.Array,
     /,
@@ -1867,6 +2426,17 @@ def select_k_unstable(
     options: SelectKOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.UInt64Array: ...
+@overload
+def select_k_unstable(
+    input: Expression,
+    /,
+    k: int,
+    sort_keys: list[tuple[str, Literal["ascending", "descending"]]],
+    *,
+    options: SelectKOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def sort_indices(
     array: lib.Array | lib.ChunkedArray | lib.RecordBatch | lib.Table,
     /,
@@ -1876,11 +2446,36 @@ def sort_indices(
     options: SortOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.UInt64Array: ...
+@overload
+def sort_indices(
+    array: Expression,
+    /,
+    order: Literal["ascending", "descending"] = "ascending",
+    *,
+    null_placement: Literal["at_start", "at_end"] = "at_end",
+    options: SortOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 # ========================= 3.6 Structural transforms =========================
+@overload
+def list_element(
+    lists: Expression, index, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
+@overload
 def list_element(
     lists, index, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.ListArray: ...
+@overload
+def list_flatten(
+    lists: Expression,
+    /,
+    recursive: bool = False,
+    *,
+    options: ListFlattenOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def list_flatten(
     lists,
     /,
@@ -1889,9 +2484,27 @@ def list_flatten(
     options: ListFlattenOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.ListArray: ...
+@overload
+def list_parent_indices(
+    lists: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
+@overload
 def list_parent_indices(
     lists, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.Int64Array: ...
+@overload
+def list_slice(
+    lists: Expression,
+    /,
+    start: int,
+    stop: int | None = None,
+    step: int = 1,
+    return_fixed_size_list: bool | None = None,
+    *,
+    options: ListSliceOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
 def list_slice(
     lists,
     /,
@@ -1932,6 +2545,7 @@ def replace_with_mask(
 ): ...
 
 # ========================= 3.7 Pairwise functions =========================
+@overload
 def pairwise_diff(
     input: _NumericOrTemporalArrayT,
     /,
@@ -1940,5 +2554,14 @@ def pairwise_diff(
     options: PairwiseOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _NumericOrTemporalArrayT: ...
+@overload
+def pairwise_diff(
+    input: Expression,
+    /,
+    period: int = 1,
+    *,
+    options: PairwiseOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 
 pairwise_diff_checked = _clone_signature(pairwise_diff)
