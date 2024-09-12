@@ -32,6 +32,7 @@ from pyarrow._stubs_typing import (
     SupportArrowDeviceArray,
     SupportArrowStream,
 )
+from pyarrow.compute import Expression
 from pyarrow.interchange.dataframe import _PyArrowDataFrame
 from pyarrow.lib import Field, MemoryPool, MonthDayNano, Schema
 
@@ -430,7 +431,7 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
     def sort_by(self, sorting: Order | list[tuple[str, Order]], **kwargs) -> Self: ...
     def take(self, indices: Indices) -> Self: ...
     def filter(
-        self, mask: Mask, null_selection_behavior: NullSelectionBehavior = "drop"
+        self, mask: Mask | Expression, null_selection_behavior: NullSelectionBehavior = "drop"
     ) -> Self: ...
     def to_pydict(self) -> dict[str, list]: ...
     def to_pylist(self) -> list[dict[str, Any]]: ...
