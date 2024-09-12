@@ -8,6 +8,7 @@ from pyarrow._fs import (  # noqa
     _MockFileSystem,
     FileSystemHandler,
     PyFileSystem,
+    SupportedFileSystem,
 )
 from pyarrow._azurefs import AzureFileSystem
 from pyarrow._hdfs import HadoopFileSystem
@@ -30,16 +31,16 @@ FileStats = FileInfo
 def copy_files(
     source: str,
     destination: str,
-    source_filesystem: FileSystem | None = None,
-    destination_filesystem: FileSystem | None = None,
+    source_filesystem: SupportedFileSystem | None = None,
+    destination_filesystem: SupportedFileSystem | None = None,
     *,
     chunk_size: int = 1024 * 1024,
     use_threads: bool = True,
 ) -> None: ...
 
 class FSSpecHandler(FileSystemHandler):  # type: ignore[misc]
-    fs: FileSystem
-    def __init__(self, fs: FileSystem) -> None: ...
+    fs: SupportedFileSystem
+    def __init__(self, fs: SupportedFileSystem) -> None: ...
 
 __all__ = [
     # _fs

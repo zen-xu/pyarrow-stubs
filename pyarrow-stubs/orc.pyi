@@ -71,7 +71,7 @@ class ORCWriter:
 def read_table(
     source: str | NativeFile | IO,
     columns: list[str] | None = None,
-    filesystem: FileSystem | None = None,
+    filesystem: SupportedFileSystem | None = None,
 ) -> Table: ...
 def write_table(
     table: Table,

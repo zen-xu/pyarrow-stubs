@@ -2,9 +2,13 @@ import datetime as dt
 import enum
 
 from abc import ABC, abstractmethod
-from typing import Self, overload
+from typing import Self, TypeAlias, Union, overload
+
+from fsspec import AbstractFileSystem
 
 from .lib import NativeFile, _Weakrefable
+
+SupportedFileSystem: TypeAlias = Union[AbstractFileSystem, FileSystem]
 
 class FileType(enum.IntFlag):
     NotFound = enum.auto()
