@@ -37,7 +37,7 @@ class CertKeyPair(NamedTuple):
     key: str
 
 class FlightError(Exception):
-    extra_info: str
+    extra_info: bytes
 
 class FlightInternalError(FlightError, ArrowException): ...
 class FlightTimedOutError(FlightError, ArrowException): ...
