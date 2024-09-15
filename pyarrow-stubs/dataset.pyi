@@ -50,7 +50,7 @@ from pyarrow._dataset_parquet_encryption import (
 from pyarrow.compute import Expression, field, scalar
 from pyarrow.lib import Array, RecordBatch, RecordBatchReader, Schema, Table
 
-from ._fs import FileSystem
+from ._fs import SupportedFileSystem
 
 _orc_available: bool
 _parquet_available: bool
@@ -153,7 +153,7 @@ def partitioning(
 def parquet_dataset(
     metadata_path: str | Path,
     schema: Schema | None = None,
-    filesystem: FileSystem | None = None,
+    filesystem: SupportedFileSystem | None = None,
     format: ParquetFileFormat | None = None,
     partitioning: Partitioning | PartitioningFactory | None = None,
     partition_base_dir: str | None = None,
@@ -163,7 +163,7 @@ def dataset(
     source: str | list[str] | Path | list[Path],
     schema: Schema | None = None,
     format: FileFormat | _DatasetFormat | None = None,
-    filesystem: FileSystem | str | None = None,
+    filesystem: SupportedFileSystem | str | None = None,
     partitioning: Partitioning | PartitioningFactory | str | list[str] | None = None,
     partition_base_dir: str | None = None,
     exclude_invalid_files: bool | None = None,
@@ -174,7 +174,7 @@ def dataset(
     source: list[Dataset],
     schema: Schema | None = None,
     format: FileFormat | _DatasetFormat | None = None,
-    filesystem: FileSystem | str | None = None,
+    filesystem: SupportedFileSystem | str | None = None,
     partitioning: Partitioning | PartitioningFactory | str | list[str] | None = None,
     partition_base_dir: str | None = None,
     exclude_invalid_files: bool | None = None,
@@ -185,7 +185,7 @@ def dataset(
     source: Iterable[RecordBatch] | Iterable[Table] | RecordBatchReader,
     schema: Schema | None = None,
     format: FileFormat | _DatasetFormat | None = None,
-    filesystem: FileSystem | str | None = None,
+    filesystem: SupportedFileSystem | str | None = None,
     partitioning: Partitioning | PartitioningFactory | str | list[str] | None = None,
     partition_base_dir: str | None = None,
     exclude_invalid_files: bool | None = None,
@@ -200,7 +200,7 @@ def write_dataset(
     partitioning: Partitioning | list[str] | None = None,
     partitioning_flavor: str | None = None,
     schema: Schema | None = None,
-    filesystem: FileSystem | None = None,
+    filesystem: SupportedFileSystem | None = None,
     file_options: FileWriteOptions | None = None,
     use_threads: bool = True,
     max_partitions: int = 1024,

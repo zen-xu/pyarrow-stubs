@@ -3,7 +3,7 @@ from typing import IO, Callable, Iterator, Literal, Self, Sequence
 
 from pyarrow import _parquet
 from pyarrow._compute import Expression
-from pyarrow._fs import FileSystem
+from pyarrow._fs import FileSystem, SupportedFileSystem
 from pyarrow._parquet import (
     ColumnChunkMetaData,
     ColumnSchema,
@@ -70,7 +70,7 @@ class ParquetFile:
         decryption_properties: FileDecryptionProperties | None = None,
         thrift_string_size_limit: int | None = None,
         thrift_container_size_limit: int | None = None,
-        filesystem: FileSystem | None = None,
+        filesystem: SupportedFileSystem | None = None,
         page_checksum_verification: bool = False,
     ): ...
     def __enter__(self) -> Self: ...
@@ -129,7 +129,7 @@ class ParquetWriter:
         self,
         where: str | Path | IO,
         schema: Schema,
-        filesystem: FileSystem | None = None,
+        filesystem: SupportedFileSystem | None = None,
         flavor: str | None = None,
         version: Literal["1.0", "2.4", "2.6"] = ...,
         use_dictionary: bool = True,
@@ -166,7 +166,7 @@ class ParquetDataset:
     def __init__(
         self,
         path_or_paths: str | list[str],
-        filesystem: FileSystem | None = None,
+        filesystem: SupportedFileSystem | None = None,
         schema: Schema | None = None,
         *,
         filters: Expression | FilterTuple | list[FilterTuple] | None = None,
@@ -213,7 +213,7 @@ def read_table(
     memory_map: bool = False,
     buffer_size: int = 0,
     partitioning: str | list[str] | Partitioning = "hive",
-    filesystem: FileSystem | None = None,
+    filesystem: SupportedFileSystem | None = None,
     filters: Expression | FilterTuple | list[FilterTuple] | None = None,
     use_legacy_dataset: bool | None = None,
     ignore_prefixes: list[str] | None = None,
@@ -240,7 +240,7 @@ def write_table(
     allow_truncated_timestamps: bool = False,
     data_page_size: int | None = None,
     flavor: str | None = None,
-    filesystem: FileSystem | None = None,
+    filesystem: SupportedFileSystem | None = None,
     compression_level: int | dict | None = None,
     use_byte_stream_split: bool = False,
     column_encoding: str | dict | None = None,
@@ -260,7 +260,7 @@ def write_to_dataset(
     table: Table,
     root_path: str | Path,
     partition_cols: list[str] | None = None,
-    filesystem: FileSystem | None = None,
+    filesystem: SupportedFileSystem | None = None,
     use_legacy_dataset: bool | None = None,
     schema: Schema | None = None,
     partitioning: Partitioning | list[str] | None = None,
@@ -275,18 +275,18 @@ def write_metadata(
     schema: Schema,
     where: str | NativeFile,
     metadata_collector: list[FileMetaData] | None = None,
-    filesystem: FileSystem | None = None,
+    filesystem: SupportedFileSystem | None = None,
     **kwargs,
 ) -> None: ...
 def read_metadata(
     where: str | Path | IO,
     memory_map: bool = False,
     decryption_properties: FileDecryptionProperties | None = None,
-    filesystem: FileSystem | None = None,
+    filesystem: SupportedFileSystem | None = None,
 ) -> FileMetaData: ...
 def read_schema(
     where: str | Path | IO,
     memory_map: bool = False,
     decryption_properties: FileDecryptionProperties | None = None,
-    filesystem: FileSystem | None = None,
+    filesystem: SupportedFileSystem | None = None,
 ) -> FileMetaData: ...

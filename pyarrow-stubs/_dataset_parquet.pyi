@@ -14,7 +14,7 @@ from ._dataset import (
     PartitioningFactory,
 )
 from ._dataset_parquet_encryption import ParquetDecryptionConfig
-from ._fs import FileSystem
+from ._fs import SupportedFileSystem
 from ._parquet import FileDecryptionProperties, FileMetaData
 from .lib import CacheOptions, Schema, _Weakrefable
 
@@ -36,7 +36,7 @@ class ParquetFileFormat(FileFormat):
     def make_fragment(
         self,
         file: IO | Path | str,
-        filesystem: FileSystem | None = None,
+        filesystem: SupportedFileSystem | None = None,
         partition_expression: Expression | None = None,
         row_groups: Iterable[int] | None = None,
         *,
@@ -118,7 +118,7 @@ class ParquetDatasetFactory(DatasetFactory):
     def __init__(
         self,
         metadata_path: str,
-        filesystem: FileSystem,
+        filesystem: SupportedFileSystem,
         format: FileFormat,
         options: ParquetFactoryOptions | None = None,
     ) -> None: ...

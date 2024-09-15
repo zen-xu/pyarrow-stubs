@@ -13,7 +13,7 @@ from typing import (
 )
 
 from . import _csv, _json, _parquet, lib
-from ._fs import FileSelector, FileSystem
+from ._fs import FileSelector, FileSystem, SupportedFileSystem
 from ._stubs_typing import Indices, JoinType, Order
 from .acero import ExecNodeOptions
 from .compute import Expression
@@ -129,7 +129,7 @@ class FileSystemDataset(Dataset):
         fragments: list[Fragment],
         schema: lib.Schema,
         format: FileFormat,
-        filesystem: FileSystem | None = None,
+        filesystem: SupportedFileSystem | None = None,
         root_partition: Expression | None = None,
     ) -> None: ...
     @classmethod
@@ -138,7 +138,7 @@ class FileSystemDataset(Dataset):
         paths: list[str],
         schema: lib.Schema | None = None,
         format: FileFormat | None = None,
-        filesystem: FileSystem | None = None,
+        filesystem: SupportedFileSystem | None = None,
         partitions: list[Expression] | None = None,
         root_partition: Expression | None = None,
     ) -> FileSystemDataset: ...
@@ -157,12 +157,12 @@ class FileWriteOptions(lib._Weakrefable):
 
 class FileFormat(lib._Weakrefable):
     def inspect(
-        self, file: str | Path | IO, filesystem: FileSystem | None = None
+        self, file: str | Path | IO, filesystem: SupportedFileSystem | None = None
     ) -> lib.Schema: ...
     def make_fragment(
         self,
         file: str | Path | IO,
-        filesystem: FileSystem | None = None,
+        filesystem: SupportedFileSystem | None = None,
         partition_expression: Expression | None = None,
         *,
         file_size: int | None = None,
@@ -402,7 +402,7 @@ class FileSystemFactoryOptions(lib._Weakrefable):
 class FileSystemDatasetFactory(DatasetFactory):
     def __init__(
         self,
-        filesystem: FileSystem,
+        filesystem: SupportedFileSystem,
         paths_or_selector: FileSelector,
         format: FileFormat,
         options: FileSystemFactoryOptions | None = None,
@@ -503,7 +503,7 @@ def _filesystemdataset_write(
     data: Scanner,
     base_dir: str | Path,
     basename_template: str,
-    filesystem: FileSystem,
+    filesystem: SupportedFileSystem,
     partitioning: Partitioning,
     file_options: FileWriteOptions,
     max_partitions: int,

@@ -1,7 +1,7 @@
 from typing import IO, Literal, Self
 
 from . import _orc
-from ._fs import FileSystem
+from ._fs import SupportedFileSystem
 from .lib import KeyValueMetadata, NativeFile, RecordBatch, Schema, Table
 
 class ORCFile:
@@ -71,7 +71,7 @@ class ORCWriter:
 def read_table(
     source: str | NativeFile | IO,
     columns: list[str] | None = None,
-    filesystem: FileSystem | None = None,
+    filesystem: SupportedFileSystem | None = None,
 ) -> Table: ...
 def write_table(
     table: Table,
