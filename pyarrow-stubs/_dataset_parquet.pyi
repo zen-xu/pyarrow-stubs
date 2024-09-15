@@ -14,7 +14,7 @@ from ._dataset import (
     PartitioningFactory,
 )
 from ._dataset_parquet_encryption import ParquetDecryptionConfig
-from ._fs import FileSystem, SupportedFileSystem
+from ._fs import SupportedFileSystem
 from ._parquet import FileDecryptionProperties, FileMetaData
 from .lib import CacheOptions, Schema, _Weakrefable
 
