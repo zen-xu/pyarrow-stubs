@@ -53,7 +53,8 @@ FilterTuple: TypeAlias = (
 class Buffer(Protocol):
     def __buffer__(self, flags: int, /) -> memoryview: ...
 
-SupportPyBuffer: TypeAlias = Any
+class SupportPyBuffer(Protocol):
+    def __buffer__(self, flags: int, /) -> memoryview: ...
 
 class SupportArrowStream(Protocol):
     def __arrow_c_stream__(self, requested_schema=None) -> Any: ...
