@@ -127,7 +127,7 @@ class ParquetWriter:
 
     def __init__(
         self,
-        where: str | Path | IO,
+        where: str | Path | IO | NativeFile,
         schema: Schema,
         filesystem: SupportedFileSystem | None = None,
         flavor: str | None = None,
@@ -229,7 +229,7 @@ def read_pandas(
 ) -> Table: ...
 def write_table(
     table: Table,
-    where: str | Path | IO,
+    where: str | Path | NativeFile | IO,
     row_group_size: int | None = None,
     version: Literal["1.0", "2.4", "2.6"] = "2.6",
     use_dictionary: bool = True,
@@ -279,13 +279,13 @@ def write_metadata(
     **kwargs,
 ) -> None: ...
 def read_metadata(
-    where: str | Path | IO,
+    where: str | Path | IO | NativeFile,
     memory_map: bool = False,
     decryption_properties: FileDecryptionProperties | None = None,
     filesystem: SupportedFileSystem | None = None,
 ) -> FileMetaData: ...
 def read_schema(
-    where: str | Path | IO,
+    where: str | Path | IO | NativeFile,
     memory_map: bool = False,
     decryption_properties: FileDecryptionProperties | None = None,
     filesystem: SupportedFileSystem | None = None,
