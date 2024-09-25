@@ -84,7 +84,6 @@ from pyarrow._compute import register_tabular_function as register_tabular_funct
 from pyarrow._compute import register_vector_function as register_vector_function
 
 from . import lib
-import typing_extensions
 
 _P = ParamSpec("_P")
 _R = TypeVar("_R")
@@ -148,23 +147,16 @@ NumericOrTemporalArray: TypeAlias = (
 )
 _NumericOrTemporalArrayT = TypeVar("_NumericOrTemporalArrayT", bound=NumericOrTemporalArray)
 BooleanArray: TypeAlias = lib.BooleanArray | lib.ChunkedArray[lib.BooleanScalar]
-FloatScalar: typing_extensions.TypeAlias = (
-    lib.Scalar[lib.Float32Type]
-    | lib.Scalar[lib.Float64Type]
-    | lib.Scalar[lib.Decimal128Type]
-    | lib.Scalar[lib.Decimal256Type]
-)
+FloatScalar: TypeAlias = lib.Scalar[lib.Float32Type] | lib.Scalar[lib.Float64Type]
+DecimalScalar: TypeAlias = lib.Scalar[lib.Decimal128Type] | lib.Scalar[lib.Decimal256Type]
 _FloatScalarT = TypeVar("_FloatScalarT", bound=FloatScalar)
-FloatArray: typing_extensions.TypeAlias = (
+FloatArray: TypeAlias = (
     lib.NumericArray[lib.FloatScalar]
     | lib.NumericArray[lib.DoubleScalar]
-    | lib.NumericArray[lib.Decimal128Scalar]
-    | lib.NumericArray[lib.Decimal256Scalar]
     | lib.ChunkedArray[lib.FloatScalar]
     | lib.ChunkedArray[lib.DoubleScalar]
-    | lib.ChunkedArray[lib.Decimal128Scalar]
-    | lib.ChunkedArray[lib.Decimal256Scalar]
 )
+
 _FloatArrayT = TypeVar("_FloatArrayT", bound=FloatArray)
 _StringScalarT = TypeVar("_StringScalarT", bound=StringScalar)
 StringArray: TypeAlias = (
@@ -279,15 +271,40 @@ max = _clone_signature(first)
 min = _clone_signature(first)
 min_max = _clone_signature(first_last)
 
+@overload
 def mean(
-    array: NumericScalar | NumericArray,
+    array: BinaryScalar | BinaryArray | FloatScalar | FloatArray,
     /,
     *,
     skip_nulls: bool = True,
     min_count: int = 1,
     options: ScalarAggregateOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.DoubleScalar | lib.Decimal128Scalar: ...
+) -> lib.DoubleScalar: ...
+@overload
+def mean(
+    array: lib.NumericArray[lib.Decimal128Scalar]
+    | lib.ChunkedArray[lib.Decimal128Scalar]
+    | lib.Decimal128Scalar,
+    /,
+    *,
+    skip_nulls: bool = True,
+    min_count: int = 1,
+    options: ScalarAggregateOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Decimal128Scalar: ...
+@overload
+def mean(
+    array: lib.NumericArray[lib.Decimal256Scalar]
+    | lib.ChunkedArray[lib.Decimal256Scalar]
+    | lib.Decimal256Scalar,
+    /,
+    *,
+    skip_nulls: bool = True,
+    min_count: int = 1,
+    options: ScalarAggregateOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Decimal256Scalar: ...
 def mode(
     array: NumericScalar | NumericArray,
     /,
@@ -448,12 +465,20 @@ divide_checked = _clone_signature(divide)
 
 @overload
 def exp(
+    exponent: lib.FloatArray, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.FloatArray: ...
+@overload
+def exp(
     exponent: NumericArray, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.FloatArray | lib.DoubleArray: ...
+) -> lib.DoubleArray: ...
+@overload
+def exp(
+    exponent: lib.FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.FloatScalar: ...
 @overload
 def exp(
     exponent: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.FloatScalar | lib.DoubleScalar: ...
+) -> lib.DoubleScalar: ...
 @overload
 def exp(exponent: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 
