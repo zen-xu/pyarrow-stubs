@@ -55,7 +55,7 @@ NullableIterable: TypeAlias = Iterable[_T | None]
 @overload  # type: ignore[overload-overlap]
 def array(
     values: NullableIterable[bool],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -65,7 +65,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[int],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -75,7 +75,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[float],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -85,7 +85,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[Decimal],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -95,7 +95,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[dict[str, Any]],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -105,7 +105,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[dt.date],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -115,7 +115,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[dt.time],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -125,7 +125,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[dt.timedelta],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -135,7 +135,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[MonthDayNano],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -145,7 +145,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[str],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -155,7 +155,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[bytes],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -165,7 +165,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[list],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -175,7 +175,7 @@ def array(
 @overload
 def array(
     values: NullableIterable[_Scalar_CoT],
-    type: None = None,
+    type: DataType | None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -1218,7 +1218,7 @@ class ListArray(BaseListArray[_Scalar_CoT]):
         offsets: Int32Array,
         values: Array[Scalar[_DataTypeT]],
         *,
-        type: None = None,
+        type: DataType | None = None,
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
     ) -> ListArray[scalar.ListScalar[_DataTypeT]]: ...
@@ -1246,7 +1246,7 @@ class LargeListArray(BaseListArray[scalar.LargeListScalar[_DataType_CoT]]):
         offsets: Int64Array,
         values: Array[Scalar[_DataTypeT]],
         *,
-        type: None = None,
+        type: DataType | None = None,
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
     ) -> LargeListArray[_DataTypeT]: ...
@@ -1274,7 +1274,7 @@ class ListViewArray(BaseListArray[scalar.ListViewScalar[_DataType_CoT]]):
         offsets: Int32Array,
         values: Array[Scalar[_DataTypeT]],
         *,
-        type: None = None,
+        type: DataType | None = None,
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
     ) -> ListViewArray[_DataTypeT]: ...
@@ -1304,7 +1304,7 @@ class LargeListViewArray(BaseListArray[scalar.LargeListScalar[_DataType_CoT]]):
         offsets: Int64Array,
         values: Array[Scalar[_DataTypeT]],
         *,
-        type: None = None,
+        type: DataType | None = None,
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
     ) -> LargeListViewArray[_DataTypeT]: ...
@@ -1333,7 +1333,7 @@ class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataType_CoT,
         cls,
         values: Array[Scalar[_DataTypeT]],
         *,
-        type: None = None,
+        type: DataType | None = None,
         mask: Mask | None = None,
     ) -> FixedSizeListArray[_DataTypeT, None]: ...
     @overload
@@ -1343,7 +1343,7 @@ class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataType_CoT,
         values: Array[Scalar[_DataTypeT]],
         limit_size: _Size,
         *,
-        type: None = None,
+        type: DataType | None = None,
         mask: Mask | None = None,
     ) -> FixedSizeListArray[_DataTypeT, _Size]: ...
     @property
@@ -1361,7 +1361,7 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
         keys: Array[Scalar[_MapKeyT]],
         items: Array[Scalar[_MapItemT]],
         *,
-        type: None = None,
+        type: DataType | None = None,
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
     ) -> MapArray[_MapKeyT, _MapItemT]: ...
