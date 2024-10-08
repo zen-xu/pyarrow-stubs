@@ -273,7 +273,7 @@ min_max = _clone_signature(first_last)
 
 @overload
 def mean(
-    array: BinaryScalar | BinaryArray | FloatScalar | FloatArray,
+    array: FloatScalar | FloatArray,
     /,
     *,
     skip_nulls: bool = True,
