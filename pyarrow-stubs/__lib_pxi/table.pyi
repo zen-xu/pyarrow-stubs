@@ -456,6 +456,23 @@ class RecordBatch(_Tabular[Array]):
         self, target_schema: Schema, safe: bool | None = None, options: CastOptions | None = None
     ) -> Self: ...
     @classmethod
+    def from_arrays(
+        cls,
+        arrays: list[Array] | list[ChunkedArray],
+        names: list[str] | None = None,
+        schema: Schema | None = None,
+        metadata: Mapping | None = None,
+    ) -> Self: ...
+    @classmethod
+    def from_pandas(
+        cls,
+        df: pd.DataFrame,
+        schema: Schema | None = None,
+        preserve_index: bool | None = None,
+        nthreads: int | None = None,
+        columns: list[str] | None = None,
+    ) -> Self: ...
+    @classmethod
     def from_struct_array(
         cls, struct_array: StructArray | ChunkedArray[scalar.StructScalar]
     ) -> Self: ...
