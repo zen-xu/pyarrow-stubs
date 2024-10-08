@@ -603,9 +603,6 @@ class TableGroupBy:
     def aggregate(
         self, aggregations: list[tuple[str, str]] | list[tuple[str, str, FunctionOptions]]
     ) -> Table: ...
-    def _table(self) -> Table: ...
-    @property
-    def _use_threads(self) -> bool: ...
 
 __all__ = [
     "ChunkedArray",
