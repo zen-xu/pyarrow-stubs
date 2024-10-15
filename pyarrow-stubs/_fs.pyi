@@ -1,8 +1,18 @@
 import datetime as dt
 import enum
+import sys
 
 from abc import ABC, abstractmethod
-from typing import Self, TypeAlias, Union, overload
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+from typing import Union, overload
 
 from fsspec import AbstractFileSystem
 

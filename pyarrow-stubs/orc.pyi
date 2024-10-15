@@ -1,4 +1,10 @@
-from typing import IO, Literal, Self
+import sys
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+from typing import IO, Literal
 
 from . import _orc
 from ._fs import SupportedFileSystem

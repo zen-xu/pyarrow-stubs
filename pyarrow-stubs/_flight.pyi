@@ -1,7 +1,12 @@
 import asyncio
 import enum
+import sys
 
-from typing import Generator, Generic, Iterable, Iterator, NamedTuple, Self, TypeVar
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+from typing import Generator, Generic, Iterable, Iterator, NamedTuple, TypeVar
 
 from typing_extensions import deprecated
 

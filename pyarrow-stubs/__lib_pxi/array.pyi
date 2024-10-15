@@ -1,17 +1,25 @@
 # mypy: disable-error-code="overload-overlap,misc,type-arg"
 
 import datetime as dt
+import sys
 
 from collections.abc import Callable
 from decimal import Decimal
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
 from typing import (
     Any,
     Generic,
     Iterable,
     Iterator,
     Literal,
-    Self,
-    TypeAlias,
     TypeVar,
     overload,
 )

@@ -1,7 +1,18 @@
+import sys
+
 from collections.abc import Callable
 from io import IOBase
 from os import PathLike
-from typing import Any, Literal, Self, SupportsIndex, TypeAlias, overload
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+from typing import Any, Literal, SupportsIndex, overload
 
 from pyarrow._stubs_typing import Compression, SupportPyBuffer
 from pyarrow.lib import MemoryPool, _Weakrefable

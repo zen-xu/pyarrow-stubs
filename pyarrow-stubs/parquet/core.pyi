@@ -1,5 +1,12 @@
+import sys
+
 from pathlib import Path
-from typing import IO, Callable, Iterator, Literal, Self, Sequence
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+from typing import IO, Callable, Iterator, Literal, Sequence
 
 from pyarrow import _parquet
 from pyarrow._compute import Expression

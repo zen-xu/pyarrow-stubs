@@ -1,4 +1,10 @@
-from typing import Any, Iterable, Self, Sequence
+import sys
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+from typing import Any, Iterable, Sequence
 
 from pyarrow.interchange.column import _PyArrowColumn
 from pyarrow.lib import RecordBatch, Table

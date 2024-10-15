@@ -1,8 +1,14 @@
 import datetime as dt
+import sys
 
 from collections.abc import Mapping
 from decimal import Decimal
-from typing import Any, Generic, Iterable, Iterator, Literal, Self, overload
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+from typing import Any, Generic, Iterable, Iterator, Literal, overload
 
 import numpy as np
 import pandas as pd
