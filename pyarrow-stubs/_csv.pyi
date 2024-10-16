@@ -31,7 +31,7 @@ class ParseOptions(lib._Weakrefable):
 @dataclass(kw_only=True)
 class ConvertOptions(lib._Weakrefable):
     check_utf8: bool = field(default=True, kw_only=False)
-    check_types: lib.Schema | dict | None = None
+    column_types: lib.Schema | dict | None = None
     null_values: list[str] | None = None
     true_values: list[str] | None = None
     false_values: list[str] | None = None
