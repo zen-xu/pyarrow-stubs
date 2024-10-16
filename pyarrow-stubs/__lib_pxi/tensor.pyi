@@ -1,6 +1,11 @@
 # mypy: disable-error-code="import-untyped"
 
-from typing import Self
+import sys
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 import numpy as np
 

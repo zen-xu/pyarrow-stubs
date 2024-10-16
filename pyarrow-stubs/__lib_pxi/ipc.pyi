@@ -1,7 +1,13 @@
 import enum
+import sys
 
 from io import IOBase
-from typing import Iterable, Iterator, Literal, Mapping, NamedTuple, Self
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+from typing import Iterable, Iterator, Literal, Mapping, NamedTuple
 
 import pandas as pd
 

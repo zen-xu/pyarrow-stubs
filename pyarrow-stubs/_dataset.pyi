@@ -1,4 +1,11 @@
+import sys
+
 from pathlib import Path
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 from typing import (
     IO,
     Any,
@@ -7,7 +14,6 @@ from typing import (
     Iterator,
     Literal,
     NamedTuple,
-    Self,
     TypeVar,
     overload,
 )
