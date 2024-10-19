@@ -38,6 +38,7 @@ class ConvertOptions(lib._Weakrefable):
     decimal_point: str = "."
     strings_can_be_null: bool = False
     quoted_strings_can_be_null: bool = True
+    include_columns: list[str] | None = None
     include_missing_columns: bool = False
     auto_dict_encode: bool = False
     auto_dict_max_cardinality: int | None = None
