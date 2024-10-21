@@ -57,7 +57,7 @@ fsspec        = "*"
 pyright       = { version = ">=1.1.385,<2", extras = ["nodejs"] }
 
 [tool.pixi.tasks]
-pyright = { cmd = "pyright" }
+pyright    = { cmd = "pyright" }
 pre-commit = { cmd = "pre-commit" }
 
 [tool.ruff]
