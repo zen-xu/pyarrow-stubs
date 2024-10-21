@@ -1,5 +1,6 @@
-from pathlib import Path
 from typing import IO, Any, Iterable, Iterator, Literal, Sequence, TypeAlias, TypedDict
+
+from _typeshed import StrPath
 
 from ._stubs_typing import Order
 from .lib import (
@@ -273,7 +274,7 @@ class FileMetaData(_Weakrefable):
     def row_group(self, i: int) -> RowGroupMetaData: ...
     def set_file_path(self, path: str) -> None: ...
     def append_row_groups(self, other: FileMetaData) -> None: ...
-    def write_metadata_file(self, where: str | Path | Buffer | NativeFile | IO) -> None: ...
+    def write_metadata_file(self, where: StrPath | Buffer | NativeFile | IO) -> None: ...
 
 class ParquetSchema(_Weakrefable):
     def __init__(self, container: FileMetaData) -> None: ...
@@ -314,7 +315,7 @@ class ParquetReader(_Weakrefable):
     def __init__(self, memory_pool: MemoryPool | None = None) -> None: ...
     def open(
         self,
-        source: str | Path | NativeFile | IO,
+        source: StrPath | NativeFile | IO,
         *,
         use_memory_map: bool = False,
         read_dictionary: Iterable[int] | Iterable[str] | None = None,

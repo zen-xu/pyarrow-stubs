@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import IO, Callable, Literal
+
+from _typeshed import StrPath
 
 from . import lib
 
@@ -66,7 +67,7 @@ class CSVWriter(lib._CRecordBatchWriter):
     def __init__(
         self,
         # TODO: OutputStream
-        sink: str | Path | IO,
+        sink: StrPath | IO,
         schema: lib.Schema,
         write_options: WriteOptions | None = None,
         *,
@@ -78,14 +79,14 @@ class CSVStreamingReader(lib.RecordBatchReader): ...
 ISO8601: lib._Weakrefable
 
 def open_csv(
-    input_file: str | Path | IO,
+    input_file: StrPath | IO,
     read_options: ReadOptions | None = None,
     parse_options: ParseOptions | None = None,
     convert_options: ConvertOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> CSVStreamingReader: ...
 def read_csv(
-    input_file: str | Path | IO,
+    input_file: StrPath | IO,
     read_options: ReadOptions | None = None,
     parse_options: ParseOptions | None = None,
     convert_options: ConvertOptions | None = None,
@@ -93,7 +94,7 @@ def read_csv(
 ) -> lib.Table: ...
 def write_csv(
     data: lib.RecordBatch | lib.Table,
-    output_file: str | Path | lib.NativeFile | IO,
+    output_file: StrPath | lib.NativeFile | IO,
     write_options: WriteOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> None: ...

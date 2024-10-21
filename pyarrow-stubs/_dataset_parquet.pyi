@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from pathlib import Path
 from typing import IO, Any, Iterable, TypedDict
+
+from _typeshed import StrPath
 
 from ._compute import Expression
 from ._dataset import (
@@ -35,7 +36,7 @@ class ParquetFileFormat(FileFormat):
     def default_extname(self) -> str: ...
     def make_fragment(
         self,
-        file: IO | Path | str,
+        file: StrPath | IO,
         filesystem: SupportedFileSystem | None = None,
         partition_expression: Expression | None = None,
         row_groups: Iterable[int] | None = None,

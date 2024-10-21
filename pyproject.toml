@@ -32,9 +32,16 @@ requires      = ["hatchling"]
 [tool.hatch.build.targets.wheel]
 packages = ["pyarrow-stubs"]
 
+[tool.isort]
+profile = "black"
+
 [tool.pixi.project]
 channels  = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+[tool.pixi.dependencies]
+python = "3.11"
+pip    = "*"
 
 [tool.pixi.pypi-dependencies]
 pyarrow-stubs = { path = ".", editable = true }
@@ -46,6 +53,12 @@ ruff          = ">=0.5"
 types-cffi    = "*"
 pandas-stubs  = "*"
 hatchling     = "*"
+fsspec        = "*"
+pyright       = { version = ">=1.1.385,<2", extras = ["nodejs"] }
+
+[tool.pixi.tasks]
+pyright = { cmd = "pyright" }
+pre-commit = { cmd = "pre-commit" }
 
 [tool.ruff]
 fix            = true

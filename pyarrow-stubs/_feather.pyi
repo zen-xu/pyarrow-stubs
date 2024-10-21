@@ -1,5 +1,6 @@
-from pathlib import Path
 from typing import IO
+
+from _typeshed import StrPath
 
 from .lib import Buffer, NativeFile, Table, _Weakrefable
 
@@ -7,7 +8,7 @@ class FeatherError(Exception): ...
 
 def write_feather(
     table: Table,
-    dest: str | IO | Path | NativeFile,
+    dest: StrPath | IO | NativeFile,
     compression: str | None = None,
     compression_level: int | None = None,
     chunksize: int | None = None,
@@ -17,7 +18,7 @@ def write_feather(
 class FeatherReader(_Weakrefable):
     def __init__(
         self,
-        source: str | IO | Path | NativeFile | Buffer,
+        source: StrPath | IO | NativeFile | Buffer,
         use_memory_map: bool,
         use_threads: bool,
     ) -> None: ...

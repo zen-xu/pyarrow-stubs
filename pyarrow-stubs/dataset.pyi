@@ -1,6 +1,6 @@
-from pathlib import Path
-from typing import Callable, Iterable, Literal, TypeAlias, overload
+from typing import Callable, Iterable, Literal, Sequence, TypeAlias, overload
 
+from _typeshed import StrPath
 from pyarrow._dataset import (
     CsvFileFormat,
     CsvFragmentScanOptions,
@@ -151,7 +151,7 @@ def partitioning(
     dictionaries: dict[str, Array] | None = None,
 ) -> Partitioning: ...
 def parquet_dataset(
-    metadata_path: str | Path,
+    metadata_path: StrPath,
     schema: Schema | None = None,
     filesystem: SupportedFileSystem | None = None,
     format: ParquetFileFormat | None = None,
@@ -160,7 +160,7 @@ def parquet_dataset(
 ) -> FileSystemDataset: ...
 @overload
 def dataset(
-    source: str | list[str] | Path | list[Path],
+    source: StrPath | Sequence[StrPath],
     schema: Schema | None = None,
     format: FileFormat | _DatasetFormat | None = None,
     filesystem: SupportedFileSystem | str | None = None,

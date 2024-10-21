@@ -1,5 +1,6 @@
-from pathlib import Path
 from typing import IO, Literal
+
+from _typeshed import StrPath
 
 from .lib import MemoryPool, Schema, Table, _Weakrefable
 
@@ -22,7 +23,7 @@ class ParseOptions(_Weakrefable):
     def equals(self, other: ParseOptions) -> bool: ...
 
 def read_json(
-    input_file: str | Path | IO,
+    input_file: StrPath | IO,
     read_options: ReadOptions | None = None,
     parse_options: ParseOptions | None = None,
     memory_pool: MemoryPool | None = None,

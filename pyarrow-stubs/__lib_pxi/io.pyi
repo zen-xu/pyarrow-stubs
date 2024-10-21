@@ -2,7 +2,8 @@ import sys
 
 from collections.abc import Callable
 from io import IOBase
-from os import PathLike
+
+from _typeshed import StrPath
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -12,6 +13,7 @@ if sys.version_info >= (3, 10):
     from typing import TypeAlias
 else:
     from typing_extensions import TypeAlias
+
 from typing import Any, Literal, SupportsIndex, overload
 
 from pyarrow._stubs_typing import Compression, SupportPyBuffer
@@ -61,8 +63,10 @@ class NativeFile(_Weakrefable):
     def read_buffer(self, nbytes: int | None = None) -> Buffer: ...
     def truncate(self) -> None: ...
     def writelines(self, lines: list[bytes]): ...
-    def download(self, stream_or_path: str | PathLike, buffer_size: int | None = None) -> None: ...
-    def upload(self, stream: str | PathLike, buffer_size: int | None) -> None: ...
+    def download(
+        self, stream_or_path: StrPath | IOBase, buffer_size: int | None = None
+    ) -> None: ...
+    def upload(self, stream: IOBase, buffer_size: int | None) -> None: ...
 
 # ----------------------------------------------------------------------
 # Python file-like objects
@@ -158,14 +162,14 @@ class BufferReader(NativeFile):
 class CompressedInputStream(NativeFile):
     def __init__(
         self,
-        stream: str | PathLike | NativeFile | IOBase,
+        stream: StrPath | NativeFile | IOBase,
         compression: Literal["bz2", "brotli", "gzip", "lz4", "zstd"],
     ) -> None: ...
 
 class CompressedOutputStream(NativeFile):
     def __init__(
         self,
-        stream: str | PathLike | NativeFile | IOBase,
+        stream: StrPath | NativeFile | IOBase,
         compression: Literal["bz2", "brotli", "gzip", "lz4", "zstd"],
     ) -> None: ...
 
@@ -222,7 +226,7 @@ class CacheOptions(_Weakrefable):
 class Codec(_Weakrefable):
     def __init__(self, compression: Compression, compression_level: int | None = None) -> None: ...
     @classmethod
-    def detect(cls, path: str | PathLike) -> Self: ...
+    def detect(cls, path: StrPath) -> Self: ...
     @staticmethod
     def is_available(compression: Compression) -> bool: ...
     @staticmethod
@@ -337,12 +341,12 @@ def decompress(
     memory_pool: MemoryPool | None = None,
 ) -> bytes: ...
 def input_stream(
-    source: str | PathLike | Buffer | IOBase,
+    source: StrPath | Buffer | IOBase,
     compression: Literal["detect", "bz2", "brotli", "gzip", "lz4", "zstd"] = "detect",
     buffer_size: int | None = None,
 ) -> BufferReader: ...
 def output_stream(
-    source: str | PathLike | Buffer | IOBase,
+    source: StrPath | Buffer | IOBase,
     compression: Literal["detect", "bz2", "brotli", "gzip", "lz4", "zstd"] = "detect",
     buffer_size: int | None = None,
 ) -> NativeFile: ...
