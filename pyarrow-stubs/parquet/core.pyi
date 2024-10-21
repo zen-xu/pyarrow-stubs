@@ -8,6 +8,11 @@ else:
     from typing_extensions import Self
 from typing import IO, Callable, Iterator, Literal, Sequence
 
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+
 from pyarrow import _parquet
 from pyarrow._compute import Expression
 from pyarrow._fs import FileSystem, SupportedFileSystem
@@ -24,7 +29,7 @@ from pyarrow._parquet import (
     SortingColumn,
     Statistics,
 )
-from pyarrow._stubs_typing import Compression, FilterTuple
+from pyarrow._stubs_typing import FilterTuple
 from pyarrow.dataset import ParquetFileFragment, Partitioning
 from pyarrow.lib import NativeFile, RecordBatch, Schema, Table
 from typing_extensions import deprecated
@@ -58,6 +63,8 @@ __all__ = (
 def filters_to_expression(filters: list[FilterTuple | list[FilterTuple]]) -> Expression: ...
 @deprecated("use filters_to_expression")
 def _filters_to_expression(filters: list[FilterTuple | list[FilterTuple]]) -> Expression: ...
+
+_Compression: TypeAlias = Literal["gzip", "bz2", "brotli", "lz4", "zstd", "snappy", "none"]
 
 class ParquetFile:
     reader: ParquetReader
@@ -140,7 +147,7 @@ class ParquetWriter:
         flavor: str | None = None,
         version: Literal["1.0", "2.4", "2.6"] = ...,
         use_dictionary: bool = True,
-        compression: Compression = "snappy",
+        compression: _Compression | dict[str, _Compression] = "snappy",
         write_statistics: bool | list = True,
         use_deprecated_int96_timestamps: bool | None = None,
         compression_level: int | dict | None = None,
@@ -240,7 +247,7 @@ def write_table(
     row_group_size: int | None = None,
     version: Literal["1.0", "2.4", "2.6"] = "2.6",
     use_dictionary: bool = True,
-    compression: Compression = "snappy",
+    compression: _Compression | dict[str, _Compression] = "snappy",
     write_statistics: bool | list = True,
     use_deprecated_int96_timestamps: bool | None = None,
     coerce_timestamps: str | None = None,
