@@ -114,6 +114,10 @@ _DatasetFormat: TypeAlias = Literal["parquet", "ipc", "arrow", "feather", "csv"]
 @overload
 def partitioning(
     schema: Schema,
+) -> Partitioning: ...
+@overload
+def partitioning(
+    schema: Schema,
     *,
     flavor: Literal["filename"],
     dictionaries: dict[str, Array] | None = None,
