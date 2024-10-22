@@ -1,4 +1,4 @@
-from pathlib import Path
+from _typeshed import StrPath
 
 from ._fs import FileSystem
 
@@ -12,7 +12,7 @@ class HadoopFileSystem(FileSystem):
         replication: int = 3,
         buffer_size: int = 0,
         default_block_size: int | None = None,
-        kerb_ticket: str | Path | None = None,
+        kerb_ticket: StrPath | None = None,
         extra_conf: dict | None = None,
     ): ...
     @staticmethod

@@ -1,7 +1,5 @@
 import sys
 
-from pathlib import Path
-
 if sys.version_info >= (3, 11):
     from typing import Self
 else:
@@ -17,6 +15,8 @@ from typing import (
     TypeVar,
     overload,
 )
+
+from _typeshed import StrPath
 
 from . import _csv, _json, _parquet, lib
 from ._fs import FileSelector, FileSystem, SupportedFileSystem
@@ -163,11 +163,11 @@ class FileWriteOptions(lib._Weakrefable):
 
 class FileFormat(lib._Weakrefable):
     def inspect(
-        self, file: str | Path | IO, filesystem: SupportedFileSystem | None = None
+        self, file: StrPath | IO, filesystem: SupportedFileSystem | None = None
     ) -> lib.Schema: ...
     def make_fragment(
         self,
-        file: str | Path | IO,
+        file: StrPath | IO,
         filesystem: SupportedFileSystem | None = None,
         partition_expression: Expression | None = None,
         *,
@@ -507,7 +507,7 @@ class WrittenFile(lib._Weakrefable):
 
 def _filesystemdataset_write(
     data: Scanner,
-    base_dir: str | Path,
+    base_dir: StrPath,
     basename_template: str,
     filesystem: SupportedFileSystem,
     partitioning: Partitioning,

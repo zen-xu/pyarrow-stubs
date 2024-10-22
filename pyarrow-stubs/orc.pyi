@@ -6,13 +6,15 @@ else:
     from typing_extensions import Self
 from typing import IO, Literal
 
+from _typeshed import StrPath
+
 from . import _orc
 from ._fs import SupportedFileSystem
 from .lib import KeyValueMetadata, NativeFile, RecordBatch, Schema, Table
 
 class ORCFile:
     reader: _orc.ORCReader
-    def __init__(self, source: str | NativeFile | IO) -> None: ...
+    def __init__(self, source: StrPath | NativeFile | IO) -> None: ...
     @property
     def metadata(self) -> KeyValueMetadata: ...
     @property
@@ -55,7 +57,7 @@ class ORCWriter:
     is_open: bool
     def __init__(
         self,
-        where: str | NativeFile | IO,
+        where: StrPath | NativeFile | IO,
         *,
         file_version: str = "0.12",
         batch_size: int = 1024,
@@ -75,7 +77,7 @@ class ORCWriter:
     def close(self) -> None: ...
 
 def read_table(
-    source: str | NativeFile | IO,
+    source: StrPath | NativeFile | IO,
     columns: list[str] | None = None,
     filesystem: SupportedFileSystem | None = None,
 ) -> Table: ...
