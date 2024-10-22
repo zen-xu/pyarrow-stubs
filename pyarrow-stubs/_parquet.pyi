@@ -367,7 +367,7 @@ class ParquetReader(_Weakrefable):
 class ParquetWriter(_Weakrefable):
     def __init__(
         self,
-        where: str | NativeFile | IO,
+        where: StrPath | NativeFile | IO,
         schema: Schema,
         use_dictionary: bool | list[str] | None = None,
         compression: _Compression | dict[str, _Compression] | None = None,
