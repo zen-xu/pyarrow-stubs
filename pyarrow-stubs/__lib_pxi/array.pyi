@@ -48,6 +48,7 @@ from .types import (
     MapType,
     _AsPyType,
     _BasicDataType,
+    _BasicValueT,
     _DataType_CoT,
     _DataTypeT,
     _IndexT,
@@ -793,15 +794,15 @@ def nulls(
 @overload
 def nulls(
     size: int,
-    types: types.DictionaryType[_IndexT, _ValueT],
+    types: types.DictionaryType[_IndexT, _BasicValueT],
     memory_pool: MemoryPool | None = None,
-) -> DictionaryArray[_IndexT, _ValueT]: ...
+) -> DictionaryArray[_IndexT, _BasicValueT]: ...
 @overload
 def nulls(
     size: int,
-    types: types.RunEndEncodedType[_RunEndType, _ValueT],
+    types: types.RunEndEncodedType[_RunEndType, _BasicValueT],
     memory_pool: MemoryPool | None = None,
-) -> RunEndEncodedArray[_RunEndType, _ValueT]: ...
+) -> RunEndEncodedArray[_RunEndType, _BasicValueT]: ...
 @overload
 def nulls(
     size: int,
@@ -996,16 +997,16 @@ def repeat(
 ) -> MapArray[_MapKeyT, _MapItemT]: ...
 @overload
 def repeat(
-    value: scalar.DictionaryScalar[_IndexT, _ValueT],
+    value: scalar.DictionaryScalar[_IndexT, _BasicValueT],
     size: int,
     memory_pool: MemoryPool | None = None,
-) -> DictionaryArray[_IndexT, _ValueT]: ...
+) -> DictionaryArray[_IndexT, _BasicValueT]: ...
 @overload
 def repeat(
-    value: scalar.RunEndEncodedScalar[_RunEndType, _ValueT],
+    value: scalar.RunEndEncodedScalar[_RunEndType, _BasicValueT],
     size: int,
     memory_pool: MemoryPool | None = None,
-) -> RunEndEncodedArray[_RunEndType, _ValueT]: ...
+) -> RunEndEncodedArray[_RunEndType, _BasicValueT]: ...
 @overload
 def repeat(
     value: scalar.UnionScalar,
@@ -1448,16 +1449,16 @@ class LargeBinaryArray(Array[scalar.LargeBinaryScalar]):
 
 class BinaryViewArray(Array[scalar.BinaryViewScalar]): ...
 
-class DictionaryArray(Array[scalar.DictionaryScalar[_IndexT, _ValueT]]):
+class DictionaryArray(Array[scalar.DictionaryScalar[_IndexT, _BasicValueT]]):
     @staticmethod
     def from_buffers(  # type: ignore[override]
-        type: _ValueT,
+        type: _BasicValueT,
         length: int,
         buffers: list[Buffer],
         dictionary: Array | np.ndarray | pd.Series,
         null_count: int = -1,
         offset: int = 0,
-    ) -> DictionaryArray[Any, _ValueT]: ...
+    ) -> DictionaryArray[Any, _BasicValueT]: ...
     @staticmethod
     def from_arrays(
         indices: Indices,
@@ -1482,28 +1483,28 @@ class StructArray(Array[scalar.StructScalar]):
     ) -> StructArray: ...
     def sort(self, order: Order = "ascending", by: str | None = None, **kwargs) -> StructArray: ...
 
-class RunEndEncodedArray(Array[scalar.RunEndEncodedScalar[_RunEndType, _ValueT]]):
+class RunEndEncodedArray(Array[scalar.RunEndEncodedScalar[_RunEndType, _BasicValueT]]):
     @overload
     @staticmethod
     def from_arrays(
         run_ends: Int16Array,
         values: Array,
         type: _ValueT | None = None,
-    ) -> RunEndEncodedArray[types.Int16Type, _ValueT]: ...
+    ) -> RunEndEncodedArray[types.Int16Type, _BasicValueT]: ...
     @overload
     @staticmethod
     def from_arrays(
         run_ends: Int32Array,
         values: Array,
         type: _ValueT | None = None,
-    ) -> RunEndEncodedArray[types.Int32Type, _ValueT]: ...
+    ) -> RunEndEncodedArray[types.Int32Type, _BasicValueT]: ...
     @overload
     @staticmethod
     def from_arrays(
         run_ends: Int64Array,
         values: Array,
         type: _ValueT | None = None,
-    ) -> RunEndEncodedArray[types.Int64Type, _ValueT]: ...
+    ) -> RunEndEncodedArray[types.Int64Type, _BasicValueT]: ...
     @staticmethod
     def from_buffers(  # type: ignore[override]
         type: _ValueT,
@@ -1512,11 +1513,11 @@ class RunEndEncodedArray(Array[scalar.RunEndEncodedScalar[_RunEndType, _ValueT]]
         null_count: int = -1,
         offset=0,
         children: tuple[Array, Array] | None = None,
-    ) -> RunEndEncodedArray[Any, _ValueT]: ...
+    ) -> RunEndEncodedArray[Any, _BasicValueT]: ...
     @property
     def run_ends(self) -> Array[scalar.Scalar[_RunEndType]]: ...
     @property
-    def values(self) -> Array[scalar.Scalar[_ValueT]]: ...
+    def values(self) -> Array[scalar.Scalar[_BasicValueT]]: ...
     def find_physical_offset(self) -> int: ...
     def find_physical_length(self) -> int: ...
 

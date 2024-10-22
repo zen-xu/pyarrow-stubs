@@ -139,19 +139,30 @@ class FixedSizeListType(ListType[_DataType_CoT], Generic[_DataType_CoT, _Size]):
 
 class DictionaryMemo(_Weakrefable): ...
 
-_IndexT = TypeVar("_IndexT", bound=_BasicDataType)
-_ValueT = TypeVar("_ValueT", bound=_BasicDataType)
+_IndexT = TypeVar(
+    "_IndexT",
+    Uint8Type,
+    Int8Type,
+    Uint16Type,
+    Int16Type,
+    Uint32Type,
+    Int32Type,
+    Uint64Type,
+    Int64Type,
+)
+_BasicValueT = TypeVar("_BasicValueT", bound=_BasicDataType)
+_ValueT = TypeVar("_ValueT", bound=DataType)
 _Ordered = TypeVar("_Ordered", bound=Literal[True, False], default=Literal[False])
 
-class DictionaryType(DataType, Generic[_IndexT, _ValueT, _Ordered]):
+class DictionaryType(DataType, Generic[_IndexT, _BasicValueT, _Ordered]):
     @property
     def ordered(self) -> _Ordered: ...
     @property
     def index_type(self) -> _IndexT: ...
     @property
-    def value_type(self) -> _ValueT: ...
+    def value_type(self) -> _BasicValueT: ...
 
-_K = TypeVar("_K", bound=_BasicDataType)
+_K = TypeVar("_K", bound=DataType)
 
 class MapType(DataType, Generic[_K, _ValueT, _Ordered]):
     @property
@@ -195,11 +206,11 @@ class DenseUnionType(UnionType):
 
 _RunEndType = TypeVar("_RunEndType", Int16Type, Int32Type, Int64Type)
 
-class RunEndEncodedType(DataType, Generic[_RunEndType, _ValueT]):
+class RunEndEncodedType(DataType, Generic[_RunEndType, _BasicValueT]):
     @property
     def run_end_type(self) -> _RunEndType: ...
     @property
-    def value_type(self) -> _ValueT: ...
+    def value_type(self) -> _BasicValueT: ...
 
 _StorageT = TypeVar("_StorageT", bound=Array | ChunkedArray)
 
@@ -401,19 +412,19 @@ def large_list_view(value_type: Field[_DataTypeT]) -> LargeListViewType[_DataTyp
 @overload
 def large_list_view(value_type: _DataTypeT) -> LargeListViewType[_DataTypeT]: ...
 @overload
-def map_(key_type: _K, item_type: _IndexT) -> MapType[_K, _IndexT, Literal[False]]: ...
+def map_(key_type: _K, item_type: _ValueT) -> MapType[_K, _ValueT, Literal[False]]: ...
 @overload
 def map_(
-    key_type: _K, item_type: _IndexT, key_sorted: _Ordered
-) -> MapType[_K, _IndexT, _Ordered]: ...
+    key_type: _K, item_type: _ValueT, key_sorted: _Ordered
+) -> MapType[_K, _ValueT, _Ordered]: ...
 @overload
 def dictionary(
-    index_type: _IndexT, value_type: _ValueT
-) -> DictionaryType[_IndexT, _ValueT, Literal[False]]: ...
+    index_type: _IndexT, value_type: _BasicValueT
+) -> DictionaryType[_IndexT, _BasicValueT, Literal[False]]: ...
 @overload
 def dictionary(
-    index_type: _IndexT, value_type: _ValueT, ordered: _Ordered
-) -> DictionaryType[_IndexT, _ValueT, _Ordered]: ...
+    index_type: _IndexT, value_type: _BasicValueT, ordered: _Ordered
+) -> DictionaryType[_IndexT, _BasicValueT, _Ordered]: ...
 def struct(
     fields: Iterable[Field | tuple[str, Field]] | Mapping[str, Field],
 ) -> StructType: ...
@@ -432,8 +443,8 @@ def union(
     child_fields: list[Field], mode: Literal["dense"], type_codes: list[int] | None = None
 ) -> DenseUnionType: ...
 def run_end_encoded(
-    run_end_type: _RunEndType, value_type: _ValueT
-) -> RunEndEncodedType[_RunEndType, _ValueT]: ...
+    run_end_type: _RunEndType, value_type: _BasicValueT
+) -> RunEndEncodedType[_RunEndType, _BasicValueT]: ...
 def fixed_shape_tensor(
     value_type: _ValueT,
     shape: tuple[list[int], ...],
