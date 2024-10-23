@@ -69,9 +69,7 @@ class Scalar(_Weakrefable, Generic[_DataType_CoT]):
     def as_py(
         self: Scalar[
             types.ListType[
-                types.DictionaryType[
-                    types._BasicDataType[_AsPyTypeK], types._BasicDataType[_AsPyTypeV], Any
-                ]
+                types.DictionaryType[types._IndexT, types._BasicDataType[_AsPyTypeV], Any]
             ]
         ],
     ) -> list[dict[_AsPyTypeK, _AsPyTypeV]]: ...
@@ -83,9 +81,7 @@ class Scalar(_Weakrefable, Generic[_DataType_CoT]):
     ) -> list[dict[Any, _AsPyTypeV]]: ...
     @overload
     def as_py(
-        self: Scalar[
-            types.ListType[types.DictionaryType[types._BasicDataType[_AsPyTypeK], Any, Any]],
-        ],
+        self: Scalar[types.ListType[types.DictionaryType[types._IndexT, Any, Any]],],
     ) -> list[dict[_AsPyTypeK, Any]]: ...
     @overload
     def as_py(
@@ -234,17 +230,17 @@ class MapScalar(Scalar[types.MapType[types._K, types._ValueT]]):
         self: Scalar[types.MapType[types._BasicDataType[_AsPyTypeK], Any],],
     ) -> Iterator[tuple[_AsPyTypeK, Any]]: ...
 
-class DictionaryScalar(Scalar[types.DictionaryType[types._IndexT, types._ValueT]]):
+class DictionaryScalar(Scalar[types.DictionaryType[types._IndexT, types._BasicValueT]]):
     @property
     def index(self) -> Scalar[types._IndexT]: ...
     @property
-    def value(self) -> Scalar[types._ValueT]: ...
+    def value(self) -> Scalar[types._BasicValueT]: ...
     @property
     def dictionary(self) -> Array: ...
 
-class RunEndEncodedScalar(Scalar[types.RunEndEncodedType[types._RunEndType, types._ValueT]]):
+class RunEndEncodedScalar(Scalar[types.RunEndEncodedType[types._RunEndType, types._BasicValueT]]):
     @property
-    def value(self) -> tuple[int, int] | None: ...
+    def value(self) -> tuple[int, types._BasicValueT] | None: ...
 
 class UnionScalar(Scalar[types.UnionType]):
     @property
