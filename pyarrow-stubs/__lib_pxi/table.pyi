@@ -624,7 +624,7 @@ def table(
 def concat_tables(
     tables: list[Table],
     memory_pool: MemoryPool | None = None,
-    promote_options: Literal["none", "default", "premissive"] = "none",
+    promote_options: Literal["none", "default", "permissive"] = "none",
     **kwargs,
 ) -> Table: ...
 
