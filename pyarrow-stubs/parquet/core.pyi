@@ -13,6 +13,7 @@ if sys.version_info >= (3, 10):
 else:
     from typing_extensions import TypeAlias
 
+from _typeshed import StrPath
 from pyarrow import _parquet
 from pyarrow._compute import Expression
 from pyarrow._fs import FileSystem, SupportedFileSystem
@@ -29,7 +30,7 @@ from pyarrow._parquet import (
     SortingColumn,
     Statistics,
 )
-from pyarrow._stubs_typing import FilterTuple
+from pyarrow._stubs_typing import FilterTuple, SingleOrList
 from pyarrow.dataset import ParquetFileFragment, Partitioning
 from pyarrow.lib import NativeFile, RecordBatch, Schema, Table
 from typing_extensions import deprecated
@@ -179,7 +180,7 @@ class ParquetWriter:
 class ParquetDataset:
     def __init__(
         self,
-        path_or_paths: str | list[str],
+        path_or_paths: SingleOrList[StrPath | NativeFile | IO],
         filesystem: SupportedFileSystem | None = None,
         schema: Schema | None = None,
         *,
@@ -217,7 +218,7 @@ class ParquetDataset:
     def partitioning(self) -> Partitioning: ...
 
 def read_table(
-    source: str | Path | NativeFile | IO,
+    source: SingleOrList[StrPath | NativeFile | IO],
     *,
     columns: list | None = None,
     use_threads: bool = True,

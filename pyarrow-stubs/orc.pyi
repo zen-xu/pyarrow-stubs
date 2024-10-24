@@ -83,7 +83,7 @@ def read_table(
 ) -> Table: ...
 def write_table(
     table: Table,
-    where: str | NativeFile | IO,
+    where: StrPath | NativeFile | IO,
     *,
     file_version: str = "0.12",
     batch_size: int = 1024,

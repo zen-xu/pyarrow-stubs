@@ -193,7 +193,7 @@ def dataset(
 ) -> InMemoryDataset: ...
 def write_dataset(
     data: Dataset | Table | RecordBatch | RecordBatchReader | list[Table] | Iterable[RecordBatch],
-    base_dir: str,
+    base_dir: StrPath,
     *,
     basename_template: str | None = None,
     format: FileFormat | _DatasetFormat | None = None,

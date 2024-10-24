@@ -1,4 +1,4 @@
-from typing import Any, Collection, Literal, Protocol, TypeAlias
+from typing import Any, Collection, Literal, Protocol, TypeAlias, TypeVar
 
 import numpy as np
 
@@ -25,6 +25,9 @@ NullEncoding: TypeAlias = Literal["mask", "encode"]
 NullSelectionBehavior: TypeAlias = Literal["drop", "emit_null"]
 Mask: TypeAlias = list[bool | None] | NDArray[np.bool_] | BooleanArray
 Indices: TypeAlias = list[int] | NDArray[np.integer] | IntegerArray
+
+_T = TypeVar("_T")
+SingleOrList: TypeAlias = list[_T] | _T
 
 class SupportEq(Protocol):
     def __eq__(self, other) -> bool: ...
