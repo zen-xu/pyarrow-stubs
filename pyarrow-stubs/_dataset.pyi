@@ -351,6 +351,12 @@ class DirectoryPartitioning(KeyValuePartitioning):
         schema: lib.Schema | None = None,
         segment_encoding: Literal["uri", "none"] = "uri",
     ) -> PartitioningFactory: ...
+    def __init__(
+        self,
+        schema: lib.Schema,
+        dictionaries: dict[str, lib.Array] | None = None,
+        segment_encoding: Literal["uri", "none"] = "uri",
+    ) -> None: ...
 
 class HivePartitioning(KeyValuePartitioning):
     def __init__(
