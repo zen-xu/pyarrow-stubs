@@ -1,6 +1,6 @@
 # mypy: disable-error-code="misc,type-var,var-annotated"
 # ruff: noqa: I001
-from typing import Literal, TypeAlias, TypeVar, overload, Any, Iterable, ParamSpec
+from typing import Literal, TypeAlias, TypeVar, overload, Any, Iterable, ParamSpec, Sequence
 from collections.abc import Callable
 
 # Option classes
@@ -2547,9 +2547,9 @@ def select_k_unstable(
 ) -> Expression: ...
 @overload
 def sort_indices(
-    array: lib.Array | lib.ChunkedArray | lib.RecordBatch | lib.Table,
+    input: lib.Array | lib.ChunkedArray | lib.RecordBatch | lib.Table,
     /,
-    order: Literal["ascending", "descending"] = "ascending",
+    sort_keys: Sequence[tuple[str, Literal["ascending", "descending"]]],
     *,
     null_placement: Literal["at_start", "at_end"] = "at_end",
     options: SortOptions | None = None,
@@ -2557,9 +2557,9 @@ def sort_indices(
 ) -> lib.UInt64Array: ...
 @overload
 def sort_indices(
-    array: Expression,
+    input: Expression,
     /,
-    order: Literal["ascending", "descending"] = "ascending",
+    sort_keys: Sequence[tuple[str, Literal["ascending", "descending"]]],
     *,
     null_placement: Literal["at_start", "at_end"] = "at_end",
     options: SortOptions | None = None,
