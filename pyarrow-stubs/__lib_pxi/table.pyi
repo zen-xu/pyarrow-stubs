@@ -609,9 +609,16 @@ def record_batch(
     schema: Schema | None = None,
     metadata: Mapping | None = None,
 ) -> RecordBatch: ...
+@overload
 def table(
-    data: dict[str, list | Array]
-    | list[Array | ChunkedArray]
+    data: dict[str, list | Array],
+    schema: Schema | None = None,
+    metadata: Mapping | None = None,
+    nthreads: int | None = None,
+) -> Table: ...
+@overload
+def table(
+    data: list[Array | ChunkedArray]
     | pd.DataFrame
     | SupportArrowArray
     | SupportArrowStream
