@@ -1408,9 +1408,9 @@ packages:
   requires_python: '>=3.8'
 - kind: pypi
   name: pyarrow-stubs
-  version: '17.10'
+  version: '17.11'
   path: .
-  sha256: c8cbcc028764f8ec801ad818c50d8ba98d4e77c2b766a7c0fa058b2dd5c55904
+  sha256: da130b39ec1fba1326b5d45ae583b14497780ac8d6b5f7d0d3901d44262cb6df
   requires_dist:
   - pyarrow>=17
   requires_python: '>=3.8,<4'
