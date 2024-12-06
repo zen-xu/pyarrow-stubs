@@ -54,7 +54,7 @@ class Dataset(lib._Weakrefable):
     ) -> Iterator[lib.RecordBatch]: ...
     def to_table(
         self,
-        columns: list[str] | None = None,
+        columns: list[str] | dict[str, Expression] | None = None,
         filter: Expression | None = None,
         batch_size: int = ...,
         batch_readahead: int = 16,
