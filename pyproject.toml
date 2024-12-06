@@ -72,8 +72,9 @@ extend-select = [
   "PYI", # flake8-pyi
 ]
 ignore = [
-  "PYI015", # assignment-default-in-stub
   "PYI011", # typed-argument-default-in-stub
+  "PYI015", # assignment-default-in-stub
+  "PYI063", # pep484-style-positional-only-parameter
   "N818",   # error-suffix-on-exception-name
 ]
 
