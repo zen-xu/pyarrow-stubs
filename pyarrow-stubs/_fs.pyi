@@ -87,14 +87,14 @@ class FileSystem(_Weakrefable):
         path: str,
         compression: str | None = "detect",
         buffer_size: int | None = None,
-        metadata: dict[str, list[str]] | None = None,
+        metadata: dict[str, str] | None = None,
     ) -> NativeFile: ...
     def open_append_stream(
         self,
         path: str,
         compression: str | None = "detect",
         buffer_size: int | None = None,
-        metadata: dict[str, list[str]] | None = None,
+        metadata: dict[str, str] | None = None,
     ): ...
     def normalize_path(self, path: str) -> str: ...
 
