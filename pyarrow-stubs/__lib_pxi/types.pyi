@@ -426,7 +426,7 @@ def dictionary(
     index_type: _IndexT, value_type: _BasicValueT, ordered: _Ordered
 ) -> DictionaryType[_IndexT, _BasicValueT, _Ordered]: ...
 def struct(
-    fields: Iterable[Field | tuple[str, Field]] | Mapping[str, Field],
+    fields: Iterable[Field | tuple[str, Field] | tuple[str, DataType]] | Mapping[str, Field],
 ) -> StructType: ...
 def sparse_union(
     child_fields: list[Field], type_codes: list[int] | None = None
