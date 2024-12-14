@@ -27,7 +27,7 @@ class RecordBatchStreamReader(lib._RecordBatchStreamReader):
         self,
         source: bytes | lib.Buffer | lib.NativeFile | IOBase,
         *,
-        options: IpcReadOptions | None,
+        options: IpcReadOptions | None = None,
         memory_pool: lib.MemoryPool | None = None,
     ) -> None: ...
 
@@ -57,8 +57,8 @@ class RecordBatchFileWriter(lib._RecordBatchFileWriter):
         sink: str | lib.NativeFile | IOBase,
         schema: lib.Schema,
         *,
-        options: IpcReadOptions | None,
-        memory_pool: lib.MemoryPool | None = None,
+        use_legacy_format: bool | None = None,
+        options: IpcWriteOptions | None = None,
     ) -> None: ...
 
 def new_stream(
@@ -71,21 +71,21 @@ def new_stream(
 def open_stream(
     source: bytes | lib.Buffer | lib.NativeFile | IOBase,
     *,
-    options: IpcReadOptions | None,
+    options: IpcReadOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> RecordBatchStreamReader: ...
 def new_file(
     sink: str | lib.NativeFile | IOBase,
     schema: lib.Schema,
     *,
-    options: IpcReadOptions | None,
-    memory_pool: lib.MemoryPool | None = None,
+    use_legacy_format: bool | None = None,
+    options: IpcWriteOptions | None = None,
 ) -> RecordBatchFileWriter: ...
 def open_file(
     source: bytes | lib.Buffer | lib.NativeFile | IOBase,
     footer_offset: int | None = None,
     *,
-    options: IpcReadOptions | None,
+    options: IpcReadOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> RecordBatchFileReader: ...
 def serialize_pandas(
