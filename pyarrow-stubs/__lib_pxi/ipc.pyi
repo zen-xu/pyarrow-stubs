@@ -41,9 +41,13 @@ class ReadStats(NamedTuple):
 class IpcReadOptions(_Weakrefable):
     ensure_native_endian: bool
     use_threads: bool
-    include_fields: list
+    included_fields: list[int]
     def __init__(
-        self, *, ensure_native_endian: bool = True, use_threads: bool = True, include_fields: list
+        self,
+        *,
+        ensure_native_endian: bool = True,
+        use_threads: bool = True,
+        included_fields: list[int] | None = None,
     ) -> None: ...
 
 class IpcWriteOptions(_Weakrefable):
