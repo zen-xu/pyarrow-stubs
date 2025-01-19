@@ -16,6 +16,7 @@ else:
     from typing_extensions import TypeAlias
 from typing import (
     Any,
+    Collection,
     Generic,
     Iterable,
     Iterator,
@@ -1095,7 +1096,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_Scalar_CoT]):
         buffers: list[Buffer],
         null_count: int = -1,
         offset=0,
-        children: list[Array[Scalar[_DataTypeT]]] | None = None,
+        children: Collection[Array[Scalar[_DataTypeT]]] | None = None,
     ) -> Array[Scalar[_DataTypeT]]: ...
     @property
     def null_count(self) -> int: ...
@@ -1403,14 +1404,14 @@ class UnionArray(Array[scalar.UnionScalar]):
     def from_dense(
         types: Int8Array,
         value_offsets: Int32Array,
-        children: list[Array],
+        children: Collection[Array],
         field_names: list[str] | None = None,
         type_codes: Int8Array | None = None,
     ) -> UnionArray: ...
     @staticmethod
     def from_sparse(
         types: Int8Array,
-        children: list[Array],
+        children: Collection[Array],
         field_names: list[str] | None = None,
         type_codes: Int8Array | None = None,
     ) -> UnionArray: ...
