@@ -15,6 +15,7 @@ else:
     from typing_extensions import TypeAlias
 from typing import (
     Any,
+    Collection,
     Generator,
     Generic,
     Iterable,
@@ -469,7 +470,7 @@ class RecordBatch(_Tabular[Array]):
     @classmethod
     def from_arrays(
         cls,
-        arrays: list[Array] | list[ChunkedArray],
+        arrays: Collection[Array] | Collection[ChunkedArray],
         names: list[str] | None = None,
         schema: Schema | None = None,
         metadata: Mapping | None = None,
@@ -550,7 +551,7 @@ class Table(_Tabular[ChunkedArray]):
     @classmethod
     def from_arrays(
         cls,
-        arrays: list[Array] | list[ChunkedArray],
+        arrays: Collection[Array] | Collection[ChunkedArray],
         names: list[str] | None = None,
         schema: Schema | None = None,
         metadata: Mapping | None = None,
@@ -601,7 +602,7 @@ class Table(_Tabular[ChunkedArray]):
 
 def record_batch(
     data: dict[str, list | Array]
-    | list[Array]
+    | Collection[Array]
     | pd.DataFrame
     | SupportArrowArray
     | SupportArrowDeviceArray,
@@ -618,7 +619,7 @@ def table(
 ) -> Table: ...
 @overload
 def table(
-    data: list[Array | ChunkedArray]
+    data: Collection[Array | ChunkedArray]
     | pd.DataFrame
     | SupportArrowArray
     | SupportArrowStream
