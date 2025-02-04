@@ -1,7 +1,7 @@
 import datetime as dt
 import sys
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from decimal import Decimal
 
 if sys.version_info >= (3, 11):
@@ -447,9 +447,9 @@ def run_end_encoded(
 ) -> RunEndEncodedType[_RunEndType, _BasicValueT]: ...
 def fixed_shape_tensor(
     value_type: _ValueT,
-    shape: tuple[list[int], ...],
-    dim_names: tuple[list[str], ...] | None = None,
-    permutation: tuple[list[int], ...] | None = None,
+    shape: Sequence[int],
+    dim_names: Sequence[str] | None = None,
+    permutation: Sequence[int] | None = None,
 ) -> FixedShapeTensorType[_ValueT]: ...
 @overload
 def type_for_alias(name: Literal["null"]) -> NullType: ...
