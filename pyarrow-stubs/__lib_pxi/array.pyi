@@ -1227,7 +1227,7 @@ class ListArray(BaseListArray[_Scalar_CoT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array,
+        offsets: Int32Array | list[int],
         values: Array[Scalar[_DataTypeT]],
         *,
         type: None = None,
@@ -1238,8 +1238,63 @@ class ListArray(BaseListArray[_Scalar_CoT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array,
-        values: Array,
+        offsets: Int32Array | list[int],
+        values: list[int],
+        *,
+        type: None = None,
+        pool: MemoryPool | None = None,
+        mask: Mask | None = None,
+    ) -> ListArray[scalar.ListScalar[types.Int64Type]]: ...
+    @overload
+    @classmethod
+    def from_arrays(
+        cls,
+        offsets: Int32Array | list[int],
+        values: list[float],
+        *,
+        type: None = None,
+        pool: MemoryPool | None = None,
+        mask: Mask | None = None,
+    ) -> ListArray[scalar.ListScalar[types.Float64Type]]: ...
+    @overload
+    @classmethod
+    def from_arrays(
+        cls,
+        offsets: Int32Array | list[int],
+        values: list[str],
+        *,
+        type: None = None,
+        pool: MemoryPool | None = None,
+        mask: Mask | None = None,
+    ) -> ListArray[scalar.ListScalar[types.StringType]]: ...
+    @overload
+    @classmethod
+    def from_arrays(
+        cls,
+        offsets: Int32Array | list[int],
+        values: list[bytes],
+        *,
+        type: None = None,
+        pool: MemoryPool | None = None,
+        mask: Mask | None = None,
+    ) -> ListArray[scalar.ListScalar[types.BinaryType]]: ...
+    @overload
+    @classmethod
+    def from_arrays(
+        cls,
+        offsets: Int32Array | list[int],
+        values: list,
+        *,
+        type: None = None,
+        pool: MemoryPool | None = None,
+        mask: Mask | None = None,
+    ) -> ListArray: ...
+    @overload
+    @classmethod
+    def from_arrays(
+        cls,
+        offsets: Int32Array | list[int],
+        values: Array | list,
         *,
         type: _DataTypeT,
         pool: MemoryPool | None = None,
