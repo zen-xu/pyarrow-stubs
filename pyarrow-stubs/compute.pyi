@@ -925,7 +925,7 @@ def max_element_wise(
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
 
-min_element_wise = _clone_signature(equal)
+min_element_wise = _clone_signature(max_element_wise)
 
 # ========================= 2.6 Logical functions =========================
 @overload
