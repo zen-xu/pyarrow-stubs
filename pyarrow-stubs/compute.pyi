@@ -912,18 +912,11 @@ not_equal = _clone_signature(equal)
 
 @overload
 def max_element_wise(
-    *args: _ScalarT,
+    *args: _ScalarOrArrayT,
     skip_nulls: bool = True,
     options: ElementWiseAggregateOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _ScalarT: ...
-@overload
-def max_element_wise(
-    *args: _ArrayT,
-    skip_nulls: bool = True,
-    options: ElementWiseAggregateOptions | None = None,
-    memory_pool: lib.MemoryPool | None = None,
-) -> _ArrayT: ...
 @overload
 def max_element_wise(
     *args: Expression,
