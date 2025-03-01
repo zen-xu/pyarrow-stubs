@@ -7,6 +7,7 @@ from numpy.typing import NDArray
 from .__lib_pxi.array import BooleanArray, IntegerArray
 
 ArrayLike: TypeAlias = Any
+ScalarLike: TypeAlias = Any
 Order: TypeAlias = Literal["ascending", "descending"]
 JoinType: TypeAlias = Literal[
     "left semi",
