@@ -1,10 +1,11 @@
+from collections.abc import Sequence
 from typing import Any, Collection, Literal, Protocol, TypeAlias, TypeVar
 
 import numpy as np
 
 from numpy.typing import NDArray
 
-from .__lib_pxi.array import BooleanArray, IntegerArray
+from .compute import BooleanArray, IntegerArray
 
 ArrayLike: TypeAlias = Any
 Order: TypeAlias = Literal["ascending", "descending"]
@@ -23,8 +24,8 @@ Compression: TypeAlias = Literal[
 ]
 NullEncoding: TypeAlias = Literal["mask", "encode"]
 NullSelectionBehavior: TypeAlias = Literal["drop", "emit_null"]
-Mask: TypeAlias = list[bool | None] | NDArray[np.bool_] | BooleanArray
-Indices: TypeAlias = list[int] | NDArray[np.integer] | IntegerArray
+Mask: TypeAlias = Sequence[bool | None] | NDArray[np.bool_] | BooleanArray
+Indices: TypeAlias = Sequence[int] | NDArray[np.integer] | IntegerArray
 
 _T = TypeVar("_T")
 SingleOrList: TypeAlias = list[_T] | _T
