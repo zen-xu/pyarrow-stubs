@@ -82,7 +82,7 @@ from pyarrow._compute import register_aggregate_function as register_aggregate_f
 from pyarrow._compute import register_scalar_function as register_scalar_function
 from pyarrow._compute import register_tabular_function as register_tabular_function
 from pyarrow._compute import register_vector_function as register_vector_function
-
+from pyarrow._stubs_typing import ArrayLike, ScalarLike
 from . import lib
 
 _P = ParamSpec("_P")
@@ -1791,7 +1791,14 @@ def choose(indices, /, *values, memory_pool: lib.MemoryPool | None = None): ...
 def coalesce(
     *values: _ScalarOrArrayT, memory_pool: lib.MemoryPool | None = None
 ) -> _ScalarOrArrayT: ...
-def if_else(cond, left, right, /, *, memory_pool: lib.MemoryPool | None = None): ...
+def if_else(
+    cond: ArrayLike | ScalarLike,
+    left: ArrayLike | ScalarLike,
+    right: ArrayLike | ScalarLike,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> ArrayLike | ScalarLike: ...
 
 # ========================= 2.21 Structural transforms =========================
 
