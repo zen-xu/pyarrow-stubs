@@ -99,6 +99,7 @@ _ScalarT = TypeVar("_ScalarT", bound=lib.Scalar)
 _ArrayT = TypeVar("_ArrayT", bound=lib.Array | lib.ChunkedArray)
 _ScalarOrArrayT = TypeVar("_ScalarOrArrayT", bound=lib.Array | lib.Scalar | lib.ChunkedArray)
 ArrayOrChunkedArray: TypeAlias = lib.Array[_Scalar_CoT] | lib.ChunkedArray[_Scalar_CoT]
+ScalarOrArray: TypeAlias = ArrayOrChunkedArray[_Scalar_CoT] | _Scalar_CoT
 
 SignedIntegerScalar: TypeAlias = (
     lib.Scalar[lib.Int8Type]
@@ -912,11 +913,11 @@ not_equal = _clone_signature(equal)
 
 @overload
 def max_element_wise(
-    *args: _ScalarOrArrayT,
+    *args: ScalarOrArray[_Scalar_CoT],
     skip_nulls: bool = True,
     options: ElementWiseAggregateOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> _ScalarT: ...
+) -> _Scalar_CoT: ...
 @overload
 def max_element_wise(
     *args: Expression,
