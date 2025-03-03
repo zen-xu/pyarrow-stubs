@@ -145,14 +145,14 @@ TemporalScalar: TypeAlias = (
 NumericOrDurationScalar: TypeAlias = NumericScalar | lib.DurationScalar
 NumericOrTemporalScalar: TypeAlias = NumericScalar | TemporalScalar
 
-_NumericOrTemporalT = TypeVar("_NumericOrTemporalT", bound=NumericOrTemporalScalar)
+_NumericOrTemporalScalarT = TypeVar("_NumericOrTemporalScalarT", bound=NumericOrTemporalScalar)
 NumericArray: TypeAlias = ArrayOrChunkedArray[_NumericScalarT]
 _NumericArrayT = TypeVar("_NumericArrayT", bound=NumericArray)
 _NumericScalarT = TypeVar("_NumericScalarT", bound=NumericScalar)
 _NumericOrDurationT = TypeVar("_NumericOrDurationT", bound=NumericOrDurationScalar)
 NumericOrDurationArray: TypeAlias = ArrayOrChunkedArray[NumericOrDurationScalar]
 _NumericOrDurationArrayT = TypeVar("_NumericOrDurationArrayT", bound=NumericOrDurationArray)
-NumericOrTemporalArray: TypeAlias = ArrayOrChunkedArray[_NumericOrTemporalT]
+NumericOrTemporalArray: TypeAlias = ArrayOrChunkedArray[_NumericOrTemporalScalarT]
 _NumericOrTemporalArrayT = TypeVar("_NumericOrTemporalArrayT", bound=NumericOrTemporalArray)
 BooleanArray: TypeAlias = ArrayOrChunkedArray[lib.BooleanScalar]
 IntegerArray: TypeAlias = ArrayOrChunkedArray[IntegerScalar]
@@ -368,8 +368,12 @@ abs_checked = _clone_signature(abs)
 
 @overload
 def add(
-    x: _NumericOrTemporalT, y: _NumericOrTemporalT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericOrTemporalT: ...
+    x: _NumericOrTemporalScalarT,
+    y: _NumericOrTemporalScalarT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericOrTemporalScalarT: ...
 @overload
 def add(
     x: _NumericOrTemporalArrayT,
@@ -380,55 +384,87 @@ def add(
 ) -> _NumericOrTemporalArrayT: ...
 @overload
 def add(
-    x: NumericScalar, y: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> NumericScalar: ...
+    x: Expression, y: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 @overload
 def add(
-    x: TemporalScalar, y: TemporalScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> TemporalScalar: ...
-@overload
-def add(
-    x: NumericOrTemporalArray | NumericOrTemporalScalar,
-    y: NumericOrTemporalArray | NumericOrTemporalScalar,
+    x: NumericOrTemporalScalar,
+    y: _NumericOrTemporalArrayT,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> NumericOrTemporalArray: ...
+) -> _NumericOrTemporalArrayT: ...
 @overload
 def add(
-    x: Expression | Any, y: Expression | Any, /, *, memory_pool: lib.MemoryPool | None = None
+    x: _NumericOrTemporalArrayT,
+    y: NumericOrTemporalScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericOrTemporalArrayT: ...
+@overload
+def add(
+    x: NumericOrTemporalScalar, y: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
+@overload
+def add(
+    x: Expression, y: NumericOrTemporalScalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> Expression: ...
 
 add_checked = _clone_signature(add)
 
 @overload
 def divide(
-    dividend: NumericScalar,
-    divisor: NumericScalar,
+    dividend: _NumericOrTemporalScalarT,
+    divisor: _NumericOrTemporalScalarT,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> NumericScalar: ...
+) -> _NumericOrTemporalScalarT: ...
 @overload
 def divide(
-    dividend: TemporalScalar,
-    divisor: TemporalScalar,
+    dividend: _NumericOrTemporalArrayT,
+    divisor: _NumericOrTemporalArrayT,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> TemporalScalar: ...
+) -> _NumericOrTemporalArrayT: ...
 @overload
 def divide(
-    dividend: NumericOrTemporalArray | NumericOrTemporalScalar,
-    divisor: NumericOrTemporalArray | NumericOrTemporalScalar,
+    dividend: Expression,
+    divisor: Expression,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> NumericArray: ...
+) -> Expression: ...
 @overload
 def divide(
-    dividend: Expression | Any,
-    divisor: Expression | Any,
+    dividend: NumericOrTemporalScalar,
+    divisor: _NumericOrTemporalArrayT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericOrTemporalArrayT: ...
+@overload
+def divide(
+    dividend: _NumericOrTemporalArrayT,
+    divisor: NumericOrTemporalScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericOrTemporalArrayT: ...
+@overload
+def divide(
+    dividend: NumericOrTemporalScalar,
+    divisor: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def divide(
+    dividend: Expression,
+    divisor: NumericOrTemporalScalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
