@@ -1792,6 +1792,9 @@ def choose(indices, /, *values, memory_pool: lib.MemoryPool | None = None): ...
 def coalesce(
     *values: _ScalarOrArrayT, memory_pool: lib.MemoryPool | None = None
 ) -> _ScalarOrArrayT: ...
+
+fill_null = coalesce
+
 def if_else(
     cond: ArrayLike | ScalarLike,
     left: ArrayLike | ScalarLike,
