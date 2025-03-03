@@ -1019,16 +1019,48 @@ def and_(
 ) -> lib.BooleanScalar: ...
 @overload
 def and_(
-    x: lib.BooleanScalar | BooleanArray,
-    y: lib.BooleanScalar | BooleanArray,
+    x: BooleanArray,
+    y: BooleanArray,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
 @overload
 def and_(
-    x: Expression | Any,
-    y: Expression | Any,
+    x: Expression,
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def and_(
+    x: lib.BooleanScalar,
+    y: BooleanArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+@overload
+def and_(
+    x: BooleanArray,
+    y: lib.BooleanScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+@overload
+def and_(
+    x: lib.BooleanScalar,
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def and_(
+    x: Expression,
+    y: lib.BooleanScalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
