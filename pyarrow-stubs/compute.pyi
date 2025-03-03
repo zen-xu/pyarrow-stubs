@@ -118,6 +118,7 @@ FloatScalar: TypeAlias = (
     lib.Scalar[lib.Float16Type] | lib.Scalar[lib.Float32Type] | lib.Scalar[lib.Float64Type]
 )
 DecimalScalar: TypeAlias = lib.Scalar[lib.Decimal128Type] | lib.Scalar[lib.Decimal256Type]
+NonFloatNumericScalar: TypeAlias = IntegerScalar | DecimalScalar
 NumericScalar: TypeAlias = IntegerScalar | FloatScalar | DecimalScalar
 BinaryScalar: TypeAlias = (
     lib.Scalar[lib.BinaryType]
@@ -474,19 +475,22 @@ divide_checked = _clone_signature(divide)
 
 @overload
 def exp(
-    exponent: lib.FloatArray, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.FloatArray: ...
+    exponent: _FloatArrayT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _FloatArrayT: ...
 @overload
 def exp(
-    exponent: NumericArray, /, *, memory_pool: lib.MemoryPool | None = None
+    exponent: ArrayOrChunkedArray[NonFloatNumericScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
 ) -> lib.DoubleArray: ...
 @overload
 def exp(
-    exponent: lib.FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.FloatScalar: ...
+    exponent: _FloatScalarT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _FloatScalarT: ...
 @overload
 def exp(
-    exponent: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
+    exponent: NonFloatNumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.DoubleScalar: ...
 @overload
 def exp(exponent: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
