@@ -492,7 +492,7 @@ def exp(
 def exp(exponent: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 
 multiply = _clone_signature(add)
-multiply_checked = _clone_signature(multiply)
+multiply_checked = _clone_signature(add)
 
 @overload
 def negate(
@@ -570,7 +570,7 @@ def sqrt(x: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expr
 sqrt_checked = _clone_signature(sqrt)
 
 subtract = _clone_signature(add)
-subtract_checked = _clone_signature(subtract)
+subtract_checked = _clone_signature(add)
 
 # ========================= 2.1 Bit-wise functions =========================
 @overload
