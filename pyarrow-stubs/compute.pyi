@@ -950,16 +950,40 @@ def equal(
 ) -> lib.BooleanScalar: ...
 @overload
 def equal(
-    x: lib.Scalar | lib.Array | lib.ChunkedArray,
-    y: lib.Scalar | lib.Array | lib.ChunkedArray,
+    x: lib.Scalar,
+    y: lib.Array | lib.ChunkedArray,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
 @overload
 def equal(
-    x: Expression | Any,
-    y: Expression | Any,
+    x: lib.Array | lib.ChunkedArray,
+    y: lib.Scalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+@overload
+def equal(
+    x: Expression,
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def equal(
+    x: lib.Scalar,
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def equal(
+    x: Expression,
+    y: lib.Scalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
