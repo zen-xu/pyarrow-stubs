@@ -521,10 +521,6 @@ def power(
 ) -> _NumericScalarT: ...
 @overload
 def power(
-    base: NumericScalar, exponent: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> NumericScalar: ...
-@overload
-def power(
     base: _NumericArrayT,
     exponent: _NumericArrayT,
     /,
@@ -533,16 +529,40 @@ def power(
 ) -> _NumericArrayT: ...
 @overload
 def power(
-    base: NumericScalar | NumericArray,
-    exponent: NumericScalar | NumericArray,
+    base: Expression,
+    exponent: Expression,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> NumericArray: ...
+) -> Expression: ...
 @overload
 def power(
-    base: Expression | Any,
-    exponent: Expression | Any,
+    base: _NumericArrayT,
+    exponent: NumericScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericArrayT: ...
+@overload
+def power(
+    base: NumericScalar,
+    exponent: _NumericArrayT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericArrayT: ...
+@overload
+def power(
+    base: NumericScalar,
+    exponent: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def power(
+    base: Expression,
+    exponent: NumericScalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
