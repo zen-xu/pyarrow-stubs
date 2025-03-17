@@ -202,7 +202,7 @@ def chunked_array(
 ) -> ChunkedArray[scalar.ListScalar]: ...
 @overload
 def chunked_array(
-    values: Iterable[_Scalar_CoT],
+    values: Iterable[_Scalar_CoT] | Iterable[Array[_Scalar_CoT]],
     type: None = None,
 ) -> ChunkedArray[_Scalar_CoT]: ...
 @overload
