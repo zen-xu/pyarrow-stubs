@@ -118,6 +118,7 @@ FloatScalar: TypeAlias = (
     lib.Scalar[lib.Float16Type] | lib.Scalar[lib.Float32Type] | lib.Scalar[lib.Float64Type]
 )
 DecimalScalar: TypeAlias = lib.Scalar[lib.Decimal128Type] | lib.Scalar[lib.Decimal256Type]
+NonFloatNumericScalar: TypeAlias = IntegerScalar | DecimalScalar
 NumericScalar: TypeAlias = IntegerScalar | FloatScalar | DecimalScalar
 BinaryScalar: TypeAlias = (
     lib.Scalar[lib.BinaryType]
@@ -145,14 +146,14 @@ TemporalScalar: TypeAlias = (
 NumericOrDurationScalar: TypeAlias = NumericScalar | lib.DurationScalar
 NumericOrTemporalScalar: TypeAlias = NumericScalar | TemporalScalar
 
-_NumericOrTemporalT = TypeVar("_NumericOrTemporalT", bound=NumericOrTemporalScalar)
+_NumericOrTemporalScalarT = TypeVar("_NumericOrTemporalScalarT", bound=NumericOrTemporalScalar)
 NumericArray: TypeAlias = ArrayOrChunkedArray[_NumericScalarT]
 _NumericArrayT = TypeVar("_NumericArrayT", bound=NumericArray)
 _NumericScalarT = TypeVar("_NumericScalarT", bound=NumericScalar)
 _NumericOrDurationT = TypeVar("_NumericOrDurationT", bound=NumericOrDurationScalar)
 NumericOrDurationArray: TypeAlias = ArrayOrChunkedArray[NumericOrDurationScalar]
 _NumericOrDurationArrayT = TypeVar("_NumericOrDurationArrayT", bound=NumericOrDurationArray)
-NumericOrTemporalArray: TypeAlias = ArrayOrChunkedArray[_NumericOrTemporalT]
+NumericOrTemporalArray: TypeAlias = ArrayOrChunkedArray[_NumericOrTemporalScalarT]
 _NumericOrTemporalArrayT = TypeVar("_NumericOrTemporalArrayT", bound=NumericOrTemporalArray)
 BooleanArray: TypeAlias = ArrayOrChunkedArray[lib.BooleanScalar]
 IntegerArray: TypeAlias = ArrayOrChunkedArray[IntegerScalar]
@@ -368,8 +369,12 @@ abs_checked = _clone_signature(abs)
 
 @overload
 def add(
-    x: _NumericOrTemporalT, y: _NumericOrTemporalT, /, *, memory_pool: lib.MemoryPool | None = None
-) -> _NumericOrTemporalT: ...
+    x: _NumericOrTemporalScalarT,
+    y: _NumericOrTemporalScalarT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericOrTemporalScalarT: ...
 @overload
 def add(
     x: _NumericOrTemporalArrayT,
@@ -380,55 +385,87 @@ def add(
 ) -> _NumericOrTemporalArrayT: ...
 @overload
 def add(
-    x: NumericScalar, y: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> NumericScalar: ...
+    x: Expression, y: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
 @overload
 def add(
-    x: TemporalScalar, y: TemporalScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> TemporalScalar: ...
-@overload
-def add(
-    x: NumericOrTemporalArray | NumericOrTemporalScalar,
-    y: NumericOrTemporalArray | NumericOrTemporalScalar,
+    x: NumericOrTemporalScalar,
+    y: _NumericOrTemporalArrayT,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> NumericOrTemporalArray: ...
+) -> _NumericOrTemporalArrayT: ...
 @overload
 def add(
-    x: Expression | Any, y: Expression | Any, /, *, memory_pool: lib.MemoryPool | None = None
+    x: _NumericOrTemporalArrayT,
+    y: NumericOrTemporalScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericOrTemporalArrayT: ...
+@overload
+def add(
+    x: NumericOrTemporalScalar, y: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
+@overload
+def add(
+    x: Expression, y: NumericOrTemporalScalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> Expression: ...
 
 add_checked = _clone_signature(add)
 
 @overload
 def divide(
-    dividend: NumericScalar,
-    divisor: NumericScalar,
+    dividend: _NumericOrTemporalScalarT,
+    divisor: _NumericOrTemporalScalarT,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> NumericScalar: ...
+) -> _NumericOrTemporalScalarT: ...
 @overload
 def divide(
-    dividend: TemporalScalar,
-    divisor: TemporalScalar,
+    dividend: _NumericOrTemporalArrayT,
+    divisor: _NumericOrTemporalArrayT,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> TemporalScalar: ...
+) -> _NumericOrTemporalArrayT: ...
 @overload
 def divide(
-    dividend: NumericOrTemporalArray | NumericOrTemporalScalar,
-    divisor: NumericOrTemporalArray | NumericOrTemporalScalar,
+    dividend: Expression,
+    divisor: Expression,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> NumericArray: ...
+) -> Expression: ...
 @overload
 def divide(
-    dividend: Expression | Any,
-    divisor: Expression | Any,
+    dividend: NumericOrTemporalScalar,
+    divisor: _NumericOrTemporalArrayT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericOrTemporalArrayT: ...
+@overload
+def divide(
+    dividend: _NumericOrTemporalArrayT,
+    divisor: NumericOrTemporalScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericOrTemporalArrayT: ...
+@overload
+def divide(
+    dividend: NumericOrTemporalScalar,
+    divisor: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def divide(
+    dividend: Expression,
+    divisor: NumericOrTemporalScalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
@@ -438,25 +475,28 @@ divide_checked = _clone_signature(divide)
 
 @overload
 def exp(
-    exponent: lib.FloatArray, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.FloatArray: ...
+    exponent: _FloatArrayT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _FloatArrayT: ...
 @overload
 def exp(
-    exponent: NumericArray, /, *, memory_pool: lib.MemoryPool | None = None
+    exponent: ArrayOrChunkedArray[NonFloatNumericScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
 ) -> lib.DoubleArray: ...
 @overload
 def exp(
-    exponent: lib.FloatScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.FloatScalar: ...
+    exponent: _FloatScalarT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _FloatScalarT: ...
 @overload
 def exp(
-    exponent: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
+    exponent: NonFloatNumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.DoubleScalar: ...
 @overload
 def exp(exponent: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 
 multiply = _clone_signature(add)
-multiply_checked = _clone_signature(multiply)
+multiply_checked = _clone_signature(add)
 
 @overload
 def negate(
@@ -481,10 +521,6 @@ def power(
 ) -> _NumericScalarT: ...
 @overload
 def power(
-    base: NumericScalar, exponent: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> NumericScalar: ...
-@overload
-def power(
     base: _NumericArrayT,
     exponent: _NumericArrayT,
     /,
@@ -493,16 +529,40 @@ def power(
 ) -> _NumericArrayT: ...
 @overload
 def power(
-    base: NumericScalar | NumericArray,
-    exponent: NumericScalar | NumericArray,
+    base: Expression,
+    exponent: Expression,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> NumericArray: ...
+) -> Expression: ...
 @overload
 def power(
-    base: Expression | Any,
-    exponent: Expression | Any,
+    base: _NumericArrayT,
+    exponent: NumericScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericArrayT: ...
+@overload
+def power(
+    base: NumericScalar,
+    exponent: _NumericArrayT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _NumericArrayT: ...
+@overload
+def power(
+    base: NumericScalar,
+    exponent: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def power(
+    base: Expression,
+    exponent: NumericScalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
@@ -534,7 +594,7 @@ def sqrt(x: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expr
 sqrt_checked = _clone_signature(sqrt)
 
 subtract = _clone_signature(add)
-subtract_checked = _clone_signature(subtract)
+subtract_checked = _clone_signature(add)
 
 # ========================= 2.1 Bit-wise functions =========================
 @overload
@@ -890,16 +950,40 @@ def equal(
 ) -> lib.BooleanScalar: ...
 @overload
 def equal(
-    x: lib.Scalar | lib.Array | lib.ChunkedArray,
-    y: lib.Scalar | lib.Array | lib.ChunkedArray,
+    x: lib.Scalar,
+    y: lib.Array | lib.ChunkedArray,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
 @overload
 def equal(
-    x: Expression | Any,
-    y: Expression | Any,
+    x: lib.Array | lib.ChunkedArray,
+    y: lib.Scalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+@overload
+def equal(
+    x: Expression,
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def equal(
+    x: lib.Scalar,
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def equal(
+    x: Expression,
+    y: lib.Scalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
@@ -935,16 +1019,48 @@ def and_(
 ) -> lib.BooleanScalar: ...
 @overload
 def and_(
-    x: lib.BooleanScalar | BooleanArray,
-    y: lib.BooleanScalar | BooleanArray,
+    x: BooleanArray,
+    y: BooleanArray,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
 @overload
 def and_(
-    x: Expression | Any,
-    y: Expression | Any,
+    x: Expression,
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def and_(
+    x: lib.BooleanScalar,
+    y: BooleanArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+@overload
+def and_(
+    x: BooleanArray,
+    y: lib.BooleanScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+@overload
+def and_(
+    x: lib.BooleanScalar,
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def and_(
+    x: Expression,
+    y: lib.BooleanScalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
