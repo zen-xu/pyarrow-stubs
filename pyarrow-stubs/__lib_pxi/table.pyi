@@ -465,7 +465,7 @@ class RecordBatch(_Tabular[Array]):
     @classmethod
     def from_arrays(
         cls,
-        arrays: Collection[Array | ChunkedArray],
+        arrays: Collection[Array],
         names: list[str] | None = None,
         schema: Schema | None = None,
         metadata: Mapping | None = None,
@@ -546,7 +546,7 @@ class Table(_Tabular[ChunkedArray]):
     @classmethod
     def from_arrays(
         cls,
-        arrays: Collection[Array] | Collection[ChunkedArray],
+        arrays: Collection[Array | ChunkedArray],
         names: list[str] | None = None,
         schema: Schema | None = None,
         metadata: Mapping | None = None,
