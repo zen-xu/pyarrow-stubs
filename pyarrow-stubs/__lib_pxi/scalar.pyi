@@ -257,8 +257,7 @@ class ExtensionScalar(Scalar[types.ExtensionType]):
     @staticmethod
     def from_storage(typ: types.BaseExtensionType, value) -> ExtensionScalar: ...
 
-class JsonScalar(ExtensionScalar):
-    pass
+class JsonScalar(ExtensionScalar): ...
 
 class UuidScalar(ExtensionScalar):
     def as_py(self: Scalar[UuidType]) -> UUID | None: ...

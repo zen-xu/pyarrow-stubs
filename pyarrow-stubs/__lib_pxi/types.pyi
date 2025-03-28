@@ -229,11 +229,8 @@ class ExtensionType(BaseExtensionType):
     @classmethod
     def __arrow_ext_deserialize__(cls, storage_type: DataType, serialized: bytes) -> Self: ...
 
-class JsonType(BaseExtensionType):
-    pass
-
-class UuidType(BaseExtensionType):
-    pass
+class JsonType(BaseExtensionType): ...
+class UuidType(BaseExtensionType): ...
 
 class FixedShapeTensorType(BaseExtensionType, Generic[_ValueT]):
     @property
