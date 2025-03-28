@@ -1587,6 +1587,12 @@ class ExtensionArray(Array[scalar.ExtensionScalar], Generic[_ArrayT]):
         typ: types.BaseExtensionType, storage: _ArrayT
     ) -> ExtensionArray[_ArrayT]: ...
 
+class JsonArray(ExtensionArray[_ArrayT]):
+    pass
+
+class UuidArray(ExtensionArray[_ArrayT]):
+    pass
+
 class FixedShapeTensorArray(ExtensionArray[_ArrayT]):
     def to_numpy_ndarray(self) -> np.ndarray: ...
     def to_tensor(self) -> Tensor: ...
@@ -1648,6 +1654,8 @@ __all__ = [
     "StructArray",
     "RunEndEncodedArray",
     "ExtensionArray",
+    "JsonArray",
+    "UuidArray",
     "FixedShapeTensorArray",
     "concat_arrays",
     "_empty_array",
