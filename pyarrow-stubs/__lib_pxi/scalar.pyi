@@ -4,6 +4,7 @@ import datetime as dt
 import sys
 
 from decimal import Decimal
+from uuid import UUID
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -18,7 +19,7 @@ from typing import Any, Generic, Iterator, Mapping, overload
 import numpy as np
 
 from pyarrow._compute import CastOptions
-from pyarrow.lib import Array, Buffer, MemoryPool, MonthDayNano, Tensor, _Weakrefable
+from pyarrow.lib import Array, Buffer, MemoryPool, MonthDayNano, Tensor, UuidType, _Weakrefable
 from typing_extensions import TypeVar
 
 from . import types
@@ -59,6 +60,8 @@ class Scalar(_Weakrefable, Generic[_DataType_CoT]):
     def validate(self, *, full: bool = False) -> None: ...
     def equals(self, other: Scalar) -> bool: ...
     def __hash__(self) -> int: ...
+    @overload
+    def as_py(self: Scalar[types.ExtensionType]) -> Any: ...
     @overload
     def as_py(self: Scalar[types._BasicDataType[_AsPyType]]) -> _AsPyType: ...
     @overload
@@ -253,6 +256,11 @@ class ExtensionScalar(Scalar[types.ExtensionType]):
     def value(self) -> Any | None: ...
     @staticmethod
     def from_storage(typ: types.BaseExtensionType, value) -> ExtensionScalar: ...
+
+class JsonScalar(ExtensionScalar): ...
+
+class UuidScalar(ExtensionScalar):
+    def as_py(self: Scalar[UuidType]) -> UUID | None: ...
 
 class FixedShapeTensorScalar(ExtensionScalar):
     def to_numpy(self) -> np.ndarray: ...
@@ -453,6 +461,8 @@ __all__ = [
     "RunEndEncodedScalar",
     "UnionScalar",
     "ExtensionScalar",
+    "JsonScalar",
+    "UuidScalar",
     "FixedShapeTensorScalar",
     "scalar",
 ]
