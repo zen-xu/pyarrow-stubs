@@ -2,7 +2,7 @@
 
 [project]
 name = "pyarrow-stubs"
-version = "17.19"
+version = "19.0"
 description = "Type annotations for pyarrow"
 authors = [{ name = "ZhengYu, Xu", email = "zen-xu@outlook.com" }]
 license = "BSD-2-Clause"
@@ -11,14 +11,14 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.8,<4"
-dependencies = ["pyarrow >=17"]
+requires-python = ">=3.9,<4"
+dependencies = ["pyarrow >=19"]
 
 [project.urls]
 homepage   = "https://github.com/zen-xu/pyarrow-stubs"
@@ -40,7 +40,7 @@ channels  = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
 [tool.pixi.dependencies]
-python = "3.11"
+python = "3.11.*"
 pip    = "*"
 
 [tool.pixi.pypi-dependencies]
