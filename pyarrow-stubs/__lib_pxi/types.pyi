@@ -229,9 +229,6 @@ class ExtensionType(BaseExtensionType):
     @classmethod
     def __arrow_ext_deserialize__(cls, storage_type: DataType, serialized: bytes) -> Self: ...
 
-class JsonType(BaseExtensionType): ...
-class UuidType(BaseExtensionType): ...
-
 class FixedShapeTensorType(BaseExtensionType, Generic[_ValueT]):
     @property
     def value_type(self) -> _ValueT: ...
@@ -656,8 +653,6 @@ __all__ = [
     "RunEndEncodedType",
     "BaseExtensionType",
     "ExtensionType",
-    "JsonType",
-    "UuidType",
     "FixedShapeTensorType",
     "PyExtensionType",
     "UnknownExtensionType",
