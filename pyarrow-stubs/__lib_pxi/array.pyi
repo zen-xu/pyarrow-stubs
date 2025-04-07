@@ -835,6 +835,30 @@ def nulls(
 @overload
 def nulls(
     size: int,
+    types: types.Bool8Type,
+    memory_pool: MemoryPool | None = None,
+) -> Bool8Array: ...
+@overload
+def nulls(
+    size: int,
+    types: types.UuidType,
+    memory_pool: MemoryPool | None = None,
+) -> UuidArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.JsonType,
+    memory_pool: MemoryPool | None = None,
+) -> JsonArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.OpaqueType,
+    memory_pool: MemoryPool | None = None,
+) -> OpaqueArray: ...
+@overload
+def nulls(
+    size: int,
     types: types.ExtensionType,
     memory_pool: MemoryPool | None = None,
 ) -> ExtensionArray: ...
@@ -1044,6 +1068,30 @@ def repeat(
     size: int,
     memory_pool: MemoryPool | None = None,
 ) -> FixedShapeTensorArray: ...
+@overload
+def repeat(
+    value: scalar.Bool8Scalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> Bool8Array: ...
+@overload
+def repeat(
+    value: scalar.UuidScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> UuidArray: ...
+@overload
+def repeat(
+    value: scalar.JsonScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> JsonArray: ...
+@overload
+def repeat(
+    value: scalar.OpaqueScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> OpaqueArray: ...
 @overload
 def repeat(
     value: scalar.ExtensionScalar,
