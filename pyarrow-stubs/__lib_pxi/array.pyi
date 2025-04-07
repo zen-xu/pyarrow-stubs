@@ -38,7 +38,15 @@ from pyarrow._stubs_typing import (
     SupportArrowArray,
     SupportArrowDeviceArray,
 )
-from pyarrow.lib import Buffer, MemoryPool, MonthDayNano, Tensor, _Weakrefable
+from pyarrow.lib import (
+    Buffer,
+    Device,
+    MemoryManager,
+    MemoryPool,
+    MonthDayNano,
+    Tensor,
+    _Weakrefable,
+)
 
 from . import scalar, types
 from .device import DeviceAllocationType
@@ -674,6 +682,14 @@ def nulls(
 ) -> DoubleArray: ...
 @overload
 def nulls(
+    size: int, types: types.Decimal32Type, memory_pool: MemoryPool | None = None
+) -> Decimal128Array: ...
+@overload
+def nulls(
+    size: int, types: types.Decimal64Type, memory_pool: MemoryPool | None = None
+) -> Decimal128Array: ...
+@overload
+def nulls(
     size: int, types: types.Decimal128Type, memory_pool: MemoryPool | None = None
 ) -> Decimal128Array: ...
 @overload
@@ -819,6 +835,30 @@ def nulls(
 @overload
 def nulls(
     size: int,
+    types: types.Bool8Type,
+    memory_pool: MemoryPool | None = None,
+) -> Bool8Array: ...
+@overload
+def nulls(
+    size: int,
+    types: types.UuidType,
+    memory_pool: MemoryPool | None = None,
+) -> UuidArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.JsonType,
+    memory_pool: MemoryPool | None = None,
+) -> JsonArray: ...
+@overload
+def nulls(
+    size: int,
+    types: types.OpaqueType,
+    memory_pool: MemoryPool | None = None,
+) -> OpaqueArray: ...
+@overload
+def nulls(
+    size: int,
     types: types.ExtensionType,
     memory_pool: MemoryPool | None = None,
 ) -> ExtensionArray: ...
@@ -874,6 +914,14 @@ def repeat(
 def repeat(
     value: float | scalar.DoubleScalar, size: int, memory_pool: MemoryPool | None = None
 ) -> DoubleArray: ...
+@overload
+def repeat(
+    value: Decimal | scalar.Decimal32Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Decimal32Array: ...
+@overload
+def repeat(
+    value: Decimal | scalar.Decimal64Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Decimal64Array: ...
 @overload
 def repeat(
     value: Decimal | scalar.Decimal128Scalar, size: int, memory_pool: MemoryPool | None = None
@@ -1022,6 +1070,30 @@ def repeat(
 ) -> FixedShapeTensorArray: ...
 @overload
 def repeat(
+    value: scalar.Bool8Scalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> Bool8Array: ...
+@overload
+def repeat(
+    value: scalar.UuidScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> UuidArray: ...
+@overload
+def repeat(
+    value: scalar.JsonScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> JsonArray: ...
+@overload
+def repeat(
+    value: scalar.OpaqueScalar,
+    size: int,
+    memory_pool: MemoryPool | None = None,
+) -> OpaqueArray: ...
+@overload
+def repeat(
     value: scalar.ExtensionScalar,
     size: int,
     memory_pool: MemoryPool | None = None,
@@ -1165,6 +1237,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_Scalar_CoT]):
     @property
     def offset(self) -> int: ...
     def buffers(self) -> list[Buffer | None]: ...
+    def copy_to(self, destination: MemoryManager | Device) -> Self: ...
     def _export_to_c(self, out_ptr: int, out_schema_ptr: int = 0) -> None: ...
     @classmethod
     def _import_from_c(cls, in_ptr: int, type: int | DataType) -> Self: ...
@@ -1214,6 +1287,8 @@ class HalfFloatArray(FloatingPointArray[scalar.HalfFloatScalar]): ...
 class FloatArray(FloatingPointArray[scalar.FloatScalar]): ...
 class DoubleArray(FloatingPointArray[scalar.DoubleScalar]): ...
 class FixedSizeBinaryArray(Array[scalar.FixedSizeBinaryScalar]): ...
+class Decimal32Array(FixedSizeBinaryArray): ...
+class Decimal64Array(FixedSizeBinaryArray): ...
 class Decimal128Array(FixedSizeBinaryArray): ...
 class Decimal256Array(FixedSizeBinaryArray): ...
 
@@ -1536,6 +1611,7 @@ class StructArray(Array[scalar.StructScalar]):
         fields: list[Field] | None = None,
         mask=None,
         memory_pool: MemoryPool | None = None,
+        type: types.StructType | None = None,
     ) -> StructArray: ...
     def sort(self, order: Order = "ascending", by: str | None = None, **kwargs) -> StructArray: ...
 
@@ -1587,11 +1663,23 @@ class ExtensionArray(Array[scalar.ExtensionScalar], Generic[_ArrayT]):
         typ: types.BaseExtensionType, storage: _ArrayT
     ) -> ExtensionArray[_ArrayT]: ...
 
+class JsonArray(ExtensionArray[_ArrayT]): ...
+class UuidArray(ExtensionArray[_ArrayT]): ...
+
 class FixedShapeTensorArray(ExtensionArray[_ArrayT]):
     def to_numpy_ndarray(self) -> np.ndarray: ...
     def to_tensor(self) -> Tensor: ...
-    @staticmethod
-    def from_numpy_ndarray(obj: np.ndarray) -> FixedShapeTensorArray: ...
+    @classmethod
+    def from_numpy_ndarray(cls, obj: np.ndarray) -> Self: ...
+
+class OpaqueArray(ExtensionArray[_ArrayT]): ...
+
+class Bool8Array(ExtensionArray):
+    def to_numpy(self, zero_copy_only: bool = ..., writable: bool = ...) -> np.ndarray: ...
+    @classmethod
+    def from_storage(cls, storage: Int8Array) -> Self: ...  # type: ignore[override]
+    @classmethod
+    def from_numpy(cls, obj: np.ndarray) -> Self: ...
 
 def concat_arrays(arrays: Iterable[_ArrayT], memory_pool: MemoryPool | None = None) -> _ArrayT: ...
 def _empty_array(type: _DataTypeT) -> Array[scalar.Scalar[_DataTypeT]]: ...
@@ -1628,6 +1716,8 @@ __all__ = [
     "FloatArray",
     "DoubleArray",
     "FixedSizeBinaryArray",
+    "Decimal32Array",
+    "Decimal64Array",
     "Decimal128Array",
     "Decimal256Array",
     "BaseListArray",
@@ -1648,6 +1738,10 @@ __all__ = [
     "StructArray",
     "RunEndEncodedArray",
     "ExtensionArray",
+    "Bool8Array",
+    "UuidArray",
+    "JsonArray",
+    "OpaqueArray",
     "FixedShapeTensorArray",
     "concat_arrays",
     "_empty_array",
