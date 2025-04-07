@@ -117,7 +117,12 @@ IntegerScalar: TypeAlias = SignedIntegerScalar | UnsignedIntegerScalar
 FloatScalar: TypeAlias = (
     lib.Scalar[lib.Float16Type] | lib.Scalar[lib.Float32Type] | lib.Scalar[lib.Float64Type]
 )
-DecimalScalar: TypeAlias = lib.Scalar[lib.Decimal128Type] | lib.Scalar[lib.Decimal256Type]
+DecimalScalar: TypeAlias = (
+    lib.Scalar[lib.Decimal32Type]
+    | lib.Scalar[lib.Decimal64Type]
+    | lib.Scalar[lib.Decimal128Type]
+    | lib.Scalar[lib.Decimal256Type]
+)
 NonFloatNumericScalar: TypeAlias = IntegerScalar | DecimalScalar
 NumericScalar: TypeAlias = IntegerScalar | FloatScalar | DecimalScalar
 BinaryScalar: TypeAlias = (

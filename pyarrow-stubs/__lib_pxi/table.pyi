@@ -44,7 +44,7 @@ from pyarrow._stubs_typing import (
 )
 from pyarrow.compute import Expression
 from pyarrow.interchange.dataframe import _PyArrowDataFrame
-from pyarrow.lib import Field, MemoryPool, MonthDayNano, Schema
+from pyarrow.lib import Device, Field, MemoryManager, MemoryPool, MonthDayNano, Schema
 
 from . import scalar
 from .array import Array, StructArray, _CastAs, _PandasConvertible
@@ -145,6 +145,8 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_Scalar_CoT]):
     def __arrow_c_stream__(self, requested_schema=None) -> Any: ...
     @classmethod
     def _import_from_c_capsule(cls, stream) -> Self: ...
+    @property
+    def is_cpu(self) -> bool: ...
 
 @overload
 def chunked_array(
@@ -507,6 +509,7 @@ class RecordBatch(_Tabular[Array]):
     def device_type(self) -> DeviceAllocationType: ...
     @property
     def is_cpu(self) -> bool: ...
+    def copy_to(self, destination: MemoryManager | Device) -> Self: ...
 
 def table_to_blocks(options, table: Table, categories, extension_columns): ...
 
@@ -594,6 +597,8 @@ class Table(_Tabular[ChunkedArray]):
         right_by: str | list[str] | None = None,
     ) -> Self: ...
     def __arrow_c_stream__(self, requested_schema=None): ...
+    @property
+    def is_cpu(self) -> bool: ...
 
 def record_batch(
     data: dict[str, list | Array]
@@ -641,6 +646,10 @@ class TableGroupBy:
     @property
     def _use_threads(self) -> bool: ...
 
+def concat_batches(
+    recordbatches: Iterable[RecordBatch], memory_pool: MemoryPool | None = None
+) -> RecordBatch: ...
+
 __all__ = [
     "ChunkedArray",
     "chunked_array",
@@ -652,4 +661,5 @@ __all__ = [
     "table",
     "concat_tables",
     "TableGroupBy",
+    "concat_batches",
 ]
