@@ -256,6 +256,11 @@ class ExtensionScalar(Scalar[types.ExtensionType]):
     @staticmethod
     def from_storage(typ: types.BaseExtensionType, value) -> ExtensionScalar: ...
 
+class Bool8Scalar(Scalar[types.Bool8Type]): ...
+class UuidScalar(Scalar[types.UuidType]): ...
+class JsonScalar(Scalar[types.JsonType]): ...
+class OpaqueScalar(Scalar[types.OpaqueType]): ...
+
 class FixedShapeTensorScalar(ExtensionScalar):
     def to_numpy(self) -> np.ndarray: ...
     def to_tensor(self) -> Tensor: ...
@@ -442,6 +447,8 @@ __all__ = [
     "HalfFloatScalar",
     "FloatScalar",
     "DoubleScalar",
+    "Decimal32Scalar",
+    "Decimal64Scalar",
     "Decimal128Scalar",
     "Decimal256Scalar",
     "Date32Scalar",
@@ -470,5 +477,9 @@ __all__ = [
     "UnionScalar",
     "ExtensionScalar",
     "FixedShapeTensorScalar",
+    "Bool8Scalar",
+    "UuidScalar",
+    "JsonScalar",
+    "OpaqueScalar",
     "scalar",
 ]
