@@ -1,5 +1,6 @@
 from typing import Any, TypedDict, TypeVar
 
+import numpy as np
 import pandas as pd
 
 from pandas import DatetimeTZDtype
@@ -10,6 +11,7 @@ _T = TypeVar("_T")
 
 def get_logical_type_map() -> dict[int, str]: ...
 def get_logical_type(arrow_type: DataType) -> str: ...
+def get_numpy_logical_type_map() -> dict[type[np.generic], str]: ...
 def get_logical_type_from_numpy(pandas_collection) -> str: ...
 def get_extension_dtype_info(column) -> tuple[str, dict[str, Any]]: ...
 
@@ -31,6 +33,7 @@ def construct_metadata(
     index_descriptors: list[dict],
     preserve_index: bool,
     types: list[DataType],
+    column_field_names: list[str] = ...,
 ) -> dict[bytes, bytes]: ...
 def dataframe_to_types(
     df: pd.DataFrame, preserve_index: bool | None, columns: list[str] | None = None
