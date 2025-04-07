@@ -971,6 +971,14 @@ def equal(
 ) -> lib.BooleanArray: ...
 @overload
 def equal(
+    x: lib.Array | lib.ChunkedArray,
+    y: lib.Array | lib.ChunkedArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+@overload
+def equal(
     x: Expression,
     y: Expression,
     /,
