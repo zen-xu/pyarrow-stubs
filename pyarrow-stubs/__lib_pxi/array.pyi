@@ -892,6 +892,14 @@ def repeat(
 ) -> DoubleArray: ...
 @overload
 def repeat(
+    value: Decimal | scalar.Decimal32Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Decimal32Array: ...
+@overload
+def repeat(
+    value: Decimal | scalar.Decimal64Scalar, size: int, memory_pool: MemoryPool | None = None
+) -> Decimal64Array: ...
+@overload
+def repeat(
     value: Decimal | scalar.Decimal128Scalar, size: int, memory_pool: MemoryPool | None = None
 ) -> Decimal128Array: ...
 @overload
@@ -1660,6 +1668,8 @@ __all__ = [
     "FloatArray",
     "DoubleArray",
     "FixedSizeBinaryArray",
+    "Decimal32Array",
+    "Decimal64Array",
     "Decimal128Array",
     "Decimal256Array",
     "BaseListArray",
