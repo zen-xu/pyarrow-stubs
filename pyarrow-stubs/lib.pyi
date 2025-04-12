@@ -1,9 +1,9 @@
 # ruff: noqa: F403
 import sys
 
-from typing import Any, Final, Literal, Sequence, final
+from typing import Any, Final, Literal, Sequence, final, overload
 
-from _typeshed import SupportsAdd, SupportsAllComparisons, SupportsMul, SupportsRMul
+from _typeshed import SupportsAdd, SupportsAllComparisons
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -31,8 +31,6 @@ class MonthDayNano(
     Sequence[int],
     SupportsAdd[Sequence[int], Sequence[int]],
     SupportsAllComparisons,
-    SupportsMul[int, Sequence[int]],
-    SupportsRMul[int, Sequence[int]],
 ):
     n_fields: Final[Literal[3]]
     n_unnamed_fields: Final[Literal[0]]
@@ -45,6 +43,11 @@ class MonthDayNano(
     def days(self) -> int: ...
     @property
     def nanoseconds(self) -> int: ...
+    @overload
+    def __getitem__(self, index: int) -> int: ...
+    @overload
+    def __getitem__(self, index: slice) -> Sequence[int]: ...
+    def __len__(self) -> int: ...
     def __new__(cls, iterable: tuple[int, int, int], /) -> Self: ...
     if sys.version_info >= (3, 13):
         def __replace__(self, **kwargs: Any) -> Self: ...
