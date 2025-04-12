@@ -630,7 +630,7 @@ def table(
     nthreads: int | None = None,
 ) -> Table: ...
 def concat_tables(
-    tables: list[Table],
+    tables: Iterable[Table],
     memory_pool: MemoryPool | None = None,
     promote_options: Literal["none", "default", "permissive"] = "none",
     **kwargs,
