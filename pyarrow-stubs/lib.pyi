@@ -1,7 +1,7 @@
 # ruff: noqa: F403
 import sys
 
-from typing import Any, Final, Literal, Sequence, final, overload
+from typing import Any, Final, Sequence, final, overload
 
 from _typeshed import SupportsAdd, SupportsAllComparisons
 
@@ -32,9 +32,9 @@ class MonthDayNano(
     SupportsAdd[Sequence[int], Sequence[int]],
     SupportsAllComparisons,
 ):
-    n_fields: Final[Literal[3]]
-    n_unnamed_fields: Final[Literal[0]]
-    n_sequence_fields: Final[Literal[3]]
+    n_fields: Final = 3
+    n_unnamed_fields: Final = 0
+    n_sequence_fields: Final = 3
     if sys.version_info >= (3, 10):
         __match_args__: Final = ("months", "days", "nanoseconds")
     @property
