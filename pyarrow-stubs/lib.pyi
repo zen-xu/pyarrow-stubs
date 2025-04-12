@@ -1,5 +1,14 @@
 # ruff: noqa: F403
-from typing import NamedTuple
+import sys
+
+from typing import Any, Final, Literal, Sequence, final
+
+from _typeshed import SupportsAdd, SupportsAllComparisons, SupportsMul, SupportsRMul
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 from .__lib_pxi.array import *
 from .__lib_pxi.benchmark import *
@@ -17,10 +26,28 @@ from .__lib_pxi.table import *
 from .__lib_pxi.tensor import *
 from .__lib_pxi.types import *
 
-class MonthDayNano(NamedTuple):
-    days: int
-    months: int
-    nanoseconds: int
+@final
+class MonthDayNano(
+    Sequence[int],
+    SupportsAdd[Sequence[int], Sequence[int]],
+    SupportsAllComparisons,
+    SupportsMul[int, Sequence[int]],
+    SupportsRMul[int, Sequence[int]],
+):
+    n_fields: Final[Literal[3]]
+    n_unnamed_fields: Final[Literal[0]]
+    n_sequence_fields: Final[Literal[3]]
+    if sys.version_info >= (3, 10):
+        __match_args__: Final = ("months", "days", "nanoseconds")
+    @property
+    def months(self) -> int: ...
+    @property
+    def days(self) -> int: ...
+    @property
+    def nanoseconds(self) -> int: ...
+    def __new__(cls, iterable: tuple[int, int, int], /) -> Self: ...
+    if sys.version_info >= (3, 13):
+        def __replace__(self, **kwargs: Any) -> Self: ...
 
 def cpu_count() -> int: ...
 def set_cpu_count(count: int) -> None: ...

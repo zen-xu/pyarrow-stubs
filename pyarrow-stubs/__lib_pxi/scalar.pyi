@@ -267,7 +267,7 @@ class FixedShapeTensorScalar(ExtensionScalar):
 
 _V = TypeVar("_V")
 
-CollectionValue: TypeAlias = list[_V | None] | tuple[_V | None, ...] | set[_V | None]
+CollectionValue: TypeAlias = list[_V] | tuple[_V, ...] | set[_V]
 
 @overload
 def scalar(
@@ -279,28 +279,22 @@ def scalar(
 ) -> BinaryScalar: ...
 @overload
 def scalar(
-    value: bool, *, from_pandas: bool | None = None, memory_pool: MemoryPool | None = None
-) -> BooleanScalar: ...
-@overload
-def scalar(
-    value: int, *, from_pandas: bool | None = None, memory_pool: MemoryPool | None = None
-) -> Int64Scalar: ...
-@overload
-def scalar(
-    value: float, *, from_pandas: bool | None = None, memory_pool: MemoryPool | None = None
-) -> DoubleScalar: ...
+    value: bool | float,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> BooleanScalar | Int64Scalar | DoubleScalar: ...
 @overload
 def scalar(
     value: Decimal, *, from_pandas: bool | None = None, memory_pool: MemoryPool | None = None
 ) -> Decimal128Scalar: ...
 @overload
 def scalar(
-    value: dt.datetime, *, from_pandas: bool | None = None, memory_pool: MemoryPool | None = None
-) -> TimestampScalar: ...
-@overload
-def scalar(
-    value: dt.date, *, from_pandas: bool | None = None, memory_pool: MemoryPool | None = None
-) -> Date32Scalar: ...
+    value: dt.datetime | dt.date,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> TimestampScalar | Date32Scalar: ...
 @overload
 def scalar(
     value: dt.time, *, from_pandas: bool | None = None, memory_pool: MemoryPool | None = None
@@ -339,60 +333,35 @@ def scalar(
 ) -> ListScalar[types.ListType[types.BinaryType]]: ...
 @overload
 def scalar(
-    value: CollectionValue[bool],
+    value: CollectionValue[float] | CollectionValue[bool],
     *,
     from_pandas: bool | None = None,
     memory_pool: MemoryPool | None = None,
-) -> ListScalar[types.ListType[types.BoolType]]: ...
-@overload
-def scalar(
-    value: CollectionValue[int],
-    *,
-    from_pandas: bool | None = None,
-    memory_pool: MemoryPool | None = None,
-) -> ListScalar[types.ListType[types.Int64Type]]: ...
-@overload
-def scalar(
-    value: CollectionValue[float],
-    *,
-    from_pandas: bool | None = None,
-    memory_pool: MemoryPool | None = None,
-) -> ListScalar[types.ListType[types.Float64Type]]: ...
+) -> (
+    ListScalar[types.ListType[types.Int64Type]]
+    | ListScalar[types.ListType[types.Float64Type]]
+    | ListScalar[types.ListType[types.BoolType]]
+): ...
 @overload
 def scalar(
     value: CollectionValue[Decimal],
     *,
     from_pandas: bool | None = None,
     memory_pool: MemoryPool | None = None,
-) -> ListScalar[types.ListType[types.Decimal32Type]]: ...
+) -> (
+    ListScalar[types.ListType[types.Decimal32Type]]
+    | ListScalar[types.ListType[types.Decimal64Type]]
+    | ListScalar[types.ListType[types.Decimal128Type]]
+): ...
 @overload
 def scalar(
-    value: CollectionValue[Decimal],
+    value: CollectionValue[dt.datetime] | CollectionValue[dt.date],
     *,
     from_pandas: bool | None = None,
     memory_pool: MemoryPool | None = None,
-) -> ListScalar[types.ListType[types.Decimal64Type]]: ...
-@overload
-def scalar(
-    value: CollectionValue[Decimal],
-    *,
-    from_pandas: bool | None = None,
-    memory_pool: MemoryPool | None = None,
-) -> ListScalar[types.ListType[types.Decimal128Type]]: ...
-@overload
-def scalar(
-    value: CollectionValue[dt.datetime],
-    *,
-    from_pandas: bool | None = None,
-    memory_pool: MemoryPool | None = None,
-) -> ListScalar[types.ListType[types.TimestampType]]: ...
-@overload
-def scalar(
-    value: CollectionValue[dt.date],
-    *,
-    from_pandas: bool | None = None,
-    memory_pool: MemoryPool | None = None,
-) -> ListScalar[types.ListType[types.Date32Type]]: ...
+) -> (
+    ListScalar[types.ListType[types.TimestampType]] | ListScalar[types.ListType[types.Date32Type]]
+): ...
 @overload
 def scalar(
     value: CollectionValue[dt.time],
@@ -416,7 +385,7 @@ def scalar(
 ) -> ListScalar[types.ListType[types.MonthDayNanoIntervalType]]: ...
 @overload
 def scalar(
-    value: CollectionValue,
+    value: CollectionValue[Any],
     *,
     from_pandas: bool | None = None,
     memory_pool: MemoryPool | None = None,
