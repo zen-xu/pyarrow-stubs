@@ -1499,7 +1499,7 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
     ) -> MapArray[_MapKeyT, _MapItemT]: ...
     @overload
     @classmethod
-    def from_arrays(
+    def from_arrays(  # pyright: ignore[reportIncompatibleMethodOverride]
         cls,
         offsets: Int64Array,
         values: Array,
