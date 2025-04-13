@@ -63,7 +63,6 @@ from .types import (
     _IndexT,
     _RunEndType,
     _Size,
-    _ValueT,
 )
 
 _ListType: TypeAlias = (
@@ -1612,25 +1611,25 @@ class RunEndEncodedArray(Array[scalar.RunEndEncodedScalar[_RunEndType, _BasicVal
     def from_arrays(
         run_ends: Int16Array,
         values: Array,
-        type: _ValueT | None = None,
+        type: _BasicValueT | None = None,
     ) -> RunEndEncodedArray[types.Int16Type, _BasicValueT]: ...
     @overload
     @staticmethod
     def from_arrays(
         run_ends: Int32Array,
         values: Array,
-        type: _ValueT | None = None,
+        type: _BasicValueT | None = None,
     ) -> RunEndEncodedArray[types.Int32Type, _BasicValueT]: ...
     @overload
     @staticmethod
     def from_arrays(
         run_ends: Int64Array,
         values: Array,
-        type: _ValueT | None = None,
+        type: _BasicValueT | None = None,
     ) -> RunEndEncodedArray[types.Int64Type, _BasicValueT]: ...
     @staticmethod
     def from_buffers(  # type: ignore[override]
-        type: _ValueT,
+        type: _BasicValueT,
         length: int,
         buffers: list[Buffer],
         null_count: int = -1,
