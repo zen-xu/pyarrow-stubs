@@ -886,20 +886,24 @@ def repeat(
 ) -> DoubleArray: ...
 @overload
 def repeat(
-    value: Decimal | scalar.Decimal32Scalar, size: int, memory_pool: MemoryPool | None = None
+    value: scalar.Decimal32Scalar, size: int, memory_pool: MemoryPool | None = None
 ) -> Decimal32Array: ...
 @overload
 def repeat(
-    value: Decimal | scalar.Decimal64Scalar, size: int, memory_pool: MemoryPool | None = None
+    value: scalar.Decimal64Scalar, size: int, memory_pool: MemoryPool | None = None
 ) -> Decimal64Array: ...
 @overload
 def repeat(
-    value: Decimal | scalar.Decimal128Scalar, size: int, memory_pool: MemoryPool | None = None
+    value: scalar.Decimal128Scalar, size: int, memory_pool: MemoryPool | None = None
 ) -> Decimal128Array: ...
 @overload
 def repeat(
     value: scalar.Decimal256Scalar, size: int, memory_pool: MemoryPool | None = None
 ) -> Decimal256Array: ...
+@overload
+def repeat(
+    value: Decimal, size: int, memory_pool: MemoryPool | None = None
+) -> Decimal32Array | Decimal64Array | Decimal128Array | Decimal256Array: ...
 @overload
 def repeat(
     value: dt.date | scalar.Date32Scalar, size: int, memory_pool: MemoryPool | None = None
