@@ -10,6 +10,10 @@ if sys.version_info >= (3, 11):
     from typing import Self
 else:
     from typing_extensions import Self
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
 
 from typing import (
     Any,
@@ -60,6 +64,21 @@ from .types import (
     _RunEndType,
     _Size,
     _ValueT,
+)
+
+_ListType: TypeAlias = (
+    types.ListType[_DataTypeT]
+    | types.FixedSizeListType[_DataTypeT, _Size]
+    | types.LargeListType[_DataTypeT]
+    | types.ListViewType[_DataTypeT]
+    | types.LargeListViewType[_DataTypeT]
+)
+_ListArray: TypeAlias = (
+    ListArray[scalar.ListScalar[_DataTypeT]]
+    | FixedSizeListArray[_DataTypeT, _Size]
+    | LargeListArray[_DataTypeT]
+    | ListViewArray[_DataTypeT]
+    | LargeListViewArray[_DataTypeT]
 )
 
 @overload
@@ -739,12 +758,6 @@ def nulls(
 @overload
 def nulls(
     size: int,
-    types: types.ListType[_DataTypeT],
-    memory_pool: MemoryPool | None = None,
-) -> ListArray[scalar.ListScalar[_DataTypeT]]: ...
-@overload
-def nulls(
-    size: int,
     types: types.FixedSizeListType[_DataTypeT, _Size],
     memory_pool: MemoryPool | None = None,
 ) -> FixedSizeListArray[_DataTypeT, _Size]: ...
@@ -766,6 +779,10 @@ def nulls(
     types: types.LargeListViewType[_DataTypeT],
     memory_pool: MemoryPool | None = None,
 ) -> LargeListViewArray[_DataTypeT]: ...
+@overload
+def nulls(
+    size: int, types: _ListType[_DataTypeT, _Size], memory_pool: MemoryPool | None = None
+) -> _ListArray[_DataTypeT, _Size]: ...
 @overload
 def nulls(
     size: int,
