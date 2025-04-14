@@ -161,6 +161,7 @@ _NumericOrDurationArrayT = TypeVar("_NumericOrDurationArrayT", bound=NumericOrDu
 NumericOrTemporalArray: TypeAlias = ArrayOrChunkedArray[_NumericOrTemporalScalarT]
 _NumericOrTemporalArrayT = TypeVar("_NumericOrTemporalArrayT", bound=NumericOrTemporalArray)
 BooleanArray: TypeAlias = ArrayOrChunkedArray[lib.BooleanScalar]
+_BooleanArrayT = TypeVar("_BooleanArrayT", bound=BooleanArray)
 IntegerArray: TypeAlias = ArrayOrChunkedArray[IntegerScalar]
 _FloatScalarT = TypeVar("_FloatScalarT", bound=FloatScalar)
 FloatArray: TypeAlias = ArrayOrChunkedArray[FloatScalar]
@@ -1078,6 +1079,14 @@ def and_(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
+@overload
+def and_(
+    x: ScalarOrArray[lib.BooleanScalar],
+    y: ScalarOrArray[lib.BooleanScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> ScalarOrArray[lib.BooleanScalar]: ...
 
 and_kleene = _clone_signature(and_)
 and_not = _clone_signature(and_)
@@ -1092,11 +1101,11 @@ def invert(
 ) -> lib.BooleanScalar: ...
 @overload
 def invert(
-    x: lib.BooleanArray,
+    x: _BooleanArrayT,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.BooleanArray: ...
+) -> _BooleanArrayT: ...
 @overload
 def invert(
     x: Expression,
