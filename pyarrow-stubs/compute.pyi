@@ -2691,12 +2691,32 @@ def sort_indices(
 # ========================= 3.6 Structural transforms =========================
 @overload
 def list_element(
-    lists: Expression, index, /, *, memory_pool: lib.MemoryPool | None = None
+    lists: Expression, index: ScalarLike, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> Expression: ...
 @overload
 def list_element(
-    lists, index, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.ListArray: ...
+    lists: lib.Array[ListScalar[_DataTypeT]],
+    index: ScalarLike,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[lib.Scalar[_DataTypeT]]: ...
+@overload
+def list_element(
+    lists: lib.ChunkedArray[ListScalar[_DataTypeT]],
+    index: ScalarLike,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Scalar[_DataTypeT]]: ...
+@overload
+def list_element(
+    lists: ListScalar[_DataTypeT],
+    index: ScalarLike,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _DataTypeT: ...
 @overload
 def list_flatten(
     lists: Expression,
