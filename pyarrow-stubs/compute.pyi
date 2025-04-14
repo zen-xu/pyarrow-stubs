@@ -1079,6 +1079,14 @@ def and_(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
+@overload
+def and_(
+    x: ScalarOrArray[lib.BooleanScalar],
+    y: ScalarOrArray[lib.BooleanScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> ScalarOrArray[lib.BooleanScalar]: ...
 
 and_kleene = _clone_signature(and_)
 and_not = _clone_signature(and_)
