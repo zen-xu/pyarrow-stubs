@@ -30,7 +30,13 @@ from typing import (
 import numpy as np
 import pandas as pd
 
-from pyarrow._compute import CastOptions, FunctionOptions
+from pyarrow._compute import (
+    CastOptions,
+    CountOptions,
+    FunctionOptions,
+    ScalarAggregateOptions,
+    TDigestOptions,
+)
 from pyarrow._stubs_typing import (
     Indices,
     Mask,
@@ -42,7 +48,7 @@ from pyarrow._stubs_typing import (
     SupportArrowDeviceArray,
     SupportArrowStream,
 )
-from pyarrow.compute import Expression
+from pyarrow.compute import ArrayOrChunkedArray, Expression
 from pyarrow.interchange.dataframe import _PyArrowDataFrame
 from pyarrow.lib import Device, Field, MemoryManager, MemoryPool, MonthDayNano, Schema
 
@@ -56,6 +62,62 @@ from .tensor import Tensor
 from .types import _AsPyType, _BasicDataType, _DataType_CoT, _DataTypeT
 
 _Scalar_CoT = TypeVar("_Scalar_CoT", bound=Scalar, covariant=True)
+
+_Aggregation: TypeAlias = Literal[
+    "all",
+    "any",
+    "approximate_median",
+    "count",
+    "count_all",
+    "count_distinct",
+    "distinct",
+    "first",
+    "first_last",
+    "last",
+    "list",
+    "max",
+    "mean",
+    "min",
+    "min_max",
+    "one",
+    "product",
+    "stddev",
+    "sum",
+    "tdigest",
+    "variance",
+]
+_AggregationPrefixed: TypeAlias = Literal[
+    "hash_all",
+    "hash_any",
+    "hash_approximate_median",
+    "hash_count",
+    "hash_count_all",
+    "hash_count_distinct",
+    "hash_distinct",
+    "hash_first",
+    "hash_first_last",
+    "hash_last",
+    "hash_list",
+    "hash_max",
+    "hash_mean",
+    "hash_min",
+    "hash_min_max",
+    "hash_one",
+    "hash_product",
+    "hash_stddev",
+    "hash_sum",
+    "hash_tdigest",
+    "hash_variance",
+]
+Aggregation: TypeAlias = _Aggregation | _AggregationPrefixed
+AggregateOptions: TypeAlias = (
+    ScalarAggregateOptions | CountOptions | TDigestOptions | FunctionOptions
+)
+
+UnarySelector: TypeAlias = str
+NullarySelector: TypeAlias = tuple[()]
+NarySelector: TypeAlias = list[str] | tuple[str, ...]
+ColumnSelector: TypeAlias = UnarySelector | NullarySelector | NarySelector
 
 class ChunkedArray(_PandasConvertible[pd.Series], Generic[_Scalar_CoT]):
     @property
@@ -109,7 +171,9 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_Scalar_CoT]):
     def unique(self) -> ChunkedArray[_Scalar_CoT]: ...
     def value_counts(self) -> StructArray: ...
     def slice(self, offset: int = 0, length: int | None = None) -> Self: ...
-    def filter(self, mask: Mask, null_selection_behavior: NullSelectionBehavior = "drop"): ...
+    def filter(
+        self, mask: Mask, null_selection_behavior: NullSelectionBehavior = "drop"
+    ) -> Self: ...
     @overload
     def index(
         self: ChunkedArray[Scalar[_BasicDataType[_AsPyType]]],
@@ -388,7 +452,7 @@ def chunked_array(
     type: Literal["month_day_nano_interval"],
 ) -> ChunkedArray[scalar.MonthDayNanoIntervalScalar]: ...
 
-_ColumnT = TypeVar("_ColumnT", bound=Array | ChunkedArray)
+_ColumnT = TypeVar("_ColumnT", bound=ArrayOrChunkedArray[Any])
 
 class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
     def __array__(self, dtype: np.dtype | None = None, copy: bool | None = None) -> np.ndarray: ...
@@ -410,7 +474,7 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
     @classmethod
     def from_pydict(
         cls,
-        mapping: Mapping[str, ChunkedArray | Array | list | np.ndarray],
+        mapping: Mapping[str, ArrayOrChunkedArray[Any] | list | np.ndarray],
         schema: Schema | None = None,
         metadata: Mapping | None = None,
     ) -> Self: ...
@@ -443,9 +507,11 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
     def remove_column(self, i: int) -> Self: ...
     def drop_columns(self, columns: str | list[str]) -> Self: ...
     def add_column(
-        self, i: int, field_: str | Field, column: ChunkedArray | Array | list
+        self, i: int, field_: str | Field, column: ArrayOrChunkedArray[Any] | list
     ) -> Self: ...
-    def append_column(self, field_: str | Field, column: ChunkedArray | Array | list) -> Self: ...
+    def append_column(
+        self, field_: str | Field, column: ArrayOrChunkedArray[Any] | list
+    ) -> Self: ...
 
 class RecordBatch(_Tabular[Array]):
     def validate(self, *, full: bool = False) -> None: ...
@@ -524,7 +590,7 @@ JoinType: TypeAlias = Literal[
     "full outer",
 ]
 
-class Table(_Tabular[ChunkedArray]):
+class Table(_Tabular[ChunkedArray[Any]]):
     def validate(self, *, full=False) -> None: ...
     def slice(self, offset=0, length=None) -> Self: ...
     def select(self, columns: list[str] | Indices) -> Self: ...
@@ -549,7 +615,7 @@ class Table(_Tabular[ChunkedArray]):
     @classmethod
     def from_arrays(
         cls,
-        arrays: Collection[Array | ChunkedArray],
+        arrays: Collection[ArrayOrChunkedArray[Any]],
         names: list[str] | None = None,
         schema: Schema | None = None,
         metadata: Mapping | None = None,
@@ -569,7 +635,9 @@ class Table(_Tabular[ChunkedArray]):
     def to_reader(self, max_chunksize: int | None = None) -> RecordBatchReader: ...
     def get_total_buffer_size(self) -> int: ...
     def __sizeof__(self) -> int: ...
-    def set_column(self, i: int, field_: str | Field, column: Array | list) -> Self: ...
+    def set_column(
+        self, i: int, field_: str | Field, column: ArrayOrChunkedArray[Any] | list
+    ) -> Self: ...
     @overload
     def rename_columns(self, names: list[str]) -> Self: ...
     @overload
@@ -619,7 +687,7 @@ def table(
 ) -> Table: ...
 @overload
 def table(
-    data: Collection[Array | ChunkedArray]
+    data: Collection[ArrayOrChunkedArray[Any]]
     | pd.DataFrame
     | SupportArrowArray
     | SupportArrowStream
@@ -630,7 +698,7 @@ def table(
     nthreads: int | None = None,
 ) -> Table: ...
 def concat_tables(
-    tables: list[Table],
+    tables: Iterable[Table],
     memory_pool: MemoryPool | None = None,
     promote_options: Literal["none", "default", "permissive"] = "none",
     **kwargs,
@@ -640,7 +708,11 @@ class TableGroupBy:
     keys: str | list[str]
     def __init__(self, table: Table, keys: str | list[str], use_threads: bool = True): ...
     def aggregate(
-        self, aggregations: list[tuple[str, str]] | list[tuple[str, str, FunctionOptions]]
+        self,
+        aggregations: Iterable[
+            tuple[ColumnSelector, Aggregation]
+            | tuple[ColumnSelector, Aggregation, AggregateOptions | None]
+        ],
     ) -> Table: ...
     def _table(self) -> Table: ...
     @property
