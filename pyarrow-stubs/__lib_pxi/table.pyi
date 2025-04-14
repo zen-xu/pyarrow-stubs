@@ -30,7 +30,13 @@ from typing import (
 import numpy as np
 import pandas as pd
 
-from pyarrow._compute import CastOptions, FunctionOptions
+from pyarrow._compute import (
+    CastOptions,
+    CountOptions,
+    FunctionOptions,
+    ScalarAggregateOptions,
+    TDigestOptions,
+)
 from pyarrow._stubs_typing import (
     Indices,
     Mask,
@@ -56,6 +62,62 @@ from .tensor import Tensor
 from .types import _AsPyType, _BasicDataType, _DataType_CoT, _DataTypeT
 
 _Scalar_CoT = TypeVar("_Scalar_CoT", bound=Scalar, covariant=True)
+
+_Aggregation: TypeAlias = Literal[
+    "all",
+    "any",
+    "approximate_median",
+    "count",
+    "count_all",
+    "count_distinct",
+    "distinct",
+    "first",
+    "first_last",
+    "last",
+    "list",
+    "max",
+    "mean",
+    "min",
+    "min_max",
+    "one",
+    "product",
+    "stddev",
+    "sum",
+    "tdigest",
+    "variance",
+]
+_AggregationPrefixed: TypeAlias = Literal[
+    "hash_all",
+    "hash_any",
+    "hash_approximate_median",
+    "hash_count",
+    "hash_count_all",
+    "hash_count_distinct",
+    "hash_distinct",
+    "hash_first",
+    "hash_first_last",
+    "hash_last",
+    "hash_list",
+    "hash_max",
+    "hash_mean",
+    "hash_min",
+    "hash_min_max",
+    "hash_one",
+    "hash_product",
+    "hash_stddev",
+    "hash_sum",
+    "hash_tdigest",
+    "hash_variance",
+]
+Aggregation: TypeAlias = _Aggregation | _AggregationPrefixed
+AggregateOptions: TypeAlias = (
+    ScalarAggregateOptions | CountOptions | TDigestOptions | FunctionOptions
+)
+
+UnarySelector: TypeAlias = str
+NullarySelector: TypeAlias = tuple[()]
+NarySelector: TypeAlias = list[str] | tuple[str, ...]
+ColumnSelector: TypeAlias = UnarySelector | NullarySelector | NarySelector
 
 class ChunkedArray(_PandasConvertible[pd.Series], Generic[_Scalar_CoT]):
     @property
@@ -640,7 +702,11 @@ class TableGroupBy:
     keys: str | list[str]
     def __init__(self, table: Table, keys: str | list[str], use_threads: bool = True): ...
     def aggregate(
-        self, aggregations: list[tuple[str, str]] | list[tuple[str, str, FunctionOptions]]
+        self,
+        aggregations: Iterable[
+            tuple[ColumnSelector, Aggregation]
+            | tuple[ColumnSelector, Aggregation, AggregateOptions | None]
+        ],
     ) -> Table: ...
     def _table(self) -> Table: ...
     @property
