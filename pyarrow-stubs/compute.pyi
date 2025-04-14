@@ -2728,20 +2728,20 @@ def list_flatten(
 ) -> Expression: ...
 @overload
 def list_flatten(
-    lists,
+    lists: ArrayOrChunkedArray[ListScalar[Any]],
     /,
     recursive: bool = False,
     *,
     options: ListFlattenOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.ListArray: ...
+) -> lib.ListArray[Any]: ...
 @overload
 def list_parent_indices(
     lists: Expression, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> Expression: ...
 @overload
 def list_parent_indices(
-    lists, /, *, memory_pool: lib.MemoryPool | None = None
+    lists: ArrayOrChunkedArray[Any], /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.Int64Array: ...
 @overload
 def list_slice(
@@ -2757,7 +2757,7 @@ def list_slice(
 ) -> Expression: ...
 @overload
 def list_slice(
-    lists,
+    lists: ArrayOrChunkedArray[Any],
     /,
     start: int,
     stop: int | None = None,
@@ -2766,7 +2766,7 @@ def list_slice(
     *,
     options: ListSliceOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.ListArray: ...
+) -> lib.ListArray[Any]: ...
 def map_lookup(
     container,
     /,
