@@ -36,6 +36,7 @@ from pyarrow._compute import (
     FunctionOptions,
     ScalarAggregateOptions,
     TDigestOptions,
+    VarianceOptions,
 )
 from pyarrow._stubs_typing import (
     Indices,
@@ -111,7 +112,7 @@ _AggregationPrefixed: TypeAlias = Literal[
 ]
 Aggregation: TypeAlias = _Aggregation | _AggregationPrefixed
 AggregateOptions: TypeAlias = (
-    ScalarAggregateOptions | CountOptions | TDigestOptions | FunctionOptions
+    ScalarAggregateOptions | CountOptions | TDigestOptions | VarianceOptions | FunctionOptions
 )
 
 UnarySelector: TypeAlias = str
