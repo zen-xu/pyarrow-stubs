@@ -132,12 +132,10 @@ BinaryScalar: TypeAlias = (
 )
 StringScalar: TypeAlias = lib.Scalar[lib.StringType] | lib.Scalar[lib.LargeStringType]
 StringOrBinaryScalar: TypeAlias = StringScalar | BinaryScalar
+_ListScalar: TypeAlias = lib.ListViewScalar[_DataTypeT] | lib.FixedSizeListScalar[_DataTypeT, Any]
+_LargeListScalar: TypeAlias = lib.LargeListScalar[_DataTypeT] | lib.LargeListViewScalar[_DataTypeT]
 ListScalar: TypeAlias = (
-    lib.ListScalar[_DataTypeT]
-    | lib.LargeListScalar[_DataTypeT]
-    | lib.ListViewScalar[_DataTypeT]
-    | lib.LargeListViewScalar[_DataTypeT]
-    | lib.FixedSizeListScalar[_DataTypeT, Any]
+    lib.ListScalar[_DataTypeT] | _ListScalar[_DataTypeT] | _LargeListScalar[_DataTypeT]
 )
 TemporalScalar: TypeAlias = (
     lib.Date32Scalar
@@ -178,6 +176,9 @@ _StringOrBinaryArrayT = TypeVar("_StringOrBinaryArrayT", bound=StringOrBinaryArr
 _TemporalScalarT = TypeVar("_TemporalScalarT", bound=TemporalScalar)
 TemporalArray: TypeAlias = ArrayOrChunkedArray[TemporalScalar]
 _TemporalArrayT = TypeVar("_TemporalArrayT", bound=TemporalArray)
+_ListArray: TypeAlias = ArrayOrChunkedArray[_ListScalar[_DataTypeT]]
+_LargeListArray: TypeAlias = ArrayOrChunkedArray[_LargeListScalar[_DataTypeT]]
+ListArray: TypeAlias = ArrayOrChunkedArray[ListScalar[_DataTypeT]]
 # =============================== 1. Aggregation ===============================
 
 # ========================= 1.1 functions =========================
@@ -1962,18 +1963,25 @@ def if_else(
 
 @overload
 def list_value_length(
-    lists: lib.ListArray | lib.ListViewArray | lib.FixedSizeListArray | lib.ChunkedArray,
+    lists: _ListArray[Any],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int32Array: ...
 @overload
 def list_value_length(
-    lists: lib.LargeListArray | lib.LargeListViewArray | lib.ChunkedArray,
+    lists: _LargeListArray[Any],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Array: ...
+@overload
+def list_value_length(
+    lists: ListArray[Any],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int32Array | lib.Int64Array: ...
 @overload
 def list_value_length(
     lists: Expression,
@@ -2699,12 +2707,32 @@ def sort_indices(
 # ========================= 3.6 Structural transforms =========================
 @overload
 def list_element(
-    lists: Expression, index, /, *, memory_pool: lib.MemoryPool | None = None
+    lists: Expression, index: ScalarLike, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> Expression: ...
 @overload
 def list_element(
-    lists, index, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.ListArray: ...
+    lists: lib.Array[ListScalar[_DataTypeT]],
+    index: ScalarLike,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[lib.Scalar[_DataTypeT]]: ...
+@overload
+def list_element(
+    lists: lib.ChunkedArray[ListScalar[_DataTypeT]],
+    index: ScalarLike,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Scalar[_DataTypeT]]: ...
+@overload
+def list_element(
+    lists: ListScalar[_DataTypeT],
+    index: ScalarLike,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _DataTypeT: ...
 @overload
 def list_flatten(
     lists: Expression,
@@ -2716,20 +2744,20 @@ def list_flatten(
 ) -> Expression: ...
 @overload
 def list_flatten(
-    lists,
+    lists: ArrayOrChunkedArray[ListScalar[Any]],
     /,
     recursive: bool = False,
     *,
     options: ListFlattenOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.ListArray: ...
+) -> lib.ListArray[Any]: ...
 @overload
 def list_parent_indices(
     lists: Expression, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> Expression: ...
 @overload
 def list_parent_indices(
-    lists, /, *, memory_pool: lib.MemoryPool | None = None
+    lists: ArrayOrChunkedArray[Any], /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.Int64Array: ...
 @overload
 def list_slice(
@@ -2745,7 +2773,7 @@ def list_slice(
 ) -> Expression: ...
 @overload
 def list_slice(
-    lists,
+    lists: ArrayOrChunkedArray[Any],
     /,
     start: int,
     stop: int | None = None,
@@ -2754,7 +2782,7 @@ def list_slice(
     *,
     options: ListSliceOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.ListArray: ...
+) -> lib.ListArray[Any]: ...
 def map_lookup(
     container,
     /,
