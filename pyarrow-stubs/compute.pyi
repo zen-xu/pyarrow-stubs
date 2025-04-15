@@ -617,19 +617,35 @@ def bit_wise_and(
 ) -> _NumericArrayT: ...
 @overload
 def bit_wise_and(
-    x: NumericScalar, y: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> NumericScalar: ...
+    x: NumericScalar, y: _NumericArrayT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericArrayT: ...
 @overload
 def bit_wise_and(
-    x: NumericArray | NumericScalar,
-    y: NumericArray | NumericScalar,
+    x: _NumericArrayT, y: NumericScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericArrayT: ...
+@overload
+def bit_wise_and(
+    x: Expression,
+    y: Expression,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> NumericArray: ...
+) -> Expression: ...
 @overload
 def bit_wise_and(
-    x: Expression | Any, y: Expression | Any, /, *, memory_pool: lib.MemoryPool | None = None
+    x: Expression,
+    y: NumericScalar | ArrayOrChunkedArray[NumericScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def bit_wise_and(
+    x: NumericScalar | ArrayOrChunkedArray[NumericScalar],
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
 @overload
 def bit_wise_not(
