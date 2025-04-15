@@ -72,7 +72,7 @@ class Scalar(_Weakrefable, Generic[_DataType_CoT]):
                 types.DictionaryType[types._IndexT, types._BasicDataType[_AsPyTypeV], Any]
             ]
         ],
-    ) -> list[dict[_AsPyTypeK, _AsPyTypeV]]: ...
+    ) -> list[dict[int, _AsPyTypeV]]: ...
     @overload
     def as_py(
         self: Scalar[
@@ -82,7 +82,7 @@ class Scalar(_Weakrefable, Generic[_DataType_CoT]):
     @overload
     def as_py(
         self: Scalar[types.ListType[types.DictionaryType[types._IndexT, Any, Any]],],
-    ) -> list[dict[_AsPyTypeK, Any]]: ...
+    ) -> list[dict[int, Any]]: ...
     @overload
     def as_py(
         self: Scalar[types.StructType],
