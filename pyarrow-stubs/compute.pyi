@@ -2687,7 +2687,7 @@ def select_k_unstable(
 def sort_indices(
     input: lib.Array | lib.ChunkedArray | lib.RecordBatch | lib.Table,
     /,
-    sort_keys: Sequence[tuple[str, Literal["ascending", "descending"]]],
+    sort_keys: Sequence[tuple[str, Literal["ascending", "descending"]]] = (),
     *,
     null_placement: Literal["at_start", "at_end"] = "at_end",
     options: SortOptions | None = None,
@@ -2697,7 +2697,7 @@ def sort_indices(
 def sort_indices(
     input: Expression,
     /,
-    sort_keys: Sequence[tuple[str, Literal["ascending", "descending"]]],
+    sort_keys: Sequence[tuple[str, Literal["ascending", "descending"]]] = (),
     *,
     null_placement: Literal["at_start", "at_end"] = "at_end",
     options: SortOptions | None = None,
