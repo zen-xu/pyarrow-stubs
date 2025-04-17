@@ -82,6 +82,8 @@ from pyarrow._compute import register_aggregate_function as register_aggregate_f
 from pyarrow._compute import register_scalar_function as register_scalar_function
 from pyarrow._compute import register_tabular_function as register_tabular_function
 from pyarrow._compute import register_vector_function as register_vector_function
+
+from pyarrow._compute import _Order, _Placement
 from pyarrow._stubs_typing import ArrayLike, ScalarLike
 from . import lib
 
@@ -2617,9 +2619,9 @@ def indices_nonzero(
 def array_sort_indices(
     array: lib.Array | lib.ChunkedArray,
     /,
-    order: Literal["ascending", "descending"] = "ascending",
+    order: _Order = "ascending",
     *,
-    null_placement: Literal["at_start", "at_end"] = "at_end",
+    null_placement: _Placement = "at_end",
     options: ArraySortOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.UInt64Array: ...
@@ -2627,9 +2629,9 @@ def array_sort_indices(
 def array_sort_indices(
     array: Expression,
     /,
-    order: Literal["ascending", "descending"] = "ascending",
+    order: _Order = "ascending",
     *,
-    null_placement: Literal["at_start", "at_end"] = "at_end",
+    null_placement: _Placement = "at_end",
     options: ArraySortOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
@@ -2639,7 +2641,7 @@ def partition_nth_indices(
     /,
     pivot: int,
     *,
-    null_placement: Literal["at_start", "at_end"] = "at_end",
+    null_placement: _Placement = "at_end",
     options: PartitionNthOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.UInt64Array: ...
@@ -2649,16 +2651,16 @@ def partition_nth_indices(
     /,
     pivot: int,
     *,
-    null_placement: Literal["at_start", "at_end"] = "at_end",
+    null_placement: _Placement = "at_end",
     options: PartitionNthOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
 def rank(
     input: lib.Array | lib.ChunkedArray,
     /,
-    sort_keys: Literal["ascending", "descending"] = "ascending",
+    sort_keys: _Order = "ascending",
     *,
-    null_placement: Literal["at_start", "at_end"] = "at_end",
+    null_placement: _Placement = "at_end",
     tiebreaker: Literal["min", "max", "first", "dense"] = "first",
     options: RankOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
@@ -2668,7 +2670,7 @@ def select_k_unstable(
     input: lib.Array | lib.ChunkedArray,
     /,
     k: int,
-    sort_keys: list[tuple[str, Literal["ascending", "descending"]]],
+    sort_keys: list[tuple[str, _Order]],
     *,
     options: SelectKOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
@@ -2678,7 +2680,7 @@ def select_k_unstable(
     input: Expression,
     /,
     k: int,
-    sort_keys: list[tuple[str, Literal["ascending", "descending"]]],
+    sort_keys: list[tuple[str, _Order]],
     *,
     options: SelectKOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
@@ -2687,9 +2689,9 @@ def select_k_unstable(
 def sort_indices(
     input: lib.Array | lib.ChunkedArray | lib.RecordBatch | lib.Table,
     /,
-    sort_keys: Sequence[tuple[str, Literal["ascending", "descending"]]],
+    sort_keys: Sequence[tuple[str, _Order]] = (),
     *,
-    null_placement: Literal["at_start", "at_end"] = "at_end",
+    null_placement: _Placement = "at_end",
     options: SortOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.UInt64Array: ...
@@ -2697,9 +2699,9 @@ def sort_indices(
 def sort_indices(
     input: Expression,
     /,
-    sort_keys: Sequence[tuple[str, Literal["ascending", "descending"]]],
+    sort_keys: Sequence[tuple[str, _Order]] = (),
     *,
-    null_placement: Literal["at_start", "at_end"] = "at_end",
+    null_placement: _Placement = "at_end",
     options: SortOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
