@@ -1,14 +1,20 @@
 import datetime as dt
+import sys
 
 from collections.abc import Sequence
 from decimal import Decimal
-from typing import Any, Collection, Literal, Protocol, TypeAlias, TypeVar
+from typing import Any, Collection, Iterable, Literal, Protocol, TypeVar
 
 import numpy as np
 
 from numpy.typing import NDArray
 
 from .compute import BooleanArray, IntegerArray
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
 
 ArrayLike: TypeAlias = Any
 ScalarLike: TypeAlias = Any
@@ -78,3 +84,5 @@ class SupportArrowDeviceArray(Protocol):
 
 class SupportArrowSchema(Protocol):
     def __arrow_c_schema(self) -> Any: ...
+
+IntoArray: TypeAlias = Iterable[Any] | SupportArrowArray | SupportArrowDeviceArray
