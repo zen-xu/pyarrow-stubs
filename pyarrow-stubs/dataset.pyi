@@ -195,6 +195,17 @@ def dataset(
     exclude_invalid_files: bool | None = None,
     ignore_prefixes: list[str] | None = None,
 ) -> InMemoryDataset: ...
+@overload
+def dataset(
+    source: RecordBatch | Table,
+    schema: Schema | None = None,
+    format: FileFormat | _DatasetFormat | None = None,
+    filesystem: SupportedFileSystem | str | None = None,
+    partitioning: Partitioning | PartitioningFactory | str | list[str] | None = None,
+    partition_base_dir: str | None = None,
+    exclude_invalid_files: bool | None = None,
+    ignore_prefixes: list[str] | None = None,
+) -> InMemoryDataset: ...
 def write_dataset(
     data: Dataset | Table | RecordBatch | RecordBatchReader | list[Table] | Iterable[RecordBatch],
     base_dir: StrPath,
