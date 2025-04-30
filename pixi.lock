@@ -1166,7 +1166,7 @@ packages:
 - pypi: .
   name: pyarrow-stubs
   version: '19.2'
-  sha256: 66bdbf64eaee62ff3dbf4f22f8aec74f3c5c4450bb382ca568182752046d42f4
+  sha256: d13d58d27f04bd83e78505d74166437c71f423241476306bdf95a0128336083a
   requires_dist:
   - pyarrow>=19
   requires_python: '>=3.9,<4'
