@@ -48,7 +48,6 @@ pyarrow-stubs = { path = ".", editable = true }
 ipython       = "*"
 scipy         = "*"
 pre-commit    = "*"
-mypy          = ">=1.11"
 ruff          = ">=0.5"
 types-cffi    = "*"
 pandas-stubs  = "*"
@@ -84,10 +83,3 @@ lines-between-types = 1
 
 [tool.ruff.format]
 docstring-code-format = true
-
-[tool.mypy]
-explicit_package_bases = true
-files                  = "pyarrow-stubs"
-namespace_packages     = true
-show_error_codes       = true
-disable_error_code     = ["overload-overlap", "import-not-found"]

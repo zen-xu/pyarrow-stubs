@@ -1,5 +1,3 @@
-# mypy: disable-error-code="import-untyped"
-
 import sys
 
 if sys.version_info >= (3, 11):

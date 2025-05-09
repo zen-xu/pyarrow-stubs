@@ -1,5 +1,3 @@
-# mypy: disable-error-code="overload-overlap,misc,type-arg"
-
 import datetime as dt
 import sys
 

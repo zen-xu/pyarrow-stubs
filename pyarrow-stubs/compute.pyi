@@ -1,4 +1,3 @@
-# mypy: disable-error-code="misc,type-var,var-annotated"
 # ruff: noqa: I001
 from typing import Literal, TypeAlias, TypeVar, overload, Any, Iterable, ParamSpec, Sequence
 from collections.abc import Callable
