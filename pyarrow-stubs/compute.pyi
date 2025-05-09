@@ -109,10 +109,10 @@ SignedIntegerScalar: TypeAlias = (
     | lib.Scalar[lib.Int64Type]
 )
 UnsignedIntegerScalar: TypeAlias = (
-    lib.Scalar[lib.Uint8Type]
-    | lib.Scalar[lib.Uint16Type]
+    lib.Scalar[lib.UInt8Type]
+    | lib.Scalar[lib.UInt16Type]
     | lib.Scalar[lib.Uint32Type]
-    | lib.Scalar[lib.Uint64Type]
+    | lib.Scalar[lib.UInt64Type]
 )
 IntegerScalar: TypeAlias = SignedIntegerScalar | UnsignedIntegerScalar
 FloatScalar: TypeAlias = (
