@@ -48,7 +48,7 @@ pyarrow-stubs = { path = ".", editable = true }
 ipython       = "*"
 scipy         = "*"
 pre-commit    = "*"
-ruff          = ">=0.5"
+ruff          = ">=0.11.5"
 types-cffi    = "*"
 pandas-stubs  = "*"
 hatchling     = "*"
