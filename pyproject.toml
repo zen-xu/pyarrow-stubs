@@ -86,5 +86,5 @@ lines-between-types = 1
 docstring-code-format = true
 
 [tool.pyright]
-typeCheckingMode = "basic"
+typeCheckingMode     = "basic"
 reportMissingImports = false
