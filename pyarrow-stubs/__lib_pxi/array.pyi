@@ -1,5 +1,3 @@
-# mypy: disable-error-code="overload-overlap,misc,type-arg"
-
 import datetime as dt
 import sys
 
@@ -63,7 +61,6 @@ from .types import (
     _IndexT,
     _RunEndType,
     _Size,
-    _ValueT,
 )
 
 _T = TypeVar("_T")
@@ -1581,6 +1578,12 @@ class LargeBinaryArray(Array[scalar.LargeBinaryScalar]):
 class BinaryViewArray(Array[scalar.BinaryViewScalar]): ...
 
 class DictionaryArray(Array[scalar.DictionaryScalar[_IndexT, _BasicValueT]]):
+    def dictionary_encode(self) -> Self: ...  # type: ignore[override]
+    def dictionary_decode(self) -> Array[Scalar[_BasicValueT]]: ...
+    @property
+    def indices(self) -> Array[Scalar[_IndexT]]: ...
+    @property
+    def dictionary(self) -> Array[Scalar[_BasicValueT]]: ...
     @staticmethod
     def from_buffers(  # type: ignore[override]
         type: _BasicValueT,
@@ -1621,25 +1624,25 @@ class RunEndEncodedArray(Array[scalar.RunEndEncodedScalar[_RunEndType, _BasicVal
     def from_arrays(
         run_ends: Int16Array,
         values: Array,
-        type: _ValueT | None = None,
+        type: DataType | None = None,
     ) -> RunEndEncodedArray[types.Int16Type, _BasicValueT]: ...
     @overload
     @staticmethod
     def from_arrays(
         run_ends: Int32Array,
         values: Array,
-        type: _ValueT | None = None,
+        type: DataType | None = None,
     ) -> RunEndEncodedArray[types.Int32Type, _BasicValueT]: ...
     @overload
     @staticmethod
     def from_arrays(
         run_ends: Int64Array,
         values: Array,
-        type: _ValueT | None = None,
+        type: DataType | None = None,
     ) -> RunEndEncodedArray[types.Int64Type, _BasicValueT]: ...
     @staticmethod
-    def from_buffers(  # type: ignore[override]
-        type: _ValueT,
+    def from_buffers(
+        type: DataType,
         length: int,
         buffers: list[Buffer],
         null_count: int = -1,
