@@ -12,6 +12,7 @@ if sys.version_info >= (3, 10):
     from typing import TypeAlias
 else:
     from typing_extensions import TypeAlias
+
 from typing import (
     Any,
     Collection,
@@ -31,10 +32,9 @@ from pyarrow._compute import CastOptions
 from pyarrow._stubs_typing import (
     ArrayLike,
     Indices,
+    IntoArray,
     Mask,
     Order,
-    SupportArrowArray,
-    SupportArrowDeviceArray,
 )
 from pyarrow.lib import (
     Buffer,
@@ -63,43 +63,34 @@ from .types import (
     _Size,
 )
 
-_T = TypeVar("_T")
+_ListType: TypeAlias = (
+    types.ListType[_DataTypeT]
+    | types.FixedSizeListType[_DataTypeT, _Size]
+    | types.LargeListType[_DataTypeT]
+    | types.ListViewType[_DataTypeT]
+    | types.LargeListViewType[_DataTypeT]
+)
+_ListArray: TypeAlias = (
+    ListArray[scalar.ListScalar[_DataTypeT]]
+    | FixedSizeListArray[_DataTypeT, _Size]
+    | LargeListArray[_DataTypeT]
+    | ListViewArray[_DataTypeT]
+    | LargeListViewArray[_DataTypeT]
+)
 
-NullableIterable: TypeAlias = Iterable[_T | None]
-
-@overload  # type: ignore[overload-overlap]
+@overload
 def array(
-    values: NullableIterable[bool],
+    values: Iterable[bool] | Iterable[int] | Iterable[float],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
     safe: bool = True,
     memory_pool: MemoryPool | None = None,
-) -> BooleanArray: ...
+) -> BooleanArray | Int64Array | DoubleArray: ...
 @overload
 def array(
-    values: NullableIterable[int],
-    type: None = None,
-    mask: Mask | None = None,
-    size: int | None = None,
-    from_pandas: bool | None = None,
-    safe: bool = True,
-    memory_pool: MemoryPool | None = None,
-) -> Int64Array: ...
-@overload
-def array(
-    values: NullableIterable[float],
-    type: None = None,
-    mask: Mask | None = None,
-    size: int | None = None,
-    from_pandas: bool | None = None,
-    safe: bool = True,
-    memory_pool: MemoryPool | None = None,
-) -> DoubleArray: ...
-@overload
-def array(
-    values: NullableIterable[Decimal],
+    values: Iterable[Decimal],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -109,7 +100,7 @@ def array(
 ) -> Decimal128Array: ...
 @overload
 def array(
-    values: NullableIterable[dict[str, Any]],
+    values: Iterable[dict[str, Any]],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -119,7 +110,7 @@ def array(
 ) -> StructArray: ...
 @overload
 def array(
-    values: NullableIterable[dt.date],
+    values: Iterable[dt.date],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -129,7 +120,7 @@ def array(
 ) -> Date32Array: ...
 @overload
 def array(
-    values: NullableIterable[dt.time],
+    values: Iterable[dt.time],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -139,7 +130,7 @@ def array(
 ) -> Time64Array: ...
 @overload
 def array(
-    values: NullableIterable[dt.timedelta],
+    values: Iterable[dt.timedelta],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -149,7 +140,7 @@ def array(
 ) -> DurationArray: ...
 @overload
 def array(
-    values: NullableIterable[MonthDayNano],
+    values: Iterable[MonthDayNano],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -159,7 +150,7 @@ def array(
 ) -> MonthDayNanoIntervalArray: ...
 @overload
 def array(
-    values: NullableIterable[str],
+    values: Iterable[str],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -169,7 +160,7 @@ def array(
 ) -> StringArray: ...
 @overload
 def array(
-    values: NullableIterable[bytes],
+    values: Iterable[bytes],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -179,7 +170,7 @@ def array(
 ) -> BinaryArray: ...
 @overload
 def array(
-    values: NullableIterable[list],
+    values: Iterable[list],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -189,7 +180,7 @@ def array(
 ) -> ListArray: ...
 @overload
 def array(
-    values: NullableIterable[_Scalar_CoT],
+    values: Iterable[_Scalar_CoT],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -199,7 +190,7 @@ def array(
 ) -> Array[_Scalar_CoT]: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["null"] | types.NullType,
     mask: Mask | None = None,
     size: int | None = None,
@@ -209,7 +200,7 @@ def array(
 ) -> NullArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["bool", "boolean"] | types.BoolType,
     mask: Mask | None = None,
     size: int | None = None,
@@ -219,7 +210,7 @@ def array(
 ) -> BooleanArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["i1", "int8"] | types.Int8Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -229,7 +220,7 @@ def array(
 ) -> Int8Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["i2", "int16"] | types.Int16Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -239,7 +230,7 @@ def array(
 ) -> Int16Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["i4", "int32"] | types.Int32Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -249,7 +240,7 @@ def array(
 ) -> Int32Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["i8", "int64"] | types.Int64Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -259,8 +250,8 @@ def array(
 ) -> Int64Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
-    type: Literal["u1", "uint8"] | types.Int8Type,
+    values: IntoArray,
+    type: Literal["u1", "uint8"] | types.Uint8Type,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -269,7 +260,7 @@ def array(
 ) -> UInt8Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["u2", "uint16"] | types.Uint16Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -279,7 +270,7 @@ def array(
 ) -> UInt16Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["u4", "uint32"] | types.Uint32Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -289,7 +280,7 @@ def array(
 ) -> UInt32Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["u8", "uint64"] | types.Uint64Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -299,7 +290,7 @@ def array(
 ) -> UInt64Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["f2", "halffloat", "float16"] | types.Float16Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -309,7 +300,7 @@ def array(
 ) -> HalfFloatArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["f4", "float", "float32"] | types.Float32Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -319,7 +310,7 @@ def array(
 ) -> FloatArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["f8", "double", "float64"] | types.Float64Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -329,7 +320,7 @@ def array(
 ) -> DoubleArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["string", "str", "utf8"] | types.StringType,
     mask: Mask | None = None,
     size: int | None = None,
@@ -339,7 +330,7 @@ def array(
 ) -> StringArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["binary"] | types.BinaryType,
     mask: Mask | None = None,
     size: int | None = None,
@@ -349,7 +340,7 @@ def array(
 ) -> BinaryArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["large_string", "large_str", "large_utf8"] | types.LargeStringType,
     mask: Mask | None = None,
     size: int | None = None,
@@ -359,7 +350,7 @@ def array(
 ) -> LargeStringArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["large_binary"] | types.LargeBinaryType,
     mask: Mask | None = None,
     size: int | None = None,
@@ -369,7 +360,7 @@ def array(
 ) -> LargeBinaryArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["binary_view"] | types.BinaryViewType,
     mask: Mask | None = None,
     size: int | None = None,
@@ -379,7 +370,7 @@ def array(
 ) -> BinaryViewArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["string_view"] | types.StringViewType,
     mask: Mask | None = None,
     size: int | None = None,
@@ -389,7 +380,7 @@ def array(
 ) -> StringViewArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["date32", "date32[day]"] | types.Date32Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -399,7 +390,7 @@ def array(
 ) -> Date32Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["date64", "date64[ms]"] | types.Date64Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -409,7 +400,7 @@ def array(
 ) -> Date64Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["time32[s]", "time32[ms]"] | types.Time32Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -419,7 +410,7 @@ def array(
 ) -> Time32Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["time64[us]", "time64[ns]"] | types.Time64Type,
     mask: Mask | None = None,
     size: int | None = None,
@@ -429,7 +420,7 @@ def array(
 ) -> Time64Array: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["timestamp[s]", "timestamp[ms]", "timestamp[us]"] | types.TimestampType,
     mask: Mask | None = None,
     size: int | None = None,
@@ -439,7 +430,7 @@ def array(
 ) -> TimestampArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["duration[s]", "duration[ms]", "duration[us]", "duration[ns]"]
     | types.DurationType,
     mask: Mask | None = None,
@@ -450,7 +441,7 @@ def array(
 ) -> DurationArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["month_day_nano_interval"] | types.MonthDayNanoIntervalType,
     mask: Mask | None = None,
     size: int | None = None,
@@ -460,7 +451,7 @@ def array(
 ) -> MonthDayNanoIntervalArray: ...
 @overload
 def array(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: _DataTypeT,
     mask: Mask | None = None,
     size: int | None = None,
@@ -469,160 +460,158 @@ def array(
     memory_pool: MemoryPool | None = None,
 ) -> Array[Scalar[_DataTypeT]]: ...
 @overload
-def asarray(values: NullableIterable[bool]) -> BooleanArray: ...
+def asarray(
+    values: Iterable[bool] | Iterable[int] | Iterable[float],
+) -> BooleanArray | Int64Array | DoubleArray: ...
 @overload
-def asarray(values: NullableIterable[int]) -> Int64Array: ...
+def asarray(values: Iterable[Decimal]) -> Decimal128Array: ...
 @overload
-def asarray(values: NullableIterable[float]) -> DoubleArray: ...
+def asarray(values: Iterable[dict[str, Any]]) -> StructArray: ...
 @overload
-def asarray(values: NullableIterable[Decimal]) -> Decimal128Array: ...
+def asarray(values: Iterable[dt.date]) -> Date32Array: ...
 @overload
-def asarray(values: NullableIterable[dict[str, Any]]) -> StructArray: ...
+def asarray(values: Iterable[dt.time]) -> Time64Array: ...
 @overload
-def asarray(values: NullableIterable[dt.date]) -> Date32Array: ...
+def asarray(values: Iterable[dt.timedelta]) -> DurationArray: ...
 @overload
-def asarray(values: NullableIterable[dt.time]) -> Time64Array: ...
+def asarray(values: Iterable[MonthDayNano]) -> MonthDayNanoIntervalArray: ...
 @overload
-def asarray(values: NullableIterable[dt.timedelta]) -> DurationArray: ...
-@overload
-def asarray(values: NullableIterable[MonthDayNano]) -> MonthDayNanoIntervalArray: ...
-@overload
-def asarray(values: NullableIterable[list]) -> ListArray: ...
+def asarray(values: Iterable[list[Any]]) -> ListArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["null"] | types.NullType,
 ) -> NullArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["bool", "boolean"] | types.BoolType,
 ) -> BooleanArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["i1", "int8"] | types.Int8Type,
 ) -> Int8Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["i2", "int16"] | types.Int16Type,
 ) -> Int16Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["i4", "int32"] | types.Int32Type,
 ) -> Int32Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["i8", "int64"] | types.Int64Type,
 ) -> Int64Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["u1", "uint8"] | types.Uint8Type,
 ) -> UInt8Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["u2", "uint16"] | types.Uint16Type,
 ) -> UInt16Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["u4", "uint32"] | types.Uint32Type,
 ) -> UInt32Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["u8", "uint64"] | types.Uint64Type,
 ) -> UInt64Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["f2", "halffloat", "float16"] | types.Float16Type,
 ) -> HalfFloatArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["f4", "float", "float32"] | types.Float32Type,
 ) -> FloatArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["f8", "double", "float64"] | types.Float64Type,
 ) -> DoubleArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["string", "str", "utf8"] | types.StringType,
 ) -> StringArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["binary"] | types.BinaryType,
 ) -> BinaryArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["large_string", "large_str", "large_utf8"] | types.LargeStringType,
 ) -> LargeStringArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["large_binary"] | types.LargeBinaryType,
 ) -> LargeBinaryArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["binary_view"] | types.BinaryViewType,
 ) -> BinaryViewArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["string_view"] | types.StringViewType,
 ) -> StringViewArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["date32", "date32[day]"] | types.Date32Type,
 ) -> Date32Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["date64", "date64[ms]"] | types.Date64Type,
 ) -> Date64Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["time32[s]", "time32[ms]"] | types.Time32Type,
 ) -> Time32Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["time64[us]", "time64[ns]"] | types.Time64Type,
 ) -> Time64Array: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["timestamp[s]", "timestamp[ms]", "timestamp[us]", "timestamp[ns]"]
     | types.TimestampType,
 ) -> TimestampArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["duration[s]", "duration[ms]", "duration[us]", "duration[ns]"]
     | types.DurationType,
 ) -> DurationArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: Literal["month_day_nano_interval"] | types.MonthDayNanoIntervalType,
 ) -> MonthDayNanoIntervalArray: ...
 @overload
 def asarray(
-    values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
+    values: IntoArray,
     type: _DataTypeT,
 ) -> Array[Scalar[_DataTypeT]]: ...
 @overload
@@ -766,12 +755,6 @@ def nulls(
 @overload
 def nulls(
     size: int,
-    types: types.ListType[_DataTypeT],
-    memory_pool: MemoryPool | None = None,
-) -> ListArray[scalar.ListScalar[_DataTypeT]]: ...
-@overload
-def nulls(
-    size: int,
     types: types.FixedSizeListType[_DataTypeT, _Size],
     memory_pool: MemoryPool | None = None,
 ) -> FixedSizeListArray[_DataTypeT, _Size]: ...
@@ -793,6 +776,10 @@ def nulls(
     types: types.LargeListViewType[_DataTypeT],
     memory_pool: MemoryPool | None = None,
 ) -> LargeListViewArray[_DataTypeT]: ...
+@overload
+def nulls(
+    size: int, types: _ListType[_DataTypeT, _Size], memory_pool: MemoryPool | None = None
+) -> _ListArray[_DataTypeT, _Size]: ...
 @overload
 def nulls(
     size: int,
@@ -913,20 +900,24 @@ def repeat(
 ) -> DoubleArray: ...
 @overload
 def repeat(
-    value: Decimal | scalar.Decimal32Scalar, size: int, memory_pool: MemoryPool | None = None
+    value: scalar.Decimal32Scalar, size: int, memory_pool: MemoryPool | None = None
 ) -> Decimal32Array: ...
 @overload
 def repeat(
-    value: Decimal | scalar.Decimal64Scalar, size: int, memory_pool: MemoryPool | None = None
+    value: scalar.Decimal64Scalar, size: int, memory_pool: MemoryPool | None = None
 ) -> Decimal64Array: ...
 @overload
 def repeat(
-    value: Decimal | scalar.Decimal128Scalar, size: int, memory_pool: MemoryPool | None = None
+    value: scalar.Decimal128Scalar, size: int, memory_pool: MemoryPool | None = None
 ) -> Decimal128Array: ...
 @overload
 def repeat(
     value: scalar.Decimal256Scalar, size: int, memory_pool: MemoryPool | None = None
 ) -> Decimal256Array: ...
+@overload
+def repeat(
+    value: Decimal, size: int, memory_pool: MemoryPool | None = None
+) -> Decimal32Array | Decimal64Array | Decimal128Array | Decimal256Array: ...
 @overload
 def repeat(
     value: dt.date | scalar.Date32Scalar, size: int, memory_pool: MemoryPool | None = None
@@ -1506,7 +1497,7 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
     ) -> MapArray[_MapKeyT, _MapItemT]: ...
     @overload
     @classmethod
-    def from_arrays(
+    def from_arrays(  # pyright: ignore[reportIncompatibleMethodOverride]
         cls,
         offsets: Int64Array,
         values: Array,
@@ -1624,25 +1615,25 @@ class RunEndEncodedArray(Array[scalar.RunEndEncodedScalar[_RunEndType, _BasicVal
     def from_arrays(
         run_ends: Int16Array,
         values: Array,
-        type: DataType | None = None,
+        type: _BasicValueT | None = None,
     ) -> RunEndEncodedArray[types.Int16Type, _BasicValueT]: ...
     @overload
     @staticmethod
     def from_arrays(
         run_ends: Int32Array,
         values: Array,
-        type: DataType | None = None,
+        type: _BasicValueT | None = None,
     ) -> RunEndEncodedArray[types.Int32Type, _BasicValueT]: ...
     @overload
     @staticmethod
     def from_arrays(
         run_ends: Int64Array,
         values: Array,
-        type: DataType | None = None,
+        type: _BasicValueT | None = None,
     ) -> RunEndEncodedArray[types.Int64Type, _BasicValueT]: ...
     @staticmethod
-    def from_buffers(
-        type: DataType,
+    def from_buffers(  # type: ignore[override]
+        type: _BasicValueT,
         length: int,
         buffers: list[Buffer],
         null_count: int = -1,
