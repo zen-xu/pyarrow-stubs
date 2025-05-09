@@ -29,8 +29,3 @@ repos:
     rev: v1.1.400
     hooks:
       - id: pyright
-        additional_dependencies:
-          - pandas
-          - numpy
-          - scipy
-          - sparse
