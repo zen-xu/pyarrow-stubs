@@ -108,21 +108,21 @@ NA = _NULL
 
 class NullScalar(Scalar[types.NullType]): ...
 class BooleanScalar(Scalar[types.BoolType]): ...
-class UInt8Scalar(Scalar[types.Uint8Type]): ...
+class UInt8Scalar(Scalar[types.UInt8Type]): ...
 class Int8Scalar(Scalar[types.Int8Type]): ...
-class UInt16Scalar(Scalar[types.Uint16Type]): ...
+class UInt16Scalar(Scalar[types.UInt16Type]): ...
 class Int16Scalar(Scalar[types.Int16Type]): ...
 class UInt32Scalar(Scalar[types.Uint32Type]): ...
 class Int32Scalar(Scalar[types.Int32Type]): ...
-class UInt64Scalar(Scalar[types.Uint64Type]): ...
+class UInt64Scalar(Scalar[types.UInt64Type]): ...
 class Int64Scalar(Scalar[types.Int64Type]): ...
 class HalfFloatScalar(Scalar[types.Float16Type]): ...
 class FloatScalar(Scalar[types.Float32Type]): ...
 class DoubleScalar(Scalar[types.Float64Type]): ...
-class Decimal32Scalar(Scalar[types.Decimal32Type]): ...
-class Decimal64Scalar(Scalar[types.Decimal64Type]): ...
-class Decimal128Scalar(Scalar[types.Decimal128Type]): ...
-class Decimal256Scalar(Scalar[types.Decimal256Type]): ...
+class Decimal32Scalar(Scalar[types.Decimal32Type[types._Precision, types._Scale]]): ...
+class Decimal64Scalar(Scalar[types.Decimal64Type[types._Precision, types._Scale]]): ...
+class Decimal128Scalar(Scalar[types.Decimal128Type[types._Precision, types._Scale]]): ...
+class Decimal256Scalar(Scalar[types.Decimal256Type[types._Precision, types._Scale]]): ...
 class Date32Scalar(Scalar[types.Date32Type]): ...
 
 class Date64Scalar(Scalar[types.Date64Type]):
@@ -420,6 +420,358 @@ def scalar(
     from_pandas: bool | None = None,
     memory_pool: MemoryPool | None = None,
 ) -> ListScalar[Any]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.NullType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> NullScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.BoolType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> BooleanScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.UInt8Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> UInt8Scalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Int8Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Int8Scalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.UInt16Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> UInt16Scalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Int16Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Int16Scalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Uint32Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> UInt32Scalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Int32Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Int32Scalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.UInt64Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> UInt64Scalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Int64Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Int64Scalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Float16Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> HalfFloatScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Float32Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> FloatScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Float64Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> DoubleScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Date32Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Date32Scalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Date64Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Date64Scalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.MonthDayNanoIntervalType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> MonthDayNanoIntervalScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.StringType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> StringScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.LargeStringType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> LargeStringScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.StringViewType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> StringViewScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.BinaryType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> BinaryScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.LargeBinaryType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> LargeBinaryScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.BinaryViewType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> BinaryViewScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.TimestampType[types._Unit, types._Tz],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> TimestampScalar[types._Unit, types._Tz]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Time32Type[types._Time32Unit],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Time32Scalar[types._Time32Unit]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Time64Type[types._Time64Unit],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Time64Scalar[types._Time64Unit]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.DurationType[types._Unit],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> DurationScalar[types._Unit]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Decimal32Type[types._Precision, types._Scale],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Decimal32Scalar[types._Precision, types._Scale]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Decimal64Type[types._Precision, types._Scale],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Decimal64Scalar[types._Precision, types._Scale]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Decimal128Type[types._Precision, types._Scale],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Decimal128Scalar[types._Precision, types._Scale]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Decimal256Type[types._Precision, types._Scale],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Decimal256Scalar[types._Precision, types._Scale]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.ListType[_DataTypeT],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> ListScalar[_DataTypeT]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.LargeListType[_DataTypeT],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> LargeListScalar[_DataTypeT]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.ListViewType[_DataTypeT],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> ListViewScalar[_DataTypeT]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.LargeListViewType[_DataTypeT],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> LargeListViewScalar[_DataTypeT]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.FixedSizeListType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> FixedSizeListScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.DictionaryType[types._IndexT, types._BasicValueT],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> DictionaryScalar[types._IndexT, types._BasicValueT]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.MapType[types._K, types._ValueT],
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> MapScalar[types._K, types._ValueT]: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.StringType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> StructScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.UnionType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> UnionScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.RunEndEncodedType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> RunEndEncodedScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.Bool8Type,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> Bool8Scalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.UuidType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> UuidScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.JsonType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> JsonScalar: ...
+@overload
+def scalar(
+    value: Any,
+    type: types.OpaqueType,
+    *,
+    from_pandas: bool | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> OpaqueScalar: ...
 @overload
 def scalar(
     value: Any,
