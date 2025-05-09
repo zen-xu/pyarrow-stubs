@@ -1,3 +1,4 @@
+# mypy: disable-error-code="overload-overlap,misc,type-arg"
 import collections.abc
 import datetime as dt
 import sys

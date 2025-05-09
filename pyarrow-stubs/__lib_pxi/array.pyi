@@ -1,3 +1,5 @@
+# mypy: disable-error-code="overload-overlap,misc,type-arg"
+
 import datetime as dt
 import sys
 
@@ -61,6 +63,7 @@ from .types import (
     _IndexT,
     _RunEndType,
     _Size,
+    _ValueT,
 )
 
 _T = TypeVar("_T")
@@ -1624,25 +1627,25 @@ class RunEndEncodedArray(Array[scalar.RunEndEncodedScalar[_RunEndType, _BasicVal
     def from_arrays(
         run_ends: Int16Array,
         values: Array,
-        type: DataType | None = None,
+        type: _ValueT | None = None,
     ) -> RunEndEncodedArray[types.Int16Type, _BasicValueT]: ...
     @overload
     @staticmethod
     def from_arrays(
         run_ends: Int32Array,
         values: Array,
-        type: DataType | None = None,
+        type: _ValueT | None = None,
     ) -> RunEndEncodedArray[types.Int32Type, _BasicValueT]: ...
     @overload
     @staticmethod
     def from_arrays(
         run_ends: Int64Array,
         values: Array,
-        type: DataType | None = None,
+        type: _ValueT | None = None,
     ) -> RunEndEncodedArray[types.Int64Type, _BasicValueT]: ...
     @staticmethod
-    def from_buffers(
-        type: DataType,
+    def from_buffers(  # type: ignore[override]
+        type: _ValueT,
         length: int,
         buffers: list[Buffer],
         null_count: int = -1,
