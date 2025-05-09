@@ -32,3 +32,5 @@ repos:
         additional_dependencies:
           - pandas
           - numpy
+          - scipy
+          - sparse

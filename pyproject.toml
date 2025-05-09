@@ -53,6 +53,7 @@ types-cffi    = "*"
 pandas-stubs  = "*"
 hatchling     = "*"
 fsspec        = "*"
+sparse        = "*"
 pyright       = { version = ">=1.1.385,<2", extras = ["nodejs"] }
 
 [tool.pixi.tasks]
@@ -83,3 +84,6 @@ lines-between-types = 1
 
 [tool.ruff.format]
 docstring-code-format = true
+
+[tool.pyright]
+typeCheckingMode = "basic"
