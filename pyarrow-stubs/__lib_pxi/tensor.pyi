@@ -1,5 +1,3 @@
-# mypy: disable-error-code="import-untyped"
-
 import sys
 
 if sys.version_info >= (3, 11):
@@ -10,8 +8,8 @@ else:
 import numpy as np
 
 from pyarrow.lib import _Weakrefable
-from pydata.sparse import COO  # type: ignore[import-not-found]
 from scipy.sparse import coo_matrix, csr_matrix
+from sparse import COO
 
 class Tensor(_Weakrefable):
     @classmethod
