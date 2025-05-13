@@ -59,7 +59,7 @@ from .io import Buffer
 from .ipc import RecordBatchReader
 from .scalar import Int64Scalar, Scalar
 from .tensor import Tensor
-from .types import _AsPyType, _BasicDataType, _DataType_CoT, _DataTypeT
+from .types import _AsPyType, _BasicDataType, _DataTypeT
 
 _Scalar_CoT = TypeVar("_Scalar_CoT", bound=Scalar, covariant=True)
 
@@ -123,7 +123,7 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_Scalar_CoT]):
     @property
     def data(self) -> Self: ...
     @property
-    def type(self: ChunkedArray[Scalar[_DataType_CoT]]) -> _DataType_CoT: ...
+    def type(self: ChunkedArray[Scalar[_DataTypeT]]) -> _DataTypeT: ...
     def length(self) -> int: ...
     __len__ = length
     def to_string(

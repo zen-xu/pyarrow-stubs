@@ -53,7 +53,6 @@ from .types import (
     _AsPyType,
     _BasicDataType,
     _BasicValueT,
-    _DataType_CoT,
     _DataTypeT,
     _IndexT,
     _RunEndType,
@@ -1136,7 +1135,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_Scalar_CoT]):
     def view(self, target_type: _CastAs) -> Array[Scalar[_CastAs]]: ...
     def sum(self, **kwargs) -> _Scalar_CoT: ...
     @property
-    def type(self: Array[Scalar[_DataType_CoT]]) -> _DataType_CoT: ...
+    def type(self: Array[Scalar[_DataTypeT]]) -> _DataTypeT: ...
     def unique(self) -> Self: ...
     def dictionary_encode(self, null_encoding: str = "mask") -> DictionaryArray: ...
     @overload
@@ -1377,7 +1376,7 @@ class ListArray(BaseListArray[_Scalar_CoT]):
     @property
     def offsets(self) -> Int32Array: ...
 
-class LargeListArray(BaseListArray[scalar.LargeListScalar[_DataType_CoT]]):
+class LargeListArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
     @overload
     @classmethod
     def from_arrays(
@@ -1405,7 +1404,7 @@ class LargeListArray(BaseListArray[scalar.LargeListScalar[_DataType_CoT]]):
     @property
     def offsets(self) -> Int64Array: ...
 
-class ListViewArray(BaseListArray[scalar.ListViewScalar[_DataType_CoT]]):
+class ListViewArray(BaseListArray[scalar.ListViewScalar[_DataTypeT]]):
     @overload
     @classmethod
     def from_arrays(
@@ -1435,7 +1434,7 @@ class ListViewArray(BaseListArray[scalar.ListViewScalar[_DataType_CoT]]):
     @property
     def sizes(self) -> Int32Array: ...
 
-class LargeListViewArray(BaseListArray[scalar.LargeListScalar[_DataType_CoT]]):
+class LargeListViewArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
     @overload
     @classmethod
     def from_arrays(
@@ -1465,7 +1464,7 @@ class LargeListViewArray(BaseListArray[scalar.LargeListScalar[_DataType_CoT]]):
     @property
     def sizes(self) -> Int64Array: ...
 
-class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataType_CoT, _Size]]):
+class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, _Size]]):
     @overload
     @classmethod
     def from_arrays(
@@ -1486,7 +1485,7 @@ class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataType_CoT,
         mask: Mask | None = None,
     ) -> FixedSizeListArray[_DataTypeT, _Size]: ...
     @property
-    def values(self) -> BaseListArray[scalar.ListScalar[_DataType_CoT]]: ...
+    def values(self) -> BaseListArray[scalar.ListScalar[_DataTypeT]]: ...
 
 _MapKeyT = TypeVar("_MapKeyT", bound=_BasicDataType)
 _MapItemT = TypeVar("_MapItemT", bound=_BasicDataType)
