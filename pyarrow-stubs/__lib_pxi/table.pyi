@@ -51,7 +51,7 @@ from pyarrow.compute import ArrayOrChunkedArray, Expression
 from pyarrow.interchange.dataframe import _PyArrowDataFrame
 from pyarrow.lib import Device, Field, MemoryManager, MemoryPool, MonthDayNano, Schema
 
-from . import scalar
+from . import array, scalar, types
 from .array import Array, NullableCollection, StructArray, _CastAs, _PandasConvertible
 from .device import DeviceAllocationType
 from .io import Buffer
@@ -200,7 +200,178 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     def chunk(self, i: int) -> ChunkedArray[_ScalarT]: ...
     @property
     def chunks(self) -> list[Array[_ScalarT]]: ...
-    def iterchunks(self) -> Generator[Array[_ScalarT], None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.NullScalar],
+    ) -> Generator[array.NullArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.BooleanScalar],
+    ) -> Generator[array.BooleanArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.UInt8Scalar],
+    ) -> Generator[array.UInt8Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Int8Scalar],
+    ) -> Generator[array.Int8Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.UInt16Scalar],
+    ) -> Generator[array.UInt16Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Int16Scalar],
+    ) -> Generator[array.Int16Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.UInt32Scalar],
+    ) -> Generator[array.UInt32Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Int32Scalar],
+    ) -> Generator[array.Int32Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.UInt64Scalar],
+    ) -> Generator[array.UInt64Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Int64Scalar],
+    ) -> Generator[array.Int64Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.HalfFloatScalar],
+    ) -> Generator[array.HalfFloatArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.FloatScalar],
+    ) -> Generator[array.FloatArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.DoubleScalar],
+    ) -> Generator[array.DoubleArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Decimal32Scalar],
+    ) -> Generator[array.Decimal32Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Decimal64Scalar],
+    ) -> Generator[array.Decimal64Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Decimal128Scalar],
+    ) -> Generator[array.Decimal128Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Decimal256Scalar],
+    ) -> Generator[array.Decimal256Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Date32Scalar],
+    ) -> Generator[array.Date32Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Date64Scalar],
+    ) -> Generator[array.Date64Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Time32Scalar[types._Time32Unit]],
+    ) -> Generator[array.Time32Array[types._Time32Unit], None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Time64Scalar[types._Time64Unit]],
+    ) -> Generator[array.Time64Array[types._Time64Unit], None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.DurationScalar[types._Unit]],
+    ) -> Generator[array.DurationArray[types._Unit], None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.MonthDayNanoIntervalScalar],
+    ) -> Generator[array.MonthDayNanoIntervalArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.BinaryScalar],
+    ) -> Generator[array.BinaryArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.LargeBinaryScalar],
+    ) -> Generator[array.LargeBinaryArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.FixedSizeBinaryScalar],
+    ) -> Generator[array.FixedSizeBinaryArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.StringScalar],
+    ) -> Generator[array.StringArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.LargeStringScalar],
+    ) -> Generator[array.LargeStringArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.BinaryViewScalar],
+    ) -> Generator[array.BinaryViewArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.StringViewScalar],
+    ) -> Generator[array.StringViewArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.ListScalar[_DataTypeT]],
+    ) -> Generator[array.ListArray[scalar.ListScalar[_DataTypeT]], None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.FixedSizeListScalar[_DataTypeT, types._Size]],
+    ) -> Generator[array.FixedSizeListArray[_DataTypeT, types._Size], None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.LargeListScalar[_DataTypeT]],
+    ) -> Generator[array.LargeListArray[_DataTypeT], None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.LargeListViewScalar[_DataTypeT]],
+    ) -> Generator[array.LargeListViewArray[_DataTypeT], None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.StructScalar],
+    ) -> Generator[array.StructArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.MapScalar[array._MapKeyT, array._MapItemT]],
+    ) -> Generator[array.MapArray[array._MapKeyT, array._MapItemT], None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.DictionaryScalar[types._IndexT, types._BasicValueT]],
+    ) -> Generator[array.DictionaryArray[types._IndexT, types._BasicValueT], None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.RunEndEncodedScalar],
+    ) -> Generator[array.RunEndEncodedArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.UnionScalar],
+    ) -> Generator[array.UnionArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.Bool8Scalar],
+    ) -> Generator[array.Bool8Array, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.UuidScalar],
+    ) -> Generator[array.UuidArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.JsonScalar],
+    ) -> Generator[array.JsonArray, None, None]: ...
+    @overload
+    def iterchunks(
+        self: ChunkedArray[scalar.OpaqueScalar],
+    ) -> Generator[array.OpaqueArray, None, None]: ...
     def __iter__(self) -> Iterator[_ScalarT]: ...
     def to_pylist(
         self: ChunkedArray[Scalar[_BasicDataType[_AsPyType]]],
