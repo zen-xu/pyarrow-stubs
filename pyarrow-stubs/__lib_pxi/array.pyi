@@ -10,12 +10,10 @@ else:
     from typing_extensions import Self
 from typing import (
     Any,
-    Collection,
     Generic,
     Iterable,
     Iterator,
     Literal,
-    Protocol,
     TypeVar,
     overload,
 )
@@ -45,7 +43,7 @@ from pyarrow.lib import (
 
 from . import scalar, types
 from .device import DeviceAllocationType
-from .scalar import Scalar
+from .scalar import NullableCollection, Scalar
 from .types import (
     DataType,
     Field,
@@ -59,16 +57,9 @@ from .types import (
     _Size,
 )
 
-_T = TypeVar("_T")
-
-class NullableIterable(Protocol[_T]):  # pyright: ignore[reportInvalidTypeVarUse]
-    # NullableIterable must be invariant, which means NullableIterable[bool] is not
-    # the subclass of NullableIterable[int].
-    def __iter__(self) -> Iterator[_T | None]: ...
-
 @overload
 def array(
-    values: NullableIterable[bool],
+    values: NullableCollection[bool],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -78,7 +69,7 @@ def array(
 ) -> BooleanArray: ...
 @overload
 def array(
-    values: NullableIterable[int],
+    values: NullableCollection[int],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -88,7 +79,7 @@ def array(
 ) -> Int64Array: ...
 @overload
 def array(
-    values: NullableIterable[float],
+    values: NullableCollection[float],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -98,7 +89,7 @@ def array(
 ) -> DoubleArray: ...
 @overload
 def array(
-    values: NullableIterable[Decimal],
+    values: NullableCollection[Decimal],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -108,7 +99,7 @@ def array(
 ) -> Decimal128Array: ...
 @overload
 def array(
-    values: NullableIterable[dict[str, Any]],
+    values: NullableCollection[dict[str, Any]],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -118,7 +109,7 @@ def array(
 ) -> StructArray: ...
 @overload
 def array(
-    values: NullableIterable[dt.date],
+    values: NullableCollection[dt.date],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -128,7 +119,7 @@ def array(
 ) -> Date32Array: ...
 @overload
 def array(
-    values: NullableIterable[dt.time],
+    values: NullableCollection[dt.time],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -138,7 +129,7 @@ def array(
 ) -> Time64Array[Literal["us"]]: ...
 @overload
 def array(
-    values: NullableIterable[dt.timedelta],
+    values: NullableCollection[dt.timedelta],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -148,7 +139,7 @@ def array(
 ) -> DurationArray[Literal["us"]]: ...
 @overload
 def array(
-    values: NullableIterable[MonthDayNano],
+    values: NullableCollection[MonthDayNano],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -158,7 +149,7 @@ def array(
 ) -> MonthDayNanoIntervalArray: ...
 @overload
 def array(
-    values: NullableIterable[str],
+    values: NullableCollection[str],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -168,7 +159,7 @@ def array(
 ) -> StringArray: ...
 @overload
 def array(
-    values: NullableIterable[bytes],
+    values: NullableCollection[bytes],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -178,7 +169,7 @@ def array(
 ) -> BinaryArray: ...
 @overload
 def array(
-    values: NullableIterable[list[Any]],
+    values: NullableCollection[list[Any]],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -188,7 +179,7 @@ def array(
 ) -> ListArray[Any]: ...
 @overload
 def array(
-    values: NullableIterable[_ScalarT],
+    values: NullableCollection[_ScalarT],
     type: None = None,
     mask: Mask | None = None,
     size: int | None = None,
@@ -537,25 +528,25 @@ def array(
     memory_pool: MemoryPool | None = None,
 ) -> Array[Scalar[_DataTypeT]]: ...
 @overload
-def asarray(values: NullableIterable[bool]) -> BooleanArray: ...
+def asarray(values: NullableCollection[bool]) -> BooleanArray: ...
 @overload
-def asarray(values: NullableIterable[int]) -> Int64Array: ...
+def asarray(values: NullableCollection[int]) -> Int64Array: ...
 @overload
-def asarray(values: NullableIterable[float]) -> DoubleArray: ...
+def asarray(values: NullableCollection[float]) -> DoubleArray: ...
 @overload
-def asarray(values: NullableIterable[Decimal]) -> Decimal128Array: ...
+def asarray(values: NullableCollection[Decimal]) -> Decimal128Array: ...
 @overload
-def asarray(values: NullableIterable[dict[str, Any]]) -> StructArray: ...
+def asarray(values: NullableCollection[dict[str, Any]]) -> StructArray: ...
 @overload
-def asarray(values: NullableIterable[dt.date]) -> Date32Array: ...
+def asarray(values: NullableCollection[dt.date]) -> Date32Array: ...
 @overload
-def asarray(values: NullableIterable[dt.time]) -> Time64Array: ...
+def asarray(values: NullableCollection[dt.time]) -> Time64Array: ...
 @overload
-def asarray(values: NullableIterable[dt.timedelta]) -> DurationArray: ...
+def asarray(values: NullableCollection[dt.timedelta]) -> DurationArray: ...
 @overload
-def asarray(values: NullableIterable[MonthDayNano]) -> MonthDayNanoIntervalArray: ...
+def asarray(values: NullableCollection[MonthDayNano]) -> MonthDayNanoIntervalArray: ...
 @overload
-def asarray(values: NullableIterable[list[Any]]) -> ListArray[Any]: ...
+def asarray(values: NullableCollection[list[Any]]) -> ListArray[Any]: ...
 @overload
 def asarray(
     values: Iterable[Any] | SupportArrowArray | SupportArrowDeviceArray,
@@ -1278,7 +1269,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
         buffers: list[Buffer],
         null_count: int = -1,
         offset=0,
-        children: Collection[Array[Scalar[_DataTypeT]]] | None = None,
+        children: NullableCollection[Array[Scalar[_DataTypeT]]] | None = None,
     ) -> Array[Scalar[_DataTypeT]]: ...
     @property
     def null_count(self) -> int: ...
@@ -1644,14 +1635,14 @@ class UnionArray(Array[scalar.UnionScalar]):
     def from_dense(
         types: Int8Array,
         value_offsets: Int32Array,
-        children: Collection[Array],
+        children: NullableCollection[Array],
         field_names: list[str] | None = None,
         type_codes: Int8Array | None = None,
     ) -> UnionArray: ...
     @staticmethod
     def from_sparse(
         types: Int8Array,
-        children: Collection[Array],
+        children: NullableCollection[Array],
         field_names: list[str] | None = None,
         type_codes: Int8Array | None = None,
     ) -> UnionArray: ...
