@@ -8,10 +8,6 @@ if sys.version_info >= (3, 11):
     from typing import Self
 else:
     from typing_extensions import Self
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:
-    from typing_extensions import TypeAlias
 from typing import (
     Any,
     Collection,
@@ -19,6 +15,7 @@ from typing import (
     Iterable,
     Iterator,
     Literal,
+    Protocol,
     TypeVar,
     overload,
 )
@@ -65,9 +62,12 @@ from .types import (
 
 _T = TypeVar("_T")
 
-NullableIterable: TypeAlias = Iterable[_T | None]
+class NullableIterable(Protocol[_T]):  # pyright: ignore[reportInvalidTypeVarUse]
+    # NullableIterable must be invariant, which means NullableIterable[bool] is not
+    # the subclass of NullableIterable[int].
+    def __iter__(self) -> Iterator[_T | None]: ...
 
-@overload  # type: ignore[overload-overlap]
+@overload
 def array(
     values: NullableIterable[bool],
     type: None = None,
@@ -260,7 +260,7 @@ def array(
 @overload
 def array(
     values: Iterable | SupportArrowArray | SupportArrowDeviceArray,
-    type: Literal["u1", "uint8"] | types.Int8Type,
+    type: Literal["u1", "uint8"] | types.UInt8Type,
     mask: Mask | None = None,
     size: int | None = None,
     from_pandas: bool | None = None,
@@ -766,18 +766,6 @@ def nulls(
 @overload
 def nulls(
     size: int,
-    types: types.ListType[_DataTypeT],
-    memory_pool: MemoryPool | None = None,
-) -> ListArray[scalar.ListScalar[_DataTypeT]]: ...
-@overload
-def nulls(
-    size: int,
-    types: types.FixedSizeListType[_DataTypeT, _Size],
-    memory_pool: MemoryPool | None = None,
-) -> FixedSizeListArray[_DataTypeT, _Size]: ...
-@overload
-def nulls(
-    size: int,
     types: types.LargeListType[_DataTypeT],
     memory_pool: MemoryPool | None = None,
 ) -> LargeListArray[_DataTypeT]: ...
@@ -793,6 +781,18 @@ def nulls(
     types: types.LargeListViewType[_DataTypeT],
     memory_pool: MemoryPool | None = None,
 ) -> LargeListViewArray[_DataTypeT]: ...
+@overload
+def nulls(
+    size: int,
+    types: types.FixedSizeListType[_DataTypeT, _Size],
+    memory_pool: MemoryPool | None = None,
+) -> FixedSizeListArray[_DataTypeT, _Size]: ...
+@overload
+def nulls(
+    size: int,
+    types: types.ListType[_DataTypeT],
+    memory_pool: MemoryPool | None = None,
+) -> ListArray[scalar.ListScalar[_DataTypeT]]: ...
 @overload
 def nulls(
     size: int,
@@ -917,11 +917,11 @@ def repeat(
 ) -> Decimal32Array: ...
 @overload
 def repeat(
-    value: Decimal | scalar.Decimal64Scalar, size: int, memory_pool: MemoryPool | None = None
+    value: scalar.Decimal64Scalar, size: int, memory_pool: MemoryPool | None = None
 ) -> Decimal64Array: ...
 @overload
 def repeat(
-    value: Decimal | scalar.Decimal128Scalar, size: int, memory_pool: MemoryPool | None = None
+    value: scalar.Decimal128Scalar, size: int, memory_pool: MemoryPool | None = None
 ) -> Decimal128Array: ...
 @overload
 def repeat(
@@ -1492,7 +1492,7 @@ _MapKeyT = TypeVar("_MapKeyT", bound=_BasicDataType)
 _MapItemT = TypeVar("_MapItemT", bound=_BasicDataType)
 
 class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
-    @overload  # type: ignore[override]
+    @overload
     @classmethod
     def from_arrays(
         cls,
@@ -1506,7 +1506,7 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
     ) -> MapArray[_MapKeyT, _MapItemT]: ...
     @overload
     @classmethod
-    def from_arrays(
+    def from_arrays(  # pyright: ignore[reportIncompatibleMethodOverride]
         cls,
         offsets: Int64Array,
         values: Array,
@@ -1641,7 +1641,7 @@ class RunEndEncodedArray(Array[scalar.RunEndEncodedScalar[_RunEndType, _BasicVal
         type: DataType | None = None,
     ) -> RunEndEncodedArray[types.Int64Type, _BasicValueT]: ...
     @staticmethod
-    def from_buffers(
+    def from_buffers(  # pyright: ignore[reportIncompatibleMethodOverride]
         type: DataType,
         length: int,
         buffers: list[Buffer],
