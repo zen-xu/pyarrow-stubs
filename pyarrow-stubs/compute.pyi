@@ -141,10 +141,10 @@ ListScalar: TypeAlias = (
 TemporalScalar: TypeAlias = (
     lib.Date32Scalar
     | lib.Date64Scalar
-    | lib.Time32Scalar
-    | lib.Time64Scalar
-    | lib.TimestampScalar
-    | lib.DurationScalar
+    | lib.Time32Scalar[Any]
+    | lib.Time64Scalar[Any]
+    | lib.TimestampScalar[Any]
+    | lib.DurationScalar[Any]
     | lib.MonthDayNanoIntervalScalar
 )
 NumericOrDurationScalar: TypeAlias = NumericScalar | lib.DurationScalar
@@ -231,7 +231,7 @@ def first(
     memory_pool: lib.MemoryPool | None = None,
 ) -> _ScalarT: ...
 def first_last(
-    array: lib.Array | lib.ChunkedArray,
+    array: lib.Array[Any] | lib.ChunkedArray[Any],
     /,
     *,
     skip_nulls: bool = True,
@@ -240,7 +240,7 @@ def first_last(
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.StructScalar: ...
 def index(
-    data: lib.Array | lib.ChunkedArray,
+    data: lib.Array[Any] | lib.ChunkedArray[Any],
     value,
     start: int | None = None,
     end: int | None = None,
@@ -920,8 +920,16 @@ def logb(
 ) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
 @overload
 def logb(
-    x: FloatScalar | FloatArray,
-    b: FloatScalar | FloatArray,
+    x: FloatScalar,
+    b: FloatArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
+@overload
+def logb(
+    x: FloatArray,
+    b: FloatScalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
@@ -956,15 +964,27 @@ def atan2(
 ) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
 @overload
 def atan2(
-    y: FloatScalar | FloatArray,
-    x: FloatScalar | FloatArray,
+    y: FloatArray,
+    x: FloatScalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
 @overload
 def atan2(
-    y: Expression | Any, x: Expression | Any, /, *, memory_pool: lib.MemoryPool | None = None
+    y: FloatScalar,
+    x: FloatArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.NumericArray[lib.FloatScalar] | lib.NumericArray[lib.DoubleScalar]: ...
+@overload
+def atan2(
+    y: Expression, x: Any, /, *, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
+@overload
+def atan2(
+    y: Any, x: Expression, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> Expression: ...
 
 # ========================= 2.5 Comparisons functions =========================
@@ -2232,19 +2252,19 @@ day_of_year = _clone_signature(day)
 
 @overload
 def hour(
-    values: lib.TimestampScalar | lib.Time32Scalar | lib.Time64Scalar,
+    values: lib.TimestampScalar[Any] | lib.Time32Scalar[Any] | lib.Time64Scalar[Any],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Scalar: ...
 @overload
 def hour(
-    values: lib.TimestampArray
-    | lib.Time32Array
-    | lib.Time64Array
-    | lib.ChunkedArray[lib.TimestampScalar]
-    | lib.ChunkedArray[lib.Time32Scalar]
-    | lib.ChunkedArray[lib.Time64Scalar],
+    values: lib.TimestampArray[Any]
+    | lib.Time32Array[Any]
+    | lib.Time64Array[Any]
+    | lib.ChunkedArray[lib.TimestampScalar[Any]]
+    | lib.ChunkedArray[lib.Time32Scalar[Any]]
+    | lib.ChunkedArray[lib.Time64Scalar[Any]],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
@@ -2258,11 +2278,11 @@ def hour(
 ) -> Expression: ...
 @overload
 def is_dst(
-    values: lib.TimestampScalar, /, *, memory_pool: lib.MemoryPool | None = None
+    values: lib.TimestampScalar[Any], /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.BooleanScalar: ...
 @overload
 def is_dst(
-    values: lib.TimestampArray | lib.ChunkedArray[lib.TimestampScalar],
+    values: lib.TimestampArray[Any] | lib.ChunkedArray[lib.TimestampScalar[Any]],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
@@ -2271,11 +2291,11 @@ def is_dst(
 def is_dst(values: Expression, /, *, memory_pool: lib.MemoryPool | None = None) -> Expression: ...
 @overload
 def iso_week(
-    values: lib.TimestampScalar, /, *, memory_pool: lib.MemoryPool | None = None
+    values: lib.TimestampScalar[Any], /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.Int64Scalar: ...
 @overload
 def iso_week(
-    values: lib.TimestampArray | lib.ChunkedArray[lib.TimestampScalar],
+    values: lib.TimestampArray[Any] | lib.ChunkedArray[lib.TimestampScalar[Any]],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
@@ -2289,7 +2309,7 @@ iso_year = _clone_signature(iso_week)
 
 @overload
 def is_leap_year(
-    values: lib.TimestampScalar | lib.Date32Scalar | lib.Date64Scalar,
+    values: lib.TimestampScalar[Any] | lib.Date32Scalar | lib.Date64Scalar,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,

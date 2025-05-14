@@ -845,20 +845,20 @@ class Table(_Tabular[ChunkedArray[Any]]):
     def is_cpu(self) -> bool: ...
 
 def record_batch(
-    data: dict[str, list | Array]
-    | Collection[Array]
+    data: dict[str, list[Any] | Array[Any]]
+    | Collection[Array[Any]]
     | pd.DataFrame
     | SupportArrowArray
     | SupportArrowDeviceArray,
     names: list[str] | None = None,
     schema: Schema | None = None,
-    metadata: Mapping | None = None,
+    metadata: Mapping[Any, Any] | None = None,
 ) -> RecordBatch: ...
 @overload
 def table(
-    data: dict[str, list | Array],
+    data: dict[str, list[Any] | Array[Any]],
     schema: Schema | None = None,
-    metadata: Mapping | None = None,
+    metadata: Mapping[Any, Any] | None = None,
     nthreads: int | None = None,
 ) -> Table: ...
 @overload
@@ -870,14 +870,14 @@ def table(
     | SupportArrowDeviceArray,
     names: list[str] | None = None,
     schema: Schema | None = None,
-    metadata: Mapping | None = None,
+    metadata: Mapping[Any, Any] | None = None,
     nthreads: int | None = None,
 ) -> Table: ...
 def concat_tables(
     tables: Iterable[Table],
     memory_pool: MemoryPool | None = None,
     promote_options: Literal["none", "default", "permissive"] = "none",
-    **kwargs,
+    **kwargs: Any,
 ) -> Table: ...
 
 class TableGroupBy:

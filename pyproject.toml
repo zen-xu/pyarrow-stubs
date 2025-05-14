@@ -40,7 +40,7 @@ channels  = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
 [tool.pixi.dependencies]
-python = "3.11.*"
+python = "3.12.*"
 pip    = "*"
 
 [tool.pixi.pypi-dependencies]
@@ -86,5 +86,12 @@ lines-between-types = 1
 docstring-code-format = true
 
 [tool.pyright]
-typeCheckingMode     = "basic"
-reportMissingImports = false
+typeCheckingMode           = "strict"
+reportMissingImports       = false
+reportPrivateUsage         = false
+reportUnknownParameterType = false
+reportMissingTypeArgument  = false
+reportMissingParameterType = false
+reportMissingTypeStubs     = false
+reportUnknownVariableType  = false
+reportUnknownArgumentType  = false
