@@ -39,6 +39,7 @@ class Dataset(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> Scanner: ...
     def to_batches(
@@ -50,6 +51,7 @@ class Dataset(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> Iterator[lib.RecordBatch]: ...
     def to_table(
@@ -61,6 +63,7 @@ class Dataset(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> lib.Table: ...
     def take(
@@ -73,6 +76,7 @@ class Dataset(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> lib.Table: ...
     def head(
@@ -85,6 +89,7 @@ class Dataset(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> lib.Table: ...
     def count_rows(
@@ -96,6 +101,7 @@ class Dataset(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> int: ...
     @property
@@ -196,6 +202,7 @@ class Fragment(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> Scanner: ...
     def to_batches(
@@ -207,6 +214,7 @@ class Fragment(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> Iterator[lib.RecordBatch]: ...
     def to_table(
@@ -218,6 +226,7 @@ class Fragment(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> lib.Table: ...
     def take(
@@ -230,6 +239,7 @@ class Fragment(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> lib.Table: ...
     def head(
@@ -242,6 +252,7 @@ class Fragment(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> lib.Table: ...
     def count_rows(
@@ -253,6 +264,7 @@ class Fragment(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> int: ...
 
@@ -450,6 +462,7 @@ class Scanner(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> Scanner: ...
     @staticmethod
@@ -464,6 +477,7 @@ class Scanner(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> Scanner: ...
     @overload
@@ -479,6 +493,7 @@ class Scanner(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> Scanner: ...
     @overload
@@ -493,6 +508,7 @@ class Scanner(lib._Weakrefable):
         fragment_readahead: int = 4,
         fragment_scan_options: FragmentScanOptions | None = None,
         use_threads: bool = True,
+        cache_metadata: bool = True,
         memory_pool: lib.MemoryPool | None = None,
     ) -> Scanner: ...
     @property

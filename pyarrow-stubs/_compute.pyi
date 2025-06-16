@@ -120,6 +120,9 @@ class ElementWiseAggregateOptions(FunctionOptions):
 class ExtractRegexOptions(FunctionOptions):
     def __init__(self, pattern: str) -> None: ...
 
+class ExtractRegexSpanOptions(FunctionOptions):
+    def __init__(self, pattern: str) -> None: ...
+
 class FilterOptions(FunctionOptions):
     def __init__(self, null_selection_behavior: Literal["drop", "emit_null"] = "drop") -> None: ...
 
@@ -179,6 +182,9 @@ class PairwiseOptions(FunctionOptions):
 class PartitionNthOptions(FunctionOptions):
     def __init__(self, pivot: int, *, null_placement: _Placement = "at_end") -> None: ...
 
+class WinsorizeOptions(FunctionOptions):
+    def __init__(self, lower_limit: float, upper_limit: float) -> None: ...
+
 class QuantileOptions(FunctionOptions):
     def __init__(
         self,
@@ -199,6 +205,22 @@ class RankOptions(FunctionOptions):
         *,
         null_placement: _Placement = "at_end",
         tiebreaker: Literal["min", "max", "first", "dense"] = "first",
+    ) -> None: ...
+
+class RankQuantileOptions(FunctionOptions):
+    def __init__(
+        self,
+        sort_keys: _Order | Sequence[tuple[str, _Order]] = "ascending",
+        *,
+        null_placement: _Placement = "at_end",
+    ) -> None: ...
+
+class PivotWiderOptions(FunctionOptions):
+    def __init__(
+        self,
+        key_names: Sequence[str],
+        *,
+        unexpected_key_behavior: Literal["ignore", "raise"] = "ignore",
     ) -> None: ...
 
 class ReplaceSliceOptions(FunctionOptions):
@@ -323,6 +345,11 @@ class Utf8NormalizeOptions(FunctionOptions):
 
 class VarianceOptions(FunctionOptions):
     def __init__(self, *, ddof: int = 0, skip_nulls: bool = True, min_count: int = 0) -> None: ...
+
+class SkewOptions(FunctionOptions):
+    def __init__(
+        self, *, skip_nulls: bool = True, biased: bool = True, min_count: int = 0
+    ) -> None: ...
 
 class WeekOptions(FunctionOptions):
     def __init__(

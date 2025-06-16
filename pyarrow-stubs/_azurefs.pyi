@@ -11,4 +11,5 @@ class AzureFileSystem(FileSystem):
         dfs_storage_authority: str | None = None,
         blob_storage_schema: Literal["http", "https"] = "https",
         dfs_storage_schema: Literal["http", "https"] = "https",
+        sas_token: str | None = None,
     ) -> None: ...

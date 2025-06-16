@@ -2,7 +2,7 @@ from typing import IO, Any, Literal
 
 from _typeshed import StrPath
 
-from .lib import MemoryPool, Schema, Table, _Weakrefable
+from .lib import MemoryPool, RecordBatchReader, Schema, Table, _Weakrefable
 
 class ReadOptions(_Weakrefable):
     use_threads: bool
@@ -22,9 +22,17 @@ class ParseOptions(_Weakrefable):
     ): ...
     def equals(self, other: ParseOptions) -> bool: ...
 
+class JSONStreamingReader(RecordBatchReader): ...
+
 def read_json(
     input_file: StrPath | IO[Any],
     read_options: ReadOptions | None = None,
     parse_options: ParseOptions | None = None,
     memory_pool: MemoryPool | None = None,
 ) -> Table: ...
+def open_json(
+    input_file: StrPath | IO[Any],
+    read_options: ReadOptions | None = None,
+    parse_options: ParseOptions | None = None,
+    memory_pool: MemoryPool | None = None,
+) -> JSONStreamingReader: ...
