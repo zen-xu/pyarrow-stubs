@@ -95,3 +95,4 @@ reportMissingParameterType = false
 reportMissingTypeStubs     = false
 reportUnknownVariableType  = false
 reportUnknownArgumentType  = false
+reportUnknownMemberType    = false
