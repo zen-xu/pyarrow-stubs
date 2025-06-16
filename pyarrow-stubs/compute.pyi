@@ -16,6 +16,7 @@ from pyarrow._compute import ElementWiseAggregateOptions as ElementWiseAggregate
 # Expressions
 from pyarrow._compute import Expression as Expression
 from pyarrow._compute import ExtractRegexOptions as ExtractRegexOptions
+from pyarrow._compute import ExtractRegexSpanOptions as ExtractRegexSpanOptions
 from pyarrow._compute import FilterOptions as FilterOptions
 from pyarrow._compute import Function as Function
 from pyarrow._compute import FunctionOptions as FunctionOptions
@@ -35,9 +36,11 @@ from pyarrow._compute import NullOptions as NullOptions
 from pyarrow._compute import PadOptions as PadOptions
 from pyarrow._compute import PairwiseOptions as PairwiseOptions
 from pyarrow._compute import PartitionNthOptions as PartitionNthOptions
+from pyarrow._compute import PivotWiderOptions as PivotWiderOptions
 from pyarrow._compute import QuantileOptions as QuantileOptions
 from pyarrow._compute import RandomOptions as RandomOptions
 from pyarrow._compute import RankOptions as RankOptions
+from pyarrow._compute import RankQuantileOptions as RankQuantileOptions
 from pyarrow._compute import ReplaceSliceOptions as ReplaceSliceOptions
 from pyarrow._compute import ReplaceSubstringOptions as ReplaceSubstringOptions
 from pyarrow._compute import RoundBinaryOptions as RoundBinaryOptions
@@ -52,6 +55,7 @@ from pyarrow._compute import ScalarFunction as ScalarFunction
 from pyarrow._compute import ScalarKernel as ScalarKernel
 from pyarrow._compute import SelectKOptions as SelectKOptions
 from pyarrow._compute import SetLookupOptions as SetLookupOptions
+from pyarrow._compute import SkewOptions as SkewOptions
 from pyarrow._compute import SliceOptions as SliceOptions
 from pyarrow._compute import SortOptions as SortOptions
 from pyarrow._compute import SplitOptions as SplitOptions
@@ -68,6 +72,7 @@ from pyarrow._compute import VarianceOptions as VarianceOptions
 from pyarrow._compute import VectorFunction as VectorFunction
 from pyarrow._compute import VectorKernel as VectorKernel
 from pyarrow._compute import WeekOptions as WeekOptions
+from pyarrow._compute import WinsorizeOptions as WinsorizeOptions
 
 # Functions
 from pyarrow._compute import call_function as call_function

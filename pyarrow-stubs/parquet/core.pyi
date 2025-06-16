@@ -198,7 +198,6 @@ class ParquetDataset:
         thrift_string_size_limit: int | None = None,
         thrift_container_size_limit: int | None = None,
         page_checksum_verification: bool = False,
-        use_legacy_dataset: bool | None = None,
     ): ...
     def equals(self, other: ParquetDataset) -> bool: ...
     @property
@@ -232,7 +231,6 @@ def read_table(
     partitioning: str | list[str] | Partitioning | None = "hive",
     filesystem: SupportedFileSystem | None = None,
     filters: Expression | FilterTuple | list[FilterTuple] | None = None,
-    use_legacy_dataset: bool | None = None,
     ignore_prefixes: list[str] | None = None,
     pre_buffer: bool = True,
     coerce_int96_timestamp_unit: str | None = None,
@@ -278,7 +276,6 @@ def write_to_dataset(
     root_path: str | Path,
     partition_cols: list[str] | None = None,
     filesystem: SupportedFileSystem | None = None,
-    use_legacy_dataset: bool | None = None,
     schema: Schema | None = None,
     partitioning: Partitioning | list[str] | None = None,
     basename_template: str | None = None,

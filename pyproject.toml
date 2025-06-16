@@ -2,7 +2,7 @@
 
 [project]
 name = "pyarrow-stubs"
-version = "19.4"
+version = "20.0.0b0"
 description = "Type annotations for pyarrow"
 authors = [{ name = "ZhengYu, Xu", email = "zen-xu@outlook.com" }]
 license = "BSD-2-Clause"
@@ -18,7 +18,7 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 requires-python = ">=3.9,<4"
-dependencies = ["pyarrow >=19"]
+dependencies = ["pyarrow >=20"]
 
 [project.urls]
 homepage   = "https://github.com/zen-xu/pyarrow-stubs"

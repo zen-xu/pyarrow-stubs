@@ -58,10 +58,16 @@ class Scalar(_Weakrefable, Generic[_DataTypeT]):
     def equals(self, other: Scalar) -> bool: ...
     def __hash__(self) -> int: ...
     @overload
-    def as_py(self: Scalar[types._BasicDataType[_AsPyType]]) -> _AsPyType: ...
+    def as_py(
+        self: Scalar[types._BasicDataType[_AsPyType]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> _AsPyType: ...
     @overload
     def as_py(
         self: Scalar[types.ListType[types._BasicDataType[_AsPyType]]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
     ) -> list[_AsPyType]: ...
     @overload
     def as_py(
@@ -70,37 +76,55 @@ class Scalar(_Weakrefable, Generic[_DataTypeT]):
                 types.DictionaryType[types._IndexT, types._BasicDataType[_AsPyTypeV], Any]
             ]
         ],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
     ) -> list[dict[int, _AsPyTypeV]]: ...
     @overload
     def as_py(
         self: Scalar[
             types.ListType[types.DictionaryType[Any, types._BasicDataType[_AsPyTypeV], Any]],
         ],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
     ) -> list[dict[Any, _AsPyTypeV]]: ...
     @overload
     def as_py(
         self: Scalar[types.ListType[types.DictionaryType[types._IndexT, Any, Any]],],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
     ) -> list[dict[int, Any]]: ...
     @overload
     def as_py(
         self: Scalar[types.StructType],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
     ) -> list[dict[str, Any]]: ...
     @overload
     def as_py(
         self: Scalar[
             types.MapType[types._BasicDataType[_AsPyTypeK], types._BasicDataType[_AsPyTypeV]]
         ],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
     ) -> list[tuple[_AsPyTypeK, _AsPyTypeV]]: ...
     @overload
     def as_py(
         self: Scalar[types.MapType[Any, types._BasicDataType[_AsPyTypeV]]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
     ) -> list[tuple[Any, _AsPyTypeV]]: ...
     @overload
     def as_py(
         self: Scalar[types.MapType[types._BasicDataType[_AsPyTypeK], Any]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
     ) -> list[tuple[_AsPyTypeK, Any]]: ...
     @overload
-    def as_py(self: Scalar[Any]) -> Any: ...
+    def as_py(
+        self: Scalar[Any],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> Any: ...
 
 _NULL: TypeAlias = None
 NA = _NULL
