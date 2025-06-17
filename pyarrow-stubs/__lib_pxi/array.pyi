@@ -40,6 +40,7 @@ from pyarrow.lib import (
     Tensor,
     _Weakrefable,
 )
+from typing_extensions import deprecated
 
 from . import scalar, types
 from .device import DeviceAllocationType
@@ -3445,6 +3446,7 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
         """Flattened array of items across all maps in array"""
 
 class UnionArray(Array[scalar.UnionScalar]):
+    @deprecated("Use fields() instead")
     def child(self, pos: int) -> Field:
         """
         DEPRECATED, use field() instead.

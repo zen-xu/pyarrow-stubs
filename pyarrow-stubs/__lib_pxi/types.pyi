@@ -23,7 +23,7 @@ from pyarrow.lib import (
     MonthDayNano,
     Table,
 )
-from typing_extensions import TypeVar
+from typing_extensions import TypeVar, deprecated
 
 from .io import Buffer
 from .scalar import ExtensionScalar
@@ -1380,6 +1380,10 @@ class OpaqueType(BaseExtensionType):
         The name of the external system.
         """
 
+@deprecated(
+    "This class is deprecated and its deserialization is disabled by default. "
+    ":class:`ExtensionType` is recommended instead."
+)
 class PyExtensionType(ExtensionType):
     """
     Concrete base class for Python-defined extension types based on pickle
@@ -1406,7 +1410,7 @@ class PyExtensionType(ExtensionType):
             Whether to enable auto-loading.
         """
 
-class UnknownExtensionType(PyExtensionType):
+class UnknownExtensionType(PyExtensionType):  # type: ignore
     """
     A concrete class for Python-defined extension types that refer to
     an unknown Python implementation.
@@ -2064,6 +2068,7 @@ class Schema(_Weakrefable):
         >>> schema.field("n_legs")
         pyarrow.Field<n_legs: int64>
         """
+    @deprecated("Use 'field' instead")
     def field_by_name(self, name: str) -> Field:
         """
         DEPRECATED
@@ -2250,6 +2255,7 @@ class Schema(_Weakrefable):
         n_legs: int64
         replaced: bool
         """
+    @deprecated("Use 'with_metadata' instead")
     def add_metadata(self, metadata: dict) -> Schema:
         """
         DEPRECATED
