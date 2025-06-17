@@ -22,9 +22,45 @@ class MonthDayNano(NamedTuple):
     months: int
     nanoseconds: int
 
-def cpu_count() -> int: ...
-def set_cpu_count(count: int) -> None: ...
-def is_threading_enabled() -> bool: ...
+def cpu_count() -> int:
+    """
+    Return the number of threads to use in parallel operations.
+
+    The number of threads is determined at startup by inspecting the
+    ``OMP_NUM_THREADS`` and ``OMP_THREAD_LIMIT`` environment variables.
+    If neither is present, it will default to the number of hardware threads
+    on the system. It can be modified at runtime by calling
+    :func:`set_cpu_count()`.
+
+    See Also
+    --------
+    set_cpu_count : Modify the size of this pool.
+    io_thread_count : The analogous function for the I/O thread pool.
+    """
+
+def set_cpu_count(count: int) -> None:
+    """
+    Set the number of threads to use in parallel operations.
+
+    Parameters
+    ----------
+    count : int
+        The number of concurrent threads that should be used.
+
+    See Also
+    --------
+    cpu_count : Get the size of this pool.
+    set_io_thread_count : The analogous function for the I/O thread pool.
+    """
+
+def is_threading_enabled() -> bool:
+    """
+    Returns True if threading is enabled in libarrow.
+
+    If it isn't enabled, then python shouldn't create any
+    threads either, because we're probably on a system where
+    threading doesn't work (e.g. Emscripten).
+    """
 
 Type_NA: int
 Type_BOOL: int
