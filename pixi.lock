@@ -1282,7 +1282,7 @@ packages:
 - pypi: ./
   name: pyarrow-stubs
   version: 20.0.0b0
-  sha256: 2a604d3e2c38a73f0276bef7204d9fa8d07fc66f4c1fbcf2185b47b48feed1cb
+  sha256: 4ae4d2484afd306b8d131ce4bed1faa48493d8ace8b43b731b811b4e4e6bd2e2
   requires_dist:
   - pyarrow>=20
   requires_python: '>=3.9,<4'
