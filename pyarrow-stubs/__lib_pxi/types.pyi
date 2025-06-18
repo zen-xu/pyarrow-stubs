@@ -1424,7 +1424,7 @@ class UnknownExtensionType(PyExtensionType):  # type: ignore
     """
     def __init__(self, storage_type: DataType, serialized: bytes) -> None: ...
 
-def register_extension_type(ext_type: PyExtensionType) -> None:
+def register_extension_type(ext_type: PyExtensionType) -> None:  # type: ignore
     """
     Register a Python extension type.
 

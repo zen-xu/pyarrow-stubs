@@ -3838,7 +3838,7 @@ ascii_lpad = _clone_signature(ascii_center)
 """
 Right-align strings by padding with a given character.
 
-For each string in `strings`, emit a right-aligned string by prepending 
+For each string in `strings`, emit a right-aligned string by prepending
 the given ASCII character.
 Null values emit null.
 
@@ -3863,7 +3863,7 @@ ascii_rpad = _clone_signature(ascii_center)
 """
 Left-align strings by padding with a given character.
 
-For each string in `strings`, emit a left-aligned string by appending 
+For each string in `strings`, emit a left-aligned string by appending
 the given ASCII character.
 Null values emit null.
 
@@ -3888,7 +3888,7 @@ utf8_center = _clone_signature(ascii_center)
 """
 Center strings by padding with a given character.
 
-For each string in `strings`, emit a centered string by padding both sides 
+For each string in `strings`, emit a centered string by padding both sides
 with the given UTF8 codeunit.
 Null values emit null.
 
@@ -3913,7 +3913,7 @@ utf8_lpad = _clone_signature(ascii_center)
 """
 Right-align strings by padding with a given character.
 
-For each string in `strings`, emit a right-aligned string by prepending 
+For each string in `strings`, emit a right-aligned string by prepending
 the given UTF8 codeunit.
 Null values emit null.
 
@@ -3938,7 +3938,7 @@ utf8_rpad = _clone_signature(ascii_center)
 """
 Left-align strings by padding with a given character.
 
-For each string in `strings`, emit a left-aligned string by appending 
+For each string in `strings`, emit a left-aligned string by appending
 the given UTF8 codeunit.
 Null values emit null.
 
@@ -5589,7 +5589,7 @@ calendar_based_origin : bool, default False
     By default, the origin is 1970-01-01T00:00:00. By setting this to True,
     rounding origin will be beginning of one less precise calendar unit.
     E.g.: rounding to hours will use beginning of day as origin.
-    
+
     By default time is rounded to a multiple of units since
     1970-01-01T00:00:00. By setting calendar_based_origin to true,
     time will be rounded to number of units since the last greater
@@ -5641,7 +5641,7 @@ calendar_based_origin : bool, default False
     By default, the origin is 1970-01-01T00:00:00. By setting this to True,
     rounding origin will be beginning of one less precise calendar unit.
     E.g.: rounding to hours will use beginning of day as origin.
-    
+
     By default time is rounded to a multiple of units since
     1970-01-01T00:00:00. By setting calendar_based_origin to true,
     time will be rounded to number of units since the last greater
@@ -7758,12 +7758,12 @@ pairwise_diff_checked = _clone_signature(pairwise_diff)
 """
 Compute first order difference of an array.
 
-Computes the first order difference of an array, It internally calls 
-the scalar function "subtract_checked" (or the checked variant) to compute 
-differences, so its behavior and supported types are the same as 
+Computes the first order difference of an array, It internally calls
+the scalar function "subtract_checked" (or the checked variant) to compute
+differences, so its behavior and supported types are the same as
 "subtract_checked". The period can be specified in :struct:`PairwiseOptions`.
 
-This function returns an error on overflow. For a variant that doesn't 
+This function returns an error on overflow. For a variant that doesn't
 fail on overflow, use function "pairwise_diff".
 
 Parameters
