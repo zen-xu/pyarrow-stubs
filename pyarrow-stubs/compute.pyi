@@ -711,9 +711,9 @@ def product(
     array: _ScalarT | lib.NumericArray[_ScalarT],
     /,
     *,
-    skip_nulls=True,
-    min_count=1,
-    options=None,
+    skip_nulls: bool = True,
+    min_count: int = 1,
+    options: ScalarAggregateOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _ScalarT:
     """
@@ -7144,6 +7144,20 @@ def indices_nonzero(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
+def indices_nonzero(*args, **kwargs):
+    """
+    Return the indices of the values in the array that are non-zero.
+
+    For each input value, check if it's zero, false or null. Emit the index
+    of the value in the array if it's none of the those.
+
+    Parameters
+    ----------
+    values : Array-like
+        Argument to compute function.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
 
 # ========================= 3.5 Sorts and partitions  =========================
 @overload
@@ -7166,6 +7180,34 @@ def array_sort_indices(
     options: ArraySortOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
+def array_sort_indices(*args, **kwargs):
+    """
+    Return the indices that would sort an array.
+
+    This function computes an array of indices that define a stable sort
+    of the input array.  By default, Null values are considered greater
+    than any other value and are therefore sorted at the end of the array.
+    For floating-point types, NaNs are considered greater than any
+    other non-null value, but smaller than null values.
+
+    The handling of nulls and NaNs can be changed in ArraySortOptions.
+
+    Parameters
+    ----------
+    array : Array-like
+        Argument to compute function.
+    order : str, default "ascending"
+        Which order to sort values in.
+        Accepted values are "ascending", "descending".
+    null_placement : str, default "at_end"
+        Where nulls in the input should be sorted.
+        Accepted values are "at_start", "at_end".
+    options : pyarrow.compute.ArraySortOptions, optional
+        Alternative way of passing options.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
 @overload
 def partition_nth_indices(
     array: lib.Array | lib.ChunkedArray,
@@ -7186,6 +7228,40 @@ def partition_nth_indices(
     options: PartitionNthOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
+def partition_nth_indices(*args, **kwargs):
+    """
+    Return the indices that would partition an array around a pivot.
+
+    This functions computes an array of indices that define a non-stable
+    partial sort of the input array.
+
+    The output is such that the `N`'th index points to the `N`'th element
+    of the input in sorted order, and all indices before the `N`'th point
+    to elements in the input less or equal to elements at or after the `N`'th.
+
+    By default, null values are considered greater than any other value
+    and are therefore partitioned towards the end of the array.
+    For floating-point types, NaNs are considered greater than any
+    other non-null value, but smaller than null values.
+
+    The pivot index `N` must be given in PartitionNthOptions.
+    The handling of nulls and NaNs can also be changed in PartitionNthOptions.
+
+    Parameters
+    ----------
+    array : Array-like
+        Argument to compute function.
+    pivot : int
+        Index into the equivalent sorted array of the pivot element.
+    null_placement : str, default "at_end"
+        Where nulls in the input should be partitioned.
+        Accepted values are "at_start", "at_end".
+    options : pyarrow.compute.PartitionNthOptions, optional
+        Alternative way of passing options.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
 def rank(
     input: lib.Array | lib.ChunkedArray,
     /,
@@ -7195,7 +7271,50 @@ def rank(
     tiebreaker: Literal["min", "max", "first", "dense"] = "first",
     options: RankOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.UInt64Array: ...
+) -> lib.UInt64Array:
+    """
+    Compute ordinal ranks of an array (1-based).
+
+    This function computes a rank of the input array.
+    By default, null values are considered greater than any other value and
+    are therefore sorted at the end of the input. For floating-point types,
+    NaNs are considered greater than any other non-null value, but smaller
+    than null values. The default tiebreaker is to assign ranks in order of
+    when ties appear in the input.
+
+    The handling of nulls, NaNs and tiebreakers can be changed in RankOptions.
+
+    Parameters
+    ----------
+    input : Array-like or scalar-like
+        Argument to compute function.
+    sort_keys : sequence of (name, order) tuples or str, default "ascending"
+        Names of field/column keys to sort the input on,
+        along with the order each field/column is sorted in.
+        Accepted values for `order` are "ascending", "descending".
+        The field name can be a string column name or expression.
+        Alternatively, one can simply pass "ascending" or "descending" as a string
+        if the input is array-like.
+    null_placement : str, default "at_end"
+        Where nulls in input should be sorted.
+        Accepted values are "at_start", "at_end".
+    tiebreaker : str, default "first"
+        Configure how ties between equal values are handled.
+        Accepted values are:
+
+        - "min": Ties get the smallest possible rank in sorted order.
+        - "max": Ties get the largest possible rank in sorted order.
+        - "first": Ranks are assigned in order of when ties appear in the
+                   input. This ensures the ranks are a stable permutation
+                   of the input.
+        - "dense": The ranks span a dense [1, M] interval where M is the
+                   number of distinct values in the input.
+    options : pyarrow.compute.RankOptions, optional
+        Alternative way of passing options.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
 @overload
 def select_k_unstable(
     input: lib.Array | lib.ChunkedArray,
@@ -7216,6 +7335,36 @@ def select_k_unstable(
     options: SelectKOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
+def select_k_unstable(*args, **kwargs):
+    """
+    Select the indices of the first `k` ordered elements from the input.
+
+    This function selects an array of indices of the first `k` ordered elements
+    from the `input` array, record batch or table specified in the column keys
+    (`options.sort_keys`). Output is not guaranteed to be stable.
+    Null values are considered greater than any other value and are
+    therefore ordered at the end. For floating-point types, NaNs are considered
+    greater than any other non-null value, but smaller than null values.
+
+    Parameters
+    ----------
+    input : Array-like or scalar-like
+        Argument to compute function.
+    k : int
+        Number of leading values to select in sorted order
+        (i.e. the largest values if sort order is "descending",
+        the smallest otherwise).
+    sort_keys : sequence of (name, order) tuples
+        Names of field/column keys to sort the input on,
+        along with the order each field/column is sorted in.
+        Accepted values for `order` are "ascending", "descending".
+        The field name can be a string column name or expression.
+    options : pyarrow.compute.SelectKOptions, optional
+        Alternative way of passing options.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
 @overload
 def sort_indices(
     input: lib.Array | lib.ChunkedArray | lib.RecordBatch | lib.Table,
@@ -7236,6 +7385,36 @@ def sort_indices(
     options: SortOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
+def sort_indices(*args, **kwargs):
+    """
+    Return the indices that would sort an array, record batch or table.
+
+    This function computes an array of indices that define a stable sort
+    of the input array, record batch or table.  By default, null values are
+    considered greater than any other value and are therefore sorted at the
+    end of the input. For floating-point types, NaNs are considered greater
+    than any other non-null value, but smaller than null values.
+
+    The handling of nulls and NaNs can be changed in SortOptions.
+
+    Parameters
+    ----------
+    input : Array-like or scalar-like
+        Argument to compute function.
+    sort_keys : sequence of (name, order) tuples
+        Names of field/column keys to sort the input on,
+        along with the order each field/column is sorted in.
+        Accepted values for `order` are "ascending", "descending".
+        The field name can be a string column name or expression.
+    null_placement : str, default "at_end"
+        Where nulls in input should be sorted, only applying to
+        columns/fields mentioned in `sort_keys`.
+        Accepted values are "at_start", "at_end".
+    options : pyarrow.compute.SortOptions, optional
+        Alternative way of passing options.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
 
 # ========================= 3.6 Structural transforms =========================
 @overload
@@ -7266,6 +7445,24 @@ def list_element(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _DataTypeT: ...
+def list_element(*args, **kwargs):
+    """
+    Compute elements using of nested list values using an index.
+
+    `lists` must have a list-like type.
+    For each value in each list of `lists`, the element at `index`
+    is emitted. Null values emit a null in the output.
+
+    Parameters
+    ----------
+    lists : Array-like or scalar-like
+        Argument to compute function.
+    index : Array-like or scalar-like
+        Argument to compute function.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
 @overload
 def list_flatten(
     lists: Expression,
@@ -7284,6 +7481,32 @@ def list_flatten(
     options: ListFlattenOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.ListArray[Any]: ...
+def list_flatten(*args, **kwargs):
+    """
+    Flatten list values.
+
+    `lists` must have a list-like type (lists, list-views, and
+    fixed-size lists).
+    Return an array with the top list level flattened unless
+    `recursive` is set to true in ListFlattenOptions. When that
+    is that case, flattening happens recursively until a non-list
+    array is formed.
+
+    Null list values do not emit anything to the output.
+
+    Parameters
+    ----------
+    lists : Array-like
+        Argument to compute function.
+    recursive : bool, default False
+        When True, the list array is flattened recursively until an array
+        of non-list values is formed.
+    options : pyarrow.compute.ListFlattenOptions, optional
+        Alternative way of passing options.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
 @overload
 def list_parent_indices(
     lists: Expression, /, *, memory_pool: lib.MemoryPool | None = None
@@ -7292,6 +7515,22 @@ def list_parent_indices(
 def list_parent_indices(
     lists: ArrayOrChunkedArray[Any], /, *, memory_pool: lib.MemoryPool | None = None
 ) -> lib.Int64Array: ...
+def list_parent_indices(*args, **kwargs):
+    """
+    Compute parent indices of nested list values.
+
+    `lists` must have a list-like or list-view type.
+    For each value in each list of `lists`, the top-level list index
+    is emitted.
+
+    Parameters
+    ----------
+    lists : Array-like or scalar-like
+        Argument to compute function.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
 @overload
 def list_slice(
     lists: Expression,
@@ -7316,6 +7555,36 @@ def list_slice(
     options: ListSliceOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.ListArray[Any]: ...
+def list_slice(*args, **kwargs):
+    """
+    Compute slice of list-like array.
+
+    `lists` must have a list-like type.
+    For each list element, compute a slice, returning a new list array.
+    A variable or fixed size list array is returned, depending on options.
+
+    Parameters
+    ----------
+    lists : Array-like or scalar-like
+        Argument to compute function.
+    start : int
+        Index to start slicing inner list elements (inclusive).
+    stop : Optional[int], default None
+        If given, index to stop slicing at (exclusive).
+        If not given, slicing will stop at the end. (NotImplemented)
+    step : int, default 1
+        Slice step.
+    return_fixed_size_list : Optional[bool], default None
+        Whether to return a FixedSizeListArray. If true _and_ stop is after
+        a list element's length, nulls will be appended to create the
+        requested slice size. The default of `None` will return the same
+        type which was passed in.
+    options : pyarrow.compute.ListSliceOptions, optional
+        Alternative way of passing options.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
 def map_lookup(
     container,
     /,
@@ -7324,7 +7593,29 @@ def map_lookup(
     *,
     options: MapLookupOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-): ...
+):
+    """
+    Find the items corresponding to a given key in a Map.
+
+    For a given query key (passed via MapLookupOptions), extract
+    either the FIRST, LAST or ALL items from a Map that have
+    matching keys.
+
+    Parameters
+    ----------
+    container : Array-like or scalar-like
+        Argument to compute function.
+    query_key : Scalar or Object can be converted to Scalar
+        The key to search for.
+    occurrence : str
+        The occurrence(s) to return from the Map
+        Accepted values are "first", "last", or "all".
+    options : pyarrow.compute.MapLookupOptions, optional
+        Alternative way of passing options.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
 def struct_field(
     values,
     /,
@@ -7332,9 +7623,63 @@ def struct_field(
     *,
     options: StructFieldOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-): ...
-def fill_null_backward(values, /, *, memory_pool: lib.MemoryPool | None = None): ...
-def fill_null_forward(values, /, *, memory_pool: lib.MemoryPool | None = None): ...
+):
+    """
+    Extract children of a struct or union by index.
+
+    Given a list of indices (passed via StructFieldOptions), extract
+    the child array or scalar with the given child index, recursively.
+
+    For union inputs, nulls are emitted for union values that reference
+    a different child than specified. Also, the indices are always
+    in physical order, not logical type codes - for example, the first
+    child is always index 0.
+
+    An empty list of indices returns the argument unchanged.
+
+    Parameters
+    ----------
+    values : Array-like or scalar-like
+        Argument to compute function.
+    indices : List[str], List[bytes], List[int], Expression, bytes, str, or int
+        List of indices for chained field lookup, for example `[4, 1]`
+        will look up the second nested field in the fifth outer field.
+    options : pyarrow.compute.StructFieldOptions, optional
+        Alternative way of passing options.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
+def fill_null_backward(values, /, *, memory_pool: lib.MemoryPool | None = None):
+    """
+    Carry non-null values backward to fill null slots.
+
+    Given an array, propagate next valid observation backward to previous valid
+    or nothing if all next values are null.
+
+    Parameters
+    ----------
+    values : Array-like
+        Argument to compute function.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
+def fill_null_forward(values, /, *, memory_pool: lib.MemoryPool | None = None):
+    """
+    Carry non-null values forward to fill null slots.
+
+    Given an array, propagate last valid observation forward to next valid
+    or nothing if all previous values are null.
+
+    Parameters
+    ----------
+    values : Array-like
+        Argument to compute function.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
+
 def replace_with_mask(
     values,
     mask: list[bool] | list[bool | None] | BooleanArray,
@@ -7342,7 +7687,28 @@ def replace_with_mask(
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-): ...
+):
+    """
+    Replace items selected with a mask.
+
+    Given an array and a boolean mask (either scalar or of equal length),
+    along with replacement values (either scalar or array),
+    each element of the array for which the corresponding mask element is
+    true will be replaced by the next value from the replacements,
+    or with null if the mask is null.
+    Hence, for replacement arrays, len(replacements) == sum(mask == true).
+
+    Parameters
+    ----------
+    values : Array-like
+        Argument to compute function.
+    mask : Array-like
+        Argument to compute function.
+    replacements : Array-like
+        Argument to compute function.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
 
 # ========================= 3.7 Pairwise functions =========================
 @overload
@@ -7363,5 +7729,51 @@ def pairwise_diff(
     options: PairwiseOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
+def pairwise_diff(*args, **kwargs):
+    """
+    Compute first order difference of an array.
+
+    Computes the first order difference of an array, It internally calls
+    the scalar function "subtract" to compute
+     differences, so its
+    behavior and supported types are the same as
+    "subtract". The period can be specified in :struct:`PairwiseOptions`.
+
+    Results will wrap around on integer overflow. Use function
+    "pairwise_diff_checked" if you want overflow to return an error.
+
+    Parameters
+    ----------
+    input : Array-like
+        Argument to compute function.
+    period : int, default 1
+        Period for applying the period function.
+    options : pyarrow.compute.PairwiseOptions, optional
+        Alternative way of passing options.
+    memory_pool : pyarrow.MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
+    """
 
 pairwise_diff_checked = _clone_signature(pairwise_diff)
+"""
+Compute first order difference of an array.
+
+Computes the first order difference of an array, It internally calls 
+the scalar function "subtract_checked" (or the checked variant) to compute 
+differences, so its behavior and supported types are the same as 
+"subtract_checked". The period can be specified in :struct:`PairwiseOptions`.
+
+This function returns an error on overflow. For a variant that doesn't 
+fail on overflow, use function "pairwise_diff".
+
+Parameters
+----------
+input : Array-like
+    Argument to compute function.
+period : int, default 1
+    Period for applying the period function.
+options : pyarrow.compute.PairwiseOptions, optional
+    Alternative way of passing options.
+memory_pool : pyarrow.MemoryPool, optional
+    If not passed, will allocate memory from the default memory pool.
+"""
