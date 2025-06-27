@@ -36,8 +36,8 @@ class ParquetFileFormat(FileFormat):
     """
     def __init__(
         self,
-        read_options: ParquetReadOptions,
-        default_fragment_scan_options: ParquetFragmentScanOptions,
+        read_options: ParquetReadOptions | None = None,
+        default_fragment_scan_options: ParquetFragmentScanOptions | None = None,
         **kwargs,
     ) -> None: ...
     @property
