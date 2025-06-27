@@ -1674,7 +1674,7 @@ class Field(_Weakrefable, Generic[_DataTypeT]):
         >>> field_new.metadata
         {b'key': b'Something important'}
         """
-    def remove_metadata(self) -> None:
+    def remove_metadata(self) -> Self:
         """
         Create new field without metadata, if any
 
