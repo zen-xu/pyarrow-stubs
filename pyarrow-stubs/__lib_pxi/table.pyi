@@ -1520,184 +1520,179 @@ def chunked_array(
 ) -> ChunkedArray[scalar.ListScalar[Any]]: ...
 @overload
 def chunked_array(
-    values: Iterable[Array[_ScalarT]],
-    type: None = None,
-) -> ChunkedArray[_ScalarT]: ...
-@overload
-def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: _DataTypeT,
-) -> ChunkedArray[Scalar[_DataTypeT]]: ...
-@overload
-def chunked_array(
-    values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["null"],
+    type: Literal["null"] | types.NullType,
 ) -> ChunkedArray[scalar.NullScalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["bool", "boolean"],
+    type: Literal["bool", "boolean"] | types.BoolType,
 ) -> ChunkedArray[scalar.BooleanScalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["i1", "int8"],
+    type: Literal["i1", "int8"] | types.Int8Type,
 ) -> ChunkedArray[scalar.Int8Scalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["i2", "int16"],
+    type: Literal["i2", "int16"] | types.Int16Type,
 ) -> ChunkedArray[scalar.Int16Scalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["i4", "int32"],
+    type: Literal["i4", "int32"] | types.Int32Type,
 ) -> ChunkedArray[scalar.Int32Scalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["i8", "int64"],
+    type: Literal["i8", "int64"] | types.Int64Type,
 ) -> ChunkedArray[scalar.Int64Scalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["u1", "uint8"],
+    type: Literal["u1", "uint8"] | types.UInt8Type,
 ) -> ChunkedArray[scalar.UInt8Scalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["u2", "uint16"],
+    type: Literal["u2", "uint16"] | types.UInt16Type,
 ) -> ChunkedArray[scalar.UInt16Scalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["u4", "uint32"],
+    type: Literal["u4", "uint32"] | types.Uint32Type,
 ) -> ChunkedArray[scalar.UInt32Scalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["u8", "uint64"],
+    type: Literal["u8", "uint64"] | types.UInt64Type,
 ) -> ChunkedArray[scalar.UInt64Scalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["f2", "halffloat", "float16"],
+    type: Literal["f2", "halffloat", "float16"] | types.Float16Type,
 ) -> ChunkedArray[scalar.HalfFloatScalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["f4", "float", "float32"],
+    type: Literal["f4", "float", "float32"] | types.Float32Type,
 ) -> ChunkedArray[scalar.FloatScalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["f8", "double", "float64"],
+    type: Literal["f8", "double", "float64"] | types.Float64Type,
 ) -> ChunkedArray[scalar.DoubleScalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["string", "str", "utf8"],
+    type: Literal["string", "str", "utf8"] | types.StringType,
 ) -> ChunkedArray[scalar.StringScalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["binary"],
+    type: Literal["binary"] | types.BinaryType,
 ) -> ChunkedArray[scalar.BinaryScalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["large_string", "large_str", "large_utf8"],
+    type: Literal["large_string", "large_str", "large_utf8"] | types.LargeStringType,
 ) -> ChunkedArray[scalar.LargeStringScalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["large_binary"],
+    type: Literal["large_binary"] | types.LargeBinaryType,
 ) -> ChunkedArray[scalar.LargeBinaryScalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["binary_view"],
+    type: Literal["binary_view"] | types.BinaryViewType,
 ) -> ChunkedArray[scalar.BinaryViewScalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["string_view"],
+    type: Literal["string_view"] | types.StringViewType,
 ) -> ChunkedArray[scalar.StringViewScalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["date32", "date32[day]"],
+    type: Literal["date32", "date32[day]"] | types.Date32Type,
 ) -> ChunkedArray[scalar.Date32Scalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["date64", "date64[ms]"],
+    type: Literal["date64", "date64[ms]"] | types.Date64Type,
 ) -> ChunkedArray[scalar.Date64Scalar]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["time32[s]"],
+    type: Literal["time32[s]"] | types.Time32Type[Literal["s"]],
 ) -> ChunkedArray[scalar.Time32Scalar[Literal["s"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["time32[ms]"],
+    type: Literal["time32[ms]"] | types.Time32Type[Literal["ms"]],
 ) -> ChunkedArray[scalar.Time32Scalar[Literal["ms"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["time64[us]"],
+    type: Literal["time64[us]"] | types.Time64Type[Literal["us"]],
 ) -> ChunkedArray[scalar.Time64Scalar[Literal["us"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["time64[ns]"],
+    type: Literal["time64[ns]"] | types.Time64Type[Literal["ns"]],
 ) -> ChunkedArray[scalar.Time64Scalar[Literal["ns"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["timestamp[s]"],
+    type: Literal["timestamp[s]"] | types.TimestampType[Literal["s"]],
 ) -> ChunkedArray[scalar.TimestampScalar[Literal["s"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["timestamp[ms]"],
+    type: Literal["timestamp[ms]"] | types.TimestampType[Literal["ms"]],
 ) -> ChunkedArray[scalar.TimestampScalar[Literal["ms"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["timestamp[us]"],
+    type: Literal["timestamp[us]"] | types.TimestampType[Literal["us"]],
 ) -> ChunkedArray[scalar.TimestampScalar[Literal["us"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["timestamp[ns]"],
+    type: Literal["timestamp[ns]"] | types.TimestampType[Literal["ns"]],
 ) -> ChunkedArray[scalar.TimestampScalar[Literal["ns"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["duration[s]"],
+    type: Literal["duration[s]"] | types.DurationType[Literal["s"]],
 ) -> ChunkedArray[scalar.DurationScalar[Literal["s"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["duration[ms]"],
+    type: Literal["duration[ms]"] | types.DurationType[Literal["ms"]],
 ) -> ChunkedArray[scalar.DurationScalar[Literal["ms"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["duration[us]"],
+    type: Literal["duration[us]"] | types.DurationType[Literal["us"]],
 ) -> ChunkedArray[scalar.DurationScalar[Literal["us"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any] | SupportArrowStream | SupportArrowArray],
-    type: Literal["duration[ns]"],
+    type: Literal["duration[ns]"] | types.DurationType[Literal["ns"]],
 ) -> ChunkedArray[scalar.DurationScalar[Literal["ns"]]]: ...
 @overload
 def chunked_array(
     values: Iterable[Iterable[Any]] | SupportArrowStream | SupportArrowArray,
-    type: Literal["month_day_nano_interval"],
+    type: Literal["month_day_nano_interval"] | types.MonthDayNanoIntervalType,
 ) -> ChunkedArray[scalar.MonthDayNanoIntervalScalar]: ...
+@overload
+def chunked_array(
+    values: Iterable[Array[_ScalarT]],
+    type: None = None,
+) -> ChunkedArray[_ScalarT]: ...
 def chunked_array(value, type=None):
     """
     Construct chunked array from list of array-like objects
