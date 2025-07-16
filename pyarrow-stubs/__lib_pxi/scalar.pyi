@@ -32,13 +32,14 @@ from .types import (
 
 _AsPyTypeK = TypeVar("_AsPyTypeK")
 _AsPyTypeV = TypeVar("_AsPyTypeV")
+_DataType_co = TypeVar("_DataType_co", bound=types.DataType, covariant=True)
 
-class Scalar(_Weakrefable, Generic[_DataTypeT]):
+class Scalar(_Weakrefable, Generic[_DataType_co]):
     """
     The base class for scalars.
     """
     @property
-    def type(self) -> _DataTypeT:
+    def type(self) -> _DataType_co:
         """
         Data type of the Scalar object.
         """

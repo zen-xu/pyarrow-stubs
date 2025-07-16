@@ -1656,9 +1656,10 @@ class _PandasConvertible(_Weakrefable, Generic[_ConvertAs]):
         """
 
 _CastAs = TypeVar("_CastAs", bound=DataType)
+_Scalar_co = TypeVar("_Scalar_co", bound=Scalar, covariant=True)
 _ScalarT = TypeVar("_ScalarT", bound=Scalar)
 
-class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
+class Array(_PandasConvertible[pd.Series], Generic[_Scalar_co]):
     """
     The base class for all Arrow arrays.
     """
@@ -1735,7 +1736,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
         -------
         view : Array
         """
-    def sum(self, **kwargs) -> _ScalarT:
+    def sum(self, **kwargs) -> _Scalar_co:
         """
         Sum the values in a numerical array.
 
@@ -1906,7 +1907,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
         only be counted once.
         """
     def __sizeof__(self) -> int: ...
-    def __iter__(self) -> Iterator[_ScalarT]: ...
+    def __iter__(self) -> Iterator[_Scalar_co]: ...
     def to_string(
         self,
         *,
@@ -1987,7 +1988,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_ScalarT]):
             A new array with nulls replaced by the given value.
         """
     @overload
-    def __getitem__(self, key: int) -> _ScalarT: ...
+    def __getitem__(self, key: int) -> _Scalar_co: ...
     @overload
     def __getitem__(self, key: slice) -> Self: ...
     def __getitem__(self, key):
