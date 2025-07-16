@@ -61,6 +61,7 @@ from .tensor import Tensor
 from .types import _AsPyType, _BasicDataType, _DataTypeT
 
 _ScalarT = TypeVar("_ScalarT", bound=Scalar)
+_Scalar_co = TypeVar("_Scalar_co", bound=Scalar, covariant=True)
 
 _Aggregation: TypeAlias = Literal[
     "all",
@@ -118,7 +119,7 @@ NullarySelector: TypeAlias = tuple[()]
 NarySelector: TypeAlias = list[str] | tuple[str, ...]
 ColumnSelector: TypeAlias = UnarySelector | NullarySelector | NarySelector
 
-class ChunkedArray(_PandasConvertible[pd.Series], Generic[_ScalarT]):
+class ChunkedArray(_PandasConvertible[pd.Series], Generic[_Scalar_co]):
     """
     An array-like composed from a (possibly empty) collection of pyarrow.Arrays
 
@@ -295,7 +296,7 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_ScalarT]):
     @overload
     def __getitem__(self, key: slice) -> Self: ...
     @overload
-    def __getitem__(self, key: int) -> _ScalarT: ...
+    def __getitem__(self, key: int) -> _Scalar_co: ...
     def __getitem__(self, key):
         """
         Slice or return value at given index
@@ -630,7 +631,7 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_ScalarT]):
         >>> n_legs.type
         DataType(int64)
         """
-    def combine_chunks(self, memory_pool: MemoryPool | None = None) -> Array[_ScalarT]:
+    def combine_chunks(self, memory_pool: MemoryPool | None = None) -> Array[_Scalar_co]:
         """
         Flatten this ChunkedArray into a single non-chunked array.
 
@@ -672,7 +673,7 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_ScalarT]):
           100
         ]
         """
-    def unique(self) -> ChunkedArray[_ScalarT]:
+    def unique(self) -> ChunkedArray[_Scalar_co]:
         """
         Compute distinct elements in array
 
@@ -1128,7 +1129,7 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_ScalarT]):
         >>> n_legs.num_chunks
         2
         """
-    def chunk(self, i: int) -> ChunkedArray[_ScalarT]:
+    def chunk(self, i: int) -> ChunkedArray[_Scalar_co]:
         """
         Select a chunk by its index.
 
@@ -1153,7 +1154,7 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_ScalarT]):
         ]
         """
     @property
-    def chunks(self) -> list[Array[_ScalarT]]:
+    def chunks(self) -> list[Array[_Scalar_co]]:
         """
         Convert to a list of single-chunked arrays.
 
@@ -1387,7 +1388,7 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_ScalarT]):
         1
 
         """
-    def __iter__(self) -> Iterator[_ScalarT]: ...
+    def __iter__(self) -> Iterator[_Scalar_co]: ...
     def to_pylist(
         self: ChunkedArray[Scalar[_BasicDataType[_AsPyType]]],
         *,
