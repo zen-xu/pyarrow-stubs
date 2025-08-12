@@ -49,7 +49,8 @@ from pyarrow._stubs_typing import (
 )
 from pyarrow.compute import ArrayOrChunkedArray, Expression
 from pyarrow.interchange.dataframe import _PyArrowDataFrame
-from pyarrow.lib import Device, Field, MemoryManager, MemoryPool, MonthDayNano, Schema
+from pyarrow.lib import Device, MemoryManager, MemoryPool, MonthDayNano, Schema
+from pyarrow.lib import Field as _Field
 
 from . import array, scalar, types
 from .array import Array, NullableCollection, StructArray, _CastAs, _PandasConvertible
@@ -58,8 +59,9 @@ from .io import Buffer
 from .ipc import RecordBatchReader
 from .scalar import Int64Scalar, Scalar
 from .tensor import Tensor
-from .types import _AsPyType, _BasicDataType, _DataTypeT
+from .types import DataType, _AsPyType, _BasicDataType, _DataTypeT
 
+Field: TypeAlias = _Field[DataType]
 _ScalarT = TypeVar("_ScalarT", bound=Scalar)
 _Scalar_co = TypeVar("_Scalar_co", bound=Scalar, covariant=True)
 
@@ -1969,9 +1971,9 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
     @classmethod
     def from_pydict(
         cls,
-        mapping: Mapping[str, ArrayOrChunkedArray[Any] | list | np.ndarray],
+        mapping: Mapping[str, ArrayOrChunkedArray[Any] | list[Any] | np.ndarray],
         schema: Schema | None = None,
-        metadata: Mapping | None = None,
+        metadata: Mapping[str | bytes, str | bytes] | None = None,
     ) -> Self:
         """
         Construct a Table or RecordBatch from Arrow arrays or columns.
@@ -2037,7 +2039,7 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
         cls,
         mapping: Sequence[Mapping[str, Any]],
         schema: Schema | None = None,
-        metadata: Mapping | None = None,
+        metadata: Mapping[str | bytes, str | bytes] | None = None,
     ) -> Self:
         """
         Construct a Table or RecordBatch from list of rows / dictionaries.
@@ -2303,7 +2305,7 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
         """
     def to_pydict(
         self, *, maps_as_pydicts: Literal["lossy", "strict"] | None = None
-    ) -> dict[str, list]:
+    ) -> dict[str, list[Any]]:
         """
         Convert the Table or RecordBatch to a dict or OrderedDict.
 
@@ -2437,9 +2439,11 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
         ----
         """
     def add_column(
-        self, i: int, field_: str | Field, column: ArrayOrChunkedArray[Any] | list
+        self, i: int, field_: str | Field, column: ArrayOrChunkedArray[Any] | list[list[Any]]
     ) -> Self: ...
-    def append_column(self, field_: str | Field, column: ArrayOrChunkedArray[Any] | list) -> Self:
+    def append_column(
+        self, field_: str | Field, column: ArrayOrChunkedArray[Any] | list[list[Any]]
+    ) -> Self:
         """
         Append column at end of columns.
 
@@ -2598,7 +2602,9 @@ class RecordBatch(_Tabular[Array]):
         ------
         ArrowInvalid
         """
-    def replace_schema_metadata(self, metadata: dict | None = None) -> Self:
+    def replace_schema_metadata(
+        self, metadata: dict[str | bytes, str | bytes] | None = None
+    ) -> Self:
         """
         Create shallow copy of record batch by replacing schema
         key-value metadata with the indicated new metadata (which may be None,
@@ -3154,7 +3160,7 @@ class RecordBatch(_Tabular[Array]):
         arrays: Collection[Array],
         names: list[str] | None = None,
         schema: Schema | None = None,
-        metadata: Mapping | None = None,
+        metadata: Mapping[str | bytes, str | bytes] | None = None,
     ) -> Self:
         """
         Construct a RecordBatch from multiple pyarrow.Arrays
@@ -3743,7 +3749,7 @@ class Table(_Tabular[ChunkedArray[Any]]):
     animals: [["Flamingo","Horse","Brittle stars","Centipede"]]
     """
 
-    def validate(self, *, full=False) -> None:
+    def validate(self, *, full: bool = False) -> None:
         """
         Perform validation checks.  An exception is raised if validation fails.
 
@@ -3759,7 +3765,7 @@ class Table(_Tabular[ChunkedArray[Any]]):
         ------
         ArrowInvalid
         """
-    def slice(self, offset=0, length=None) -> Self:
+    def slice(self, offset: int = 0, length: int | None = None) -> Self:
         """
         Compute zero-copy slice of this Table.
 
@@ -3856,7 +3862,9 @@ class Table(_Tabular[ChunkedArray[Any]]):
         ----
         year: [[2020,2022,2019,2021]]
         """
-    def replace_schema_metadata(self, metadata: dict | None = None) -> Self:
+    def replace_schema_metadata(
+        self, metadata: dict[str | bytes, str | bytes] | None = None
+    ) -> Self:
         """
         Create shallow copy of table by replacing schema
         key-value metadata with the indicated new metadata (which may be None),
@@ -4219,7 +4227,7 @@ class Table(_Tabular[ChunkedArray[Any]]):
         arrays: Collection[ArrayOrChunkedArray[Any]],
         names: list[str] | None = None,
         schema: Schema | None = None,
-        metadata: Mapping | None = None,
+        metadata: Mapping[str | bytes, str | bytes] | None = None,
     ) -> Self:
         """
         Construct a Table from Arrow arrays.
@@ -4602,7 +4610,7 @@ class Table(_Tabular[ChunkedArray[Any]]):
         """
     def __sizeof__(self) -> int: ...
     def add_column(
-        self, i: int, field_: str | Field, column: ArrayOrChunkedArray[Any] | list
+        self, i: int, field_: str | Field, column: ArrayOrChunkedArray[Any] | list[list[Any]]
     ) -> Self:
         """
         Add column to Table at position.
@@ -4692,7 +4700,7 @@ class Table(_Tabular[ChunkedArray[Any]]):
         n_legs: [[2,4,5,100]]
         """
     def set_column(
-        self, i: int, field_: str | Field, column: ArrayOrChunkedArray[Any] | list
+        self, i: int, field_: str | Field, column: ArrayOrChunkedArray[Any] | list[list[Any]]
     ) -> Self:
         """
         Replace column in Table at position.
@@ -5082,7 +5090,7 @@ def record_batch(
     | SupportArrowDeviceArray,
     names: list[str] | None = None,
     schema: Schema | None = None,
-    metadata: Mapping[Any, Any] | None = None,
+    metadata: Mapping[str | bytes, str | bytes] | None = None,
 ) -> RecordBatch:
     """
     Create a pyarrow.RecordBatch from another Python data structure or sequence
@@ -5220,7 +5228,7 @@ def record_batch(
 def table(
     data: dict[str, list[Any] | Array[Any]],
     schema: Schema | None = None,
-    metadata: Mapping[Any, Any] | None = None,
+    metadata: Mapping[str | bytes, str | bytes] | None = None,
     nthreads: int | None = None,
 ) -> Table: ...
 @overload
@@ -5232,7 +5240,7 @@ def table(
     | SupportArrowDeviceArray,
     names: list[str] | None = None,
     schema: Schema | None = None,
-    metadata: Mapping[Any, Any] | None = None,
+    metadata: Mapping[str | bytes, str | bytes] | None = None,
     nthreads: int | None = None,
 ) -> Table: ...
 def table(*args, **kwargs):
