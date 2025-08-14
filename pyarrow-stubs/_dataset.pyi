@@ -946,6 +946,7 @@ class Fragment(lib._Weakrefable):
         """
     def to_batches(
         self,
+        schema: lib.Schema | None = None,
         columns: list[str] | None = None,
         filter: Expression | None = None,
         batch_size: int = ...,
@@ -1018,6 +1019,7 @@ class Fragment(lib._Weakrefable):
         """
     def to_table(
         self,
+        schema: lib.Schema | None = None,
         columns: list[str] | None = None,
         filter: Expression | None = None,
         batch_size: int = ...,
