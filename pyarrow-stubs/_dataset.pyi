@@ -485,7 +485,6 @@ class Dataset(lib._Weakrefable):
         """
     def count_rows(
         self,
-        columns: list[str] | None = None,
         filter: Expression | None = None,
         batch_size: int = ...,
         batch_readahead: int = 16,
