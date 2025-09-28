@@ -1549,7 +1549,9 @@ def ensure_metadata(
     meta: Mapping[bytes | str, bytes | str] | KeyValueMetadata | None, allow_none: bool = False
 ) -> KeyValueMetadata | None: ...
 
-class Field(_Weakrefable, Generic[_DataTypeT]):
+_DataTypeT_co = TypeVar("_DataTypeT_co", bound=DataType, covariant=True)
+
+class Field(_Weakrefable, Generic[_DataTypeT_co]):
     """
     A named field, with a data type, nullability, and optional metadata.
 
@@ -1647,7 +1649,7 @@ class Field(_Weakrefable, Generic[_DataTypeT]):
         {b'key': b'Something important'}
         """
     @property
-    def type(self) -> _DataTypeT: ...
+    def type(self: Field[_DataTypeT]) -> _DataTypeT: ...
     def with_metadata(self, metadata: dict[bytes | str, bytes | str]) -> Self:
         """
         Add metadata as dict of string keys and values to Field
@@ -1744,7 +1746,7 @@ class Field(_Weakrefable, Generic[_DataTypeT]):
         >>> field_new
         pyarrow.Field<lock: int32>
         """
-    def with_nullable(self, nullable: bool) -> Field[_DataTypeT]:
+    def with_nullable(self: Field[_DataTypeT], nullable: bool) -> Field[_DataTypeT]:
         """
         A copy of this field with the replaced nullability
 
