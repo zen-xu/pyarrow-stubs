@@ -2154,7 +2154,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_Scalar_co]):
     def to_pylist(
         self: Array[Scalar[_BasicDataType[_AsPyType]]],
         *,
-        map_as_pydicts: Literal["lossy", "strict"] | None = None,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
     ) -> list[_AsPyType | None]:
         """
         Convert to a list of native Python objects.
