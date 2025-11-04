@@ -5083,7 +5083,7 @@ class Table(_Tabular[ChunkedArray[Any]]):
         """
 
 def record_batch(
-    data: dict[str, list[Any] | Array[Any]]
+    data: Mapping[str, Sequence[Any] | Array[Any]]
     | Collection[Array[Any]]
     | pd.DataFrame
     | SupportArrowArray
@@ -5226,7 +5226,7 @@ def record_batch(
 
 @overload
 def table(
-    data: dict[str, list[Any] | Array[Any]],
+    data: Mapping[str, Sequence[Any] | Array[Any]],
     schema: Schema | None = None,
     metadata: Mapping[str | bytes, str | bytes] | None = None,
     nthreads: int | None = None,
