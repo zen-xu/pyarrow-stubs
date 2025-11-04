@@ -2603,7 +2603,7 @@ class RecordBatch(_Tabular[Array]):
         ArrowInvalid
         """
     def replace_schema_metadata(
-        self, metadata: dict[str | bytes, str | bytes] | None = None
+        self, metadata: Mapping[str | bytes, str | bytes] | None = None
     ) -> Self:
         """
         Create shallow copy of record batch by replacing schema
@@ -3863,7 +3863,7 @@ class Table(_Tabular[ChunkedArray[Any]]):
         year: [[2020,2022,2019,2021]]
         """
     def replace_schema_metadata(
-        self, metadata: dict[str | bytes, str | bytes] | None = None
+        self, metadata: Mapping[str | bytes, str | bytes] | None = None
     ) -> Self:
         """
         Create shallow copy of table by replacing schema
