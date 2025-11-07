@@ -120,6 +120,7 @@ UnarySelector: TypeAlias = str
 NullarySelector: TypeAlias = tuple[()]
 NarySelector: TypeAlias = list[str] | tuple[str, ...]
 ColumnSelector: TypeAlias = UnarySelector | NullarySelector | NarySelector
+MetaData: TypeAlias = dict[bytes, bytes] | dict[bytes, str] | dict[str, str] | dict[str, bytes]
 
 class ChunkedArray(_PandasConvertible[pd.Series], Generic[_Scalar_co]):
     """
@@ -1973,7 +1974,7 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
         cls,
         mapping: Mapping[str, ArrayOrChunkedArray[Any] | list[Any] | np.ndarray],
         schema: Schema | None = None,
-        metadata: Mapping[str | bytes, str | bytes] | None = None,
+        metadata: MetaData | None = None,
     ) -> Self:
         """
         Construct a Table or RecordBatch from Arrow arrays or columns.
@@ -2039,7 +2040,7 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
         cls,
         mapping: Sequence[Mapping[str, Any]],
         schema: Schema | None = None,
-        metadata: Mapping[str | bytes, str | bytes] | None = None,
+        metadata: MetaData | None = None,
     ) -> Self:
         """
         Construct a Table or RecordBatch from list of rows / dictionaries.
@@ -2602,9 +2603,7 @@ class RecordBatch(_Tabular[Array]):
         ------
         ArrowInvalid
         """
-    def replace_schema_metadata(
-        self, metadata: Mapping[str | bytes, str | bytes] | None = None
-    ) -> Self:
+    def replace_schema_metadata(self, metadata: MetaData | None = None) -> Self:
         """
         Create shallow copy of record batch by replacing schema
         key-value metadata with the indicated new metadata (which may be None,
@@ -3160,7 +3159,7 @@ class RecordBatch(_Tabular[Array]):
         arrays: Collection[Array],
         names: list[str] | None = None,
         schema: Schema | None = None,
-        metadata: Mapping[str | bytes, str | bytes] | None = None,
+        metadata: MetaData | None = None,
     ) -> Self:
         """
         Construct a RecordBatch from multiple pyarrow.Arrays
@@ -3862,9 +3861,7 @@ class Table(_Tabular[ChunkedArray[Any]]):
         ----
         year: [[2020,2022,2019,2021]]
         """
-    def replace_schema_metadata(
-        self, metadata: Mapping[str | bytes, str | bytes] | None = None
-    ) -> Self:
+    def replace_schema_metadata(self, metadata: MetaData | None = None) -> Self:
         """
         Create shallow copy of table by replacing schema
         key-value metadata with the indicated new metadata (which may be None),
@@ -4227,7 +4224,7 @@ class Table(_Tabular[ChunkedArray[Any]]):
         arrays: Collection[ArrayOrChunkedArray[Any]],
         names: list[str] | None = None,
         schema: Schema | None = None,
-        metadata: Mapping[str | bytes, str | bytes] | None = None,
+        metadata: MetaData | None = None,
     ) -> Self:
         """
         Construct a Table from Arrow arrays.
@@ -5090,7 +5087,7 @@ def record_batch(
     | SupportArrowDeviceArray,
     names: list[str] | None = None,
     schema: Schema | None = None,
-    metadata: Mapping[str | bytes, str | bytes] | None = None,
+    metadata: MetaData | None = None,
 ) -> RecordBatch:
     """
     Create a pyarrow.RecordBatch from another Python data structure or sequence
@@ -5228,7 +5225,7 @@ def record_batch(
 def table(
     data: Mapping[str, Sequence[Any] | Array[Any]],
     schema: Schema | None = None,
-    metadata: Mapping[str | bytes, str | bytes] | None = None,
+    metadata: MetaData | None = None,
     nthreads: int | None = None,
 ) -> Table: ...
 @overload
@@ -5240,7 +5237,7 @@ def table(
     | SupportArrowDeviceArray,
     names: list[str] | None = None,
     schema: Schema | None = None,
-    metadata: Mapping[str | bytes, str | bytes] | None = None,
+    metadata: MetaData | None = None,
     nthreads: int | None = None,
 ) -> Table: ...
 def table(*args, **kwargs):
