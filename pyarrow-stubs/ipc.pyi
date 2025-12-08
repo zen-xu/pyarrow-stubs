@@ -1,4 +1,5 @@
 from io import IOBase
+from typing import Any
 
 import pandas as pd
 import pyarrow.lib as lib
@@ -30,6 +31,23 @@ class RecordBatchStreamReader(lib._RecordBatchStreamReader):
         options: IpcReadOptions | None = None,
         memory_pool: lib.MemoryPool | None = None,
     ) -> None: ...
+    def read_pandas(self, **options: Any) -> pd.DataFrame:
+        """
+        Read contents of stream to a pandas.DataFrame.
+
+        Read all record batches as a pyarrow.Table then convert it to a
+        pandas.DataFrame using Table.to_pandas.
+
+        Parameters
+        ----------
+        **options
+            Arguments to forward to :meth:`Table.to_pandas`.
+
+        Returns
+        -------
+        df : pandas.DataFrame
+        """
+        ...
 
 class RecordBatchStreamWriter(lib._RecordBatchStreamWriter):
     def __init__(
@@ -50,6 +68,23 @@ class RecordBatchFileReader(lib._RecordBatchFileReader):
         options: IpcReadOptions | None,
         memory_pool: lib.MemoryPool | None = None,
     ) -> None: ...
+    def read_pandas(self, **options: Any) -> pd.DataFrame:
+        """
+        Read contents of file to a pandas.DataFrame.
+
+        Read all record batches as a pyarrow.Table then convert it to a
+        pandas.DataFrame using Table.to_pandas.
+
+        Parameters
+        ----------
+        **options
+            Arguments to forward to :meth:`Table.to_pandas`.
+
+        Returns
+        -------
+        df : pandas.DataFrame
+        """
+        ...
 
 class RecordBatchFileWriter(lib._RecordBatchFileWriter):
     def __init__(
