@@ -300,7 +300,7 @@ class _ReadPandasMixin:
         df : pandas.DataFrame
         """
 
-class RecordBatchReader(_Weakrefable):
+class RecordBatchReader(_Weakrefable, _ReadPandasMixin):
     """Base class for reading stream of record batches.
 
     Record batch readers function as iterators of record batches that also
@@ -396,7 +396,6 @@ class RecordBatchReader(_Weakrefable):
         -------
         Table
         """
-    read_pandas = _ReadPandasMixin.read_pandas  # pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]
     def close(self) -> None:
         """
         Release any resources associated with the reader.
@@ -532,7 +531,7 @@ class RecordBatchWithMetadata(NamedTuple):
     batch: RecordBatch
     custom_metadata: KeyValueMetadata
 
-class _RecordBatchFileReader(_Weakrefable):
+class _RecordBatchFileReader(_Weakrefable, _ReadPandasMixin):
     @property
     def num_record_batches(self) -> int:
         """
@@ -571,7 +570,6 @@ class _RecordBatchFileReader(_Weakrefable):
         """
         Read all record batches as a pyarrow.Table
         """
-    read_pandas = _ReadPandasMixin.read_pandas  # pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]
     def __enter__(self) -> Self: ...
     def __exit__(self, exc_type, exc_val, exc_tb): ...
     @property
