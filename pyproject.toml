@@ -2,7 +2,7 @@
 
 [project]
 name = "pyarrow-stubs"
-version = "20.0.0.20251209"
+version = "20.0.0.20251215"
 description = "Type annotations for pyarrow"
 authors = [{ name = "ZhengYu, Xu", email = "zen-xu@outlook.com" }]
 license = "BSD-2-Clause"
@@ -35,7 +35,7 @@ packages = ["pyarrow-stubs"]
 [tool.isort]
 profile = "black"
 
-[tool.pixi.project]
+[tool.pixi.workspace]
 channels  = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
