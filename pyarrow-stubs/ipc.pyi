@@ -82,7 +82,7 @@ def new_file(
     options: IpcWriteOptions | None = None,
 ) -> RecordBatchFileWriter: ...
 def open_file(
-    source: bytes | lib.Buffer | lib.NativeFile | IOBase,
+    source: str | bytes | lib.Buffer | lib.NativeFile | IOBase,
     footer_offset: int | None = None,
     *,
     options: IpcReadOptions | None = None,
