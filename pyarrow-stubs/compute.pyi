@@ -1088,7 +1088,7 @@ def add(
 ) -> Expression: ...
 @overload
 def add(
-    x: NumericOrTemporalScalar,
+    x: NumericOrTemporalScalar | float,
     y: _NumericOrTemporalArrayT,
     /,
     *,
@@ -1097,18 +1097,26 @@ def add(
 @overload
 def add(
     x: _NumericOrTemporalArrayT,
-    y: NumericOrTemporalScalar,
+    y: NumericOrTemporalScalar | float,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _NumericOrTemporalArrayT: ...
 @overload
 def add(
-    x: NumericOrTemporalScalar, y: Expression, /, *, memory_pool: lib.MemoryPool | None = None
+    x: NumericOrTemporalScalar | float,
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
 @overload
 def add(
-    x: Expression, y: NumericOrTemporalScalar, /, *, memory_pool: lib.MemoryPool | None = None
+    x: Expression,
+    y: NumericOrTemporalScalar | float,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
 def add(*args, **kwargs):
     """
@@ -1172,7 +1180,7 @@ def divide(
 ) -> Expression: ...
 @overload
 def divide(
-    dividend: NumericOrTemporalScalar,
+    dividend: NumericOrTemporalScalar | float,
     divisor: _NumericOrTemporalArrayT,
     /,
     *,
@@ -1181,14 +1189,14 @@ def divide(
 @overload
 def divide(
     dividend: _NumericOrTemporalArrayT,
-    divisor: NumericOrTemporalScalar,
+    divisor: NumericOrTemporalScalar | float,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> _NumericOrTemporalArrayT: ...
 @overload
 def divide(
-    dividend: NumericOrTemporalScalar,
+    dividend: NumericOrTemporalScalar | float,
     divisor: Expression,
     /,
     *,
@@ -1197,7 +1205,7 @@ def divide(
 @overload
 def divide(
     dividend: Expression,
-    divisor: NumericOrTemporalScalar,
+    divisor: NumericOrTemporalScalar | float,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
