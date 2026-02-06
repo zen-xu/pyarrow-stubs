@@ -1845,7 +1845,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_Scalar_co]):
     def from_buffers(
         type: _DataTypeT,
         length: int,
-        buffers: list[Buffer],
+        buffers: list[Buffer | None],
         null_count: int = -1,
         offset=0,
         children: NullableCollection[Array[Scalar[_DataTypeT]]] | None = None,
@@ -1861,7 +1861,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_Scalar_co]):
             The value type of the array.
         length : int
             The number of values in the array.
-        buffers : List[Buffer]
+        buffers : List[Buffer | None]
             The buffers backing this array.
         null_count : int, default -1
             The number of null entries in the array. Negative value means that
