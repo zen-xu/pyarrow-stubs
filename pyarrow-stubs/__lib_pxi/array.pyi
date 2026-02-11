@@ -3630,7 +3630,7 @@ class DictionaryArray(Array[scalar.DictionaryScalar[_IndexT, _BasicValueT]]):
     def from_buffers(  # type: ignore[override]
         type: _BasicValueT,
         length: int,
-        buffers: list[Buffer],
+        buffers: list[Buffer | None],
         dictionary: Array | np.ndarray | pd.Series,
         null_count: int = -1,
         offset: int = 0,
@@ -3643,7 +3643,7 @@ class DictionaryArray(Array[scalar.DictionaryScalar[_IndexT, _BasicValueT]]):
         type : pyarrow.DataType
         length : int
             The number of values in the array.
-        buffers : List[Buffer]
+        buffers : List[Buffer | None]
             The buffers backing the indices array.
         dictionary : pyarrow.Array, ndarray or pandas.Series
             The array of values referenced by the indices.
