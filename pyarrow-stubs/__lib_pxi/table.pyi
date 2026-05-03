@@ -3424,7 +3424,7 @@ class RecordBatch(_Tabular[Array]):
                [ 4., 40.],
                [nan, nan]])
         """
-    def _export_to_c(self, out_ptr: int, out_schema_ptr: int = 0):
+    def _export_to_c(self, out_ptr: int, out_schema_ptr: int = 0) -> None:
         """
         Export to a C ArrowArray struct, given its pointer.
 
