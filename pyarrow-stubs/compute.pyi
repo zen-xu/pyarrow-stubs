@@ -239,6 +239,13 @@ _BinaryArrayT = TypeVar("_BinaryArrayT", bound=BinaryArray)
 _StringOrBinaryScalarT = TypeVar("_StringOrBinaryScalarT", bound=StringOrBinaryScalar)
 StringOrBinaryArray: TypeAlias = StringArray | BinaryArray
 _StringOrBinaryArrayT = TypeVar("_StringOrBinaryArrayT", bound=StringOrBinaryArray)
+_JoinScalarT = TypeVar(
+    "_JoinScalarT",
+    lib.Scalar[lib.StringType],
+    lib.Scalar[lib.LargeStringType],
+    lib.Scalar[lib.BinaryType],
+    lib.Scalar[lib.LargeBinaryType],
+)
 _TemporalScalarT = TypeVar("_TemporalScalarT", bound=TemporalScalar)
 TemporalArray: TypeAlias = ArrayOrChunkedArray[TemporalScalar]
 _TemporalArrayT = TypeVar("_TemporalArrayT", bound=TemporalArray)
@@ -4457,9 +4464,83 @@ def extract_regex(*args, **kwargs):
     """
 
 # ========================= 2.16 String join =========================
+_JoinDataTypeT = TypeVar(
+    "_JoinDataTypeT",
+    lib.StringType,
+    lib.LargeStringType,
+    lib.BinaryType,
+    lib.LargeBinaryType,
+)
+
+_JoinListScalar: TypeAlias = (
+    lib.Scalar[lib.ListType[_JoinDataTypeT]]
+    | lib.Scalar[lib.LargeListType[_JoinDataTypeT]]
+    | lib.Scalar[lib.FixedSizeListType[_JoinDataTypeT, Any]]
+    | lib.Scalar[lib.ListViewType[_JoinDataTypeT]]
+    | lib.Scalar[lib.LargeListViewType[_JoinDataTypeT]]
+)
+
+_JoinListArray: TypeAlias = (
+    lib.Array[lib.Scalar[lib.ListType[_JoinDataTypeT]]]
+    | lib.Array[lib.Scalar[lib.LargeListType[_JoinDataTypeT]]]
+    | lib.Array[lib.Scalar[lib.FixedSizeListType[_JoinDataTypeT, Any]]]
+    | lib.Array[lib.Scalar[lib.ListViewType[_JoinDataTypeT]]]
+    | lib.Array[lib.Scalar[lib.LargeListViewType[_JoinDataTypeT]]]
+)
+
+_JoinListChunkedArray: TypeAlias = (
+    lib.ChunkedArray[lib.Scalar[lib.ListType[_JoinDataTypeT]]]
+    | lib.ChunkedArray[lib.Scalar[lib.LargeListType[_JoinDataTypeT]]]
+    | lib.ChunkedArray[lib.Scalar[lib.FixedSizeListType[_JoinDataTypeT, Any]]]
+    | lib.ChunkedArray[lib.Scalar[lib.ListViewType[_JoinDataTypeT]]]
+    | lib.ChunkedArray[lib.Scalar[lib.LargeListViewType[_JoinDataTypeT]]]
+)
+
+@overload
 def binary_join(
-    strings, separator, /, *, memory_pool: lib.MemoryPool | None = None
-) -> StringScalar | StringArray:
+    strings: Expression,
+    separator: Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def binary_join(
+    strings: Any,
+    separator: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def binary_join(  # pyright: ignore[reportOverlappingOverload]
+    strings: _JoinListScalar[_JoinDataTypeT],
+    separator: lib.Scalar[_JoinDataTypeT],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Scalar[_JoinDataTypeT]: ...
+@overload
+def binary_join(
+    strings: _JoinListArray[_JoinDataTypeT] | _JoinListScalar[_JoinDataTypeT],
+    separator: lib.Array[lib.Scalar[_JoinDataTypeT]] | lib.Scalar[_JoinDataTypeT],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[lib.Scalar[_JoinDataTypeT]]: ...
+@overload
+def binary_join(
+    strings: _JoinListChunkedArray[_JoinDataTypeT]
+    | _JoinListArray[_JoinDataTypeT]
+    | _JoinListScalar[_JoinDataTypeT],
+    separator: lib.ChunkedArray[lib.Scalar[_JoinDataTypeT]]
+    | lib.Array[lib.Scalar[_JoinDataTypeT]]
+    | lib.Scalar[_JoinDataTypeT],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Scalar[_JoinDataTypeT]]: ...
+def binary_join(*args, **kwargs):
     """
     Join a list of strings together with a separator.
 
@@ -4478,21 +4559,29 @@ def binary_join(
     """
 
 @overload
-def binary_join_element_wise(
-    *strings: _StringOrBinaryScalarT,
+def binary_join_element_wise(  # pyright: ignore[reportOverlappingOverload]
+    *strings: _JoinScalarT,
     null_handling: Literal["emit_null", "skip", "replace"] = "emit_null",
     null_replacement: str = "",
     options: JoinOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> _StringOrBinaryScalarT: ...
+) -> _JoinScalarT: ...
 @overload
 def binary_join_element_wise(
-    *strings: _StringOrBinaryArrayT,
+    *strings: lib.Array[_JoinScalarT] | _JoinScalarT,
     null_handling: Literal["emit_null", "skip", "replace"] = "emit_null",
     null_replacement: str = "",
     options: JoinOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> _StringOrBinaryArrayT: ...
+) -> lib.Array[_JoinScalarT]: ...
+@overload
+def binary_join_element_wise(
+    *strings: lib.ChunkedArray[_JoinScalarT] | lib.Array[_JoinScalarT] | _JoinScalarT,
+    null_handling: Literal["emit_null", "skip", "replace"] = "emit_null",
+    null_replacement: str = "",
+    options: JoinOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[_JoinScalarT]: ...
 @overload
 def binary_join_element_wise(
     *strings: Expression,
@@ -7624,14 +7713,42 @@ def map_lookup(
         If not passed, will allocate memory from the default memory pool.
     """
 
+@overload
 def struct_field(
-    values,
+    values: Expression,
     /,
-    indices,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
     *,
     options: StructFieldOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-):
+) -> Expression: ...
+@overload
+def struct_field(
+    values: lib.ChunkedArray[lib.StructScalar | lib.UnionScalar],
+    /,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
+    *,
+    options: StructFieldOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[Any]: ...
+@overload
+def struct_field(
+    values: lib.Array[lib.StructScalar | lib.UnionScalar],
+    /,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
+    *,
+    options: StructFieldOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[Any]: ...
+@overload
+def struct_field(
+    values: lib.StructScalar | lib.UnionScalar,
+    /,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
+    *,
+    options: StructFieldOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Scalar[Any]:
     """
     Extract children of a struct or union by index.
 
