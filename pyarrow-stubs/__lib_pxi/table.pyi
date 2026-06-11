@@ -57,9 +57,9 @@ from .array import Array, NullableCollection, StructArray, _CastAs, _PandasConve
 from .device import DeviceAllocationType
 from .io import Buffer
 from .ipc import RecordBatchReader
-from .scalar import Int64Scalar, Scalar
+from .scalar import FixedSizeListScalar, Int64Scalar, LargeListScalar, ListScalar, Scalar
 from .tensor import Tensor
-from .types import DataType, _AsPyType, _BasicDataType, _DataTypeT
+from .types import DataType, _AsPyType, _BasicDataType, _DataTypeT, _Size
 
 Field: TypeAlias = _Field[DataType]
 _ScalarT = TypeVar("_ScalarT", bound=Scalar)
@@ -1392,11 +1392,37 @@ class ChunkedArray(_PandasConvertible[pd.Series], Generic[_Scalar_co]):
 
         """
     def __iter__(self) -> Iterator[_Scalar_co]: ...
+    @overload
     def to_pylist(
         self: ChunkedArray[Scalar[_BasicDataType[_AsPyType]]],
         *,
         maps_as_pydicts: Literal["lossy", "strict"] | None = None,
-    ) -> list[_AsPyType | None]:
+    ) -> list[_AsPyType | None]: ...
+    @overload
+    def to_pylist(
+        self: ChunkedArray[ListScalar[_BasicDataType[_AsPyType]]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[list[_AsPyType | None] | None]: ...
+    @overload
+    def to_pylist(
+        self: ChunkedArray[LargeListScalar[_BasicDataType[_AsPyType]]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[list[_AsPyType | None] | None]: ...
+    @overload
+    def to_pylist(
+        self: ChunkedArray[FixedSizeListScalar[_BasicDataType[_AsPyType], _Size]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[list[_AsPyType | None] | None]: ...
+    @overload
+    def to_pylist(
+        self,
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[Any]: ...
+    def to_pylist(self, *args, **kwargs):
         """
         Convert to a list of native Python objects.
 
