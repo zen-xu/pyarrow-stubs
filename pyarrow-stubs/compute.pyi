@@ -2489,14 +2489,14 @@ def equal(
 @overload
 def equal(
     x: lib.Scalar,
-    y: lib.Array | lib.ChunkedArray,
+    y: lib.Array,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
 @overload
 def equal(
-    x: lib.Array | lib.ChunkedArray,
+    x: lib.Array,
     y: lib.Scalar,
     /,
     *,
@@ -2504,12 +2504,44 @@ def equal(
 ) -> lib.BooleanArray: ...
 @overload
 def equal(
-    x: lib.Array | lib.ChunkedArray,
-    y: lib.Array | lib.ChunkedArray,
+    x: lib.Array,
+    y: lib.Array,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
+@overload
+def equal(
+    x: lib.Scalar,
+    y: lib.ChunkedArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
+@overload
+def equal(
+    x: lib.ChunkedArray,
+    y: lib.Scalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
+@overload
+def equal(
+    x: lib.Array | lib.ChunkedArray,
+    y: lib.ChunkedArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
+@overload
+def equal(
+    x: lib.ChunkedArray,
+    y: lib.Array | lib.ChunkedArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
 @overload
 def equal(
     x: Expression,
@@ -2683,18 +2715,6 @@ memory_pool : pyarrow.MemoryPool, optional
 # ========================= 2.6 Logical functions =========================
 @overload
 def and_(
-    x: lib.BooleanScalar, y: lib.BooleanScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.BooleanScalar: ...
-@overload
-def and_(
-    x: BooleanArray,
-    y: BooleanArray,
-    /,
-    *,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.BooleanArray: ...
-@overload
-def and_(
     x: Expression,
     y: Expression,
     /,
@@ -2703,15 +2723,59 @@ def and_(
 ) -> Expression: ...
 @overload
 def and_(
-    x: lib.BooleanScalar,
-    y: BooleanArray,
+    x: Expression,
+    y: Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def and_(
+    x: Any,
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def and_(
+    x: lib.BooleanScalar, y: lib.BooleanScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanScalar: ...
+@overload
+def and_(
+    x: lib.Array[lib.BooleanScalar],
+    y: lib.Array[lib.BooleanScalar],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
 @overload
 def and_(
-    x: BooleanArray,
+    x: lib.ChunkedArray[lib.BooleanScalar],
+    y: lib.ChunkedArray[lib.BooleanScalar] | lib.Array[lib.BooleanScalar] | lib.BooleanScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
+@overload
+def and_(
+    x: lib.Array[lib.BooleanScalar] | lib.BooleanScalar,
+    y: lib.ChunkedArray[lib.BooleanScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
+@overload
+def and_(
+    x: lib.BooleanScalar,
+    y: lib.Array[lib.BooleanScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+@overload
+def and_(
+    x: lib.Array[lib.BooleanScalar],
     y: lib.BooleanScalar,
     /,
     *,
@@ -5332,6 +5396,23 @@ def choose(indices, /, *values, memory_pool: lib.MemoryPool | None = None):
         If not passed, will allocate memory from the default memory pool.
     """
 
+@overload
+def coalesce(
+    *values: Expression, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
+@overload
+def coalesce(
+    *values: _ScalarT, memory_pool: lib.MemoryPool | None = None
+) -> _ScalarT: ...
+@overload
+def coalesce(
+    *values: lib.Array[_ScalarT] | _ScalarT, memory_pool: lib.MemoryPool | None = None
+) -> lib.Array[_ScalarT]: ...
+@overload
+def coalesce(
+    *values: lib.ChunkedArray[_ScalarT] | lib.Array[_ScalarT] | _ScalarT, memory_pool: lib.MemoryPool | None = None
+) -> lib.ChunkedArray[_ScalarT]: ...
+@overload
 def coalesce(
     *values: _ScalarOrArrayT, memory_pool: lib.MemoryPool | None = None
 ) -> _ScalarOrArrayT:
@@ -5402,6 +5483,61 @@ Examples
 ]
 """
 
+@overload
+def if_else(
+    cond: Expression,
+    left: Any,
+    right: Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def if_else(
+    cond: Any,
+    left: Expression,
+    right: Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def if_else(
+    cond: Any,
+    left: Any,
+    right: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def if_else(  # pyright: ignore[reportOverlappingOverload]
+    cond: lib.BooleanScalar | bool,
+    left: _ScalarT,
+    right: _ScalarT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _ScalarT: ...
+@overload
+def if_else(
+    cond: lib.Array[lib.BooleanScalar] | lib.BooleanScalar | bool,
+    left: lib.Array[_ScalarT] | _ScalarT,
+    right: lib.Array[_ScalarT] | _ScalarT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[_ScalarT]: ...
+@overload
+def if_else(
+    cond: lib.ChunkedArray[lib.BooleanScalar] | lib.Array[lib.BooleanScalar] | lib.BooleanScalar | bool,
+    left: lib.ChunkedArray[_ScalarT] | lib.Array[_ScalarT] | _ScalarT,
+    right: lib.ChunkedArray[_ScalarT] | lib.Array[_ScalarT] | _ScalarT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[_ScalarT]: ...
+@overload
 def if_else(
     cond: ArrayLike | ScalarLike,
     left: ArrayLike | ScalarLike,
@@ -5433,25 +5569,39 @@ def if_else(
 
 @overload
 def list_value_length(
-    lists: _ListArray[Any],
+    lists: lib.Array[lib.ListScalar[Any]] | lib.Array[_ListScalar[Any]],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int32Array: ...
 @overload
 def list_value_length(
-    lists: _LargeListArray[Any],
+    lists: lib.Array[_LargeListScalar[Any]],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Array: ...
 @overload
 def list_value_length(
+    lists: lib.ChunkedArray[lib.ListScalar[Any]] | lib.ChunkedArray[_ListScalar[Any]],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Int32Scalar]: ...
+@overload
+def list_value_length(
+    lists: lib.ChunkedArray[_LargeListScalar[Any]],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Int64Scalar]: ...
+@overload
+def list_value_length(
     lists: ListArray[Any],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.Int32Array | lib.Int64Array: ...
+) -> lib.Int32Array | lib.Int64Array | lib.ChunkedArray[lib.Int32Scalar] | lib.ChunkedArray[lib.Int64Scalar]: ...
 @overload
 def list_value_length(
     lists: Expression,
