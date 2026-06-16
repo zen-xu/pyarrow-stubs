@@ -521,6 +521,16 @@ def array(
 @overload
 def array(
     values: Iterable[Any] | SupportArrowArray | SupportArrowDeviceArray,
+    type: types.ListType[_DataTypeT],
+    mask: Mask | None = None,
+    size: int | None = None,
+    from_pandas: bool | None = None,
+    safe: bool = True,
+    memory_pool: MemoryPool | None = None,
+) -> Array[scalar.ListScalar[_DataTypeT]]: ...
+@overload
+def array(
+    values: Iterable[Any] | SupportArrowArray | SupportArrowDeviceArray,
     type: _DataTypeT,
     mask: Mask | None = None,
     size: int | None = None,
