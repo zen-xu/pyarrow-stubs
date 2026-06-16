@@ -7571,13 +7571,22 @@ def list_flatten(
 ) -> Expression: ...
 @overload
 def list_flatten(
-    lists: ArrayOrChunkedArray[ListScalar[Any]],
+    lists: lib.Array[ListScalar[_DataTypeT]],
     /,
     recursive: bool = False,
     *,
     options: ListFlattenOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.ListArray[Any]: ...
+) -> lib.Array[lib.Scalar[_DataTypeT]]: ...
+@overload
+def list_flatten(
+    lists: lib.ChunkedArray[ListScalar[_DataTypeT]],
+    /,
+    recursive: bool = False,
+    *,
+    options: ListFlattenOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Scalar[_DataTypeT]]: ...
 def list_flatten(*args, **kwargs):
     """
     Flatten list values.
@@ -7724,7 +7733,7 @@ def struct_field(
 ) -> Expression: ...
 @overload
 def struct_field(
-    values: lib.ChunkedArray[lib.StructScalar | lib.UnionScalar],
+    values: lib.ChunkedArray[lib.StructScalar] | lib.ChunkedArray[lib.Scalar[lib.StructType]],
     /,
     indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
     *,
@@ -7733,7 +7742,25 @@ def struct_field(
 ) -> lib.ChunkedArray[Any]: ...
 @overload
 def struct_field(
-    values: lib.Array[lib.StructScalar | lib.UnionScalar],
+    values: lib.ChunkedArray[lib.UnionScalar] | lib.ChunkedArray[lib.Scalar[lib.UnionType]],
+    /,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
+    *,
+    options: StructFieldOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[Any]: ...
+@overload
+def struct_field(
+    values: lib.StructArray | lib.Array[lib.Scalar[lib.StructType]],
+    /,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
+    *,
+    options: StructFieldOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[Any]: ...
+@overload
+def struct_field(
+    values: lib.UnionArray | lib.Array[lib.Scalar[lib.UnionType]],
     /,
     indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
     *,

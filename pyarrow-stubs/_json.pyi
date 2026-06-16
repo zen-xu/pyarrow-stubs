@@ -110,7 +110,7 @@ class JSONStreamingReader(RecordBatchReader):
     """
 
 def read_json(
-    input_file: StrPath | IO[Any] | Buffer | NativeFile,
+    input_file: StrPath | IO[Any] | Buffer | NativeFile | None,
     read_options: ReadOptions | None = None,
     parse_options: ParseOptions | None = None,
     memory_pool: MemoryPool | None = None,
