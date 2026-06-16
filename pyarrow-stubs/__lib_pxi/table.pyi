@@ -1721,7 +1721,7 @@ def chunked_array(
 @overload
 def chunked_array(
     values: Iterable[Array[_ScalarT]],
-    type: None = None,
+    type: Any = None,
 ) -> ChunkedArray[_ScalarT]: ...
 def chunked_array(value, type=None):
     """
