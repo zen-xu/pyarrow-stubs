@@ -3820,7 +3820,7 @@ class RunEndEncodedArray(Array[scalar.RunEndEncodedScalar[_RunEndType, _BasicVal
     def from_buffers(  # pyright: ignore[reportIncompatibleMethodOverride]
         type: DataType,
         length: int,
-        buffers: list[Buffer],
+        buffers: list[None],
         null_count: int = -1,
         offset=0,
         children: tuple[Array, Array] | None = None,
