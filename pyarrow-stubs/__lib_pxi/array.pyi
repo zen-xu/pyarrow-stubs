@@ -44,7 +44,7 @@ from typing_extensions import deprecated
 
 from . import scalar, types
 from .device import DeviceAllocationType
-from .scalar import NullableCollection, Scalar
+from .scalar import FixedSizeListScalar, LargeListScalar, ListScalar, NullableCollection, Scalar
 from .types import (
     DataType,
     Field,
@@ -518,6 +518,16 @@ def array(
     safe: bool = True,
     memory_pool: MemoryPool | None = None,
 ) -> MonthDayNanoIntervalArray: ...
+@overload
+def array(
+    values: Iterable[Any] | SupportArrowArray | SupportArrowDeviceArray,
+    type: types.ListType[_DataTypeT],
+    mask: Mask | None = None,
+    size: int | None = None,
+    from_pandas: bool | None = None,
+    safe: bool = True,
+    memory_pool: MemoryPool | None = None,
+) -> Array[scalar.ListScalar[_DataTypeT]]: ...
 @overload
 def array(
     values: Iterable[Any] | SupportArrowArray | SupportArrowDeviceArray,
@@ -2151,11 +2161,37 @@ class Array(_PandasConvertible[pd.Series], Generic[_Scalar_co]):
         -------
         array : numpy.ndarray
         """
+    @overload
     def to_pylist(
         self: Array[Scalar[_BasicDataType[_AsPyType]]],
         *,
         maps_as_pydicts: Literal["lossy", "strict"] | None = None,
-    ) -> list[_AsPyType | None]:
+    ) -> list[_AsPyType | None]: ...
+    @overload
+    def to_pylist(
+        self: Array[ListScalar[_BasicDataType[_AsPyType]]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[list[_AsPyType | None] | None]: ...
+    @overload
+    def to_pylist(
+        self: Array[LargeListScalar[_BasicDataType[_AsPyType]]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[list[_AsPyType | None] | None]: ...
+    @overload
+    def to_pylist(
+        self: Array[FixedSizeListScalar[_BasicDataType[_AsPyType], _Size]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[list[_AsPyType | None] | None]: ...
+    @overload
+    def to_pylist(
+        self,
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[Any]: ...
+    def to_pylist(self, *args, **kwargs):
         """
         Convert to a list of native Python objects.
 
@@ -2163,7 +2199,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_Scalar_co]):
         ----------
         maps_as_pydicts : str, optional, default `None`
             Valid values are `None`, 'lossy', or 'strict'.
-            The default behavior (`None`), is to convert Arrow Map arrays to
+            The default behavior (`None``), is to convert Arrow Map arrays to
             Python association lists (list-of-tuples) in the same order as the
             Arrow Map, as in [(key1, value1), (key2, value2), ...].
 
@@ -2426,7 +2462,18 @@ class Decimal128Array(FixedSizeBinaryArray): ...
 class Decimal256Array(FixedSizeBinaryArray): ...
 
 class BaseListArray(Array[_ScalarT]):
-    def flatten(self, recursive: bool = False) -> Array: ...
+    @overload
+    def flatten(self: BaseListArray[scalar.ListScalar[_DataTypeT]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
+    @overload
+    def flatten(self: BaseListArray[scalar.LargeListScalar[_DataTypeT]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
+    @overload
+    def flatten(self: BaseListArray[scalar.ListViewScalar[_DataTypeT]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
+    @overload
+    def flatten(self: BaseListArray[scalar.LargeListViewScalar[_DataTypeT]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
+    @overload
+    def flatten(self: BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, Any]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
+    @overload
+    def flatten(self, recursive: bool = False) -> Array[_ScalarT]: ...
     def value_parent_indices(self) -> Int64Array: ...
     def value_lengths(self) -> Int32Array: ...
 

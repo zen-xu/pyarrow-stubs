@@ -239,6 +239,13 @@ _BinaryArrayT = TypeVar("_BinaryArrayT", bound=BinaryArray)
 _StringOrBinaryScalarT = TypeVar("_StringOrBinaryScalarT", bound=StringOrBinaryScalar)
 StringOrBinaryArray: TypeAlias = StringArray | BinaryArray
 _StringOrBinaryArrayT = TypeVar("_StringOrBinaryArrayT", bound=StringOrBinaryArray)
+_JoinScalarT = TypeVar(
+    "_JoinScalarT",
+    lib.Scalar[lib.StringType],
+    lib.Scalar[lib.LargeStringType],
+    lib.Scalar[lib.BinaryType],
+    lib.Scalar[lib.LargeBinaryType],
+)
 _TemporalScalarT = TypeVar("_TemporalScalarT", bound=TemporalScalar)
 TemporalArray: TypeAlias = ArrayOrChunkedArray[TemporalScalar]
 _TemporalArrayT = TypeVar("_TemporalArrayT", bound=TemporalArray)
@@ -2482,14 +2489,14 @@ def equal(
 @overload
 def equal(
     x: lib.Scalar,
-    y: lib.Array | lib.ChunkedArray,
+    y: lib.Array,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
 @overload
 def equal(
-    x: lib.Array | lib.ChunkedArray,
+    x: lib.Array,
     y: lib.Scalar,
     /,
     *,
@@ -2497,12 +2504,44 @@ def equal(
 ) -> lib.BooleanArray: ...
 @overload
 def equal(
-    x: lib.Array | lib.ChunkedArray,
-    y: lib.Array | lib.ChunkedArray,
+    x: lib.Array,
+    y: lib.Array,
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
+@overload
+def equal(
+    x: lib.Scalar,
+    y: lib.ChunkedArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
+@overload
+def equal(
+    x: lib.ChunkedArray,
+    y: lib.Scalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
+@overload
+def equal(
+    x: lib.Array | lib.ChunkedArray,
+    y: lib.ChunkedArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
+@overload
+def equal(
+    x: lib.ChunkedArray,
+    y: lib.Array | lib.ChunkedArray,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
 @overload
 def equal(
     x: Expression,
@@ -2676,18 +2715,6 @@ memory_pool : pyarrow.MemoryPool, optional
 # ========================= 2.6 Logical functions =========================
 @overload
 def and_(
-    x: lib.BooleanScalar, y: lib.BooleanScalar, /, *, memory_pool: lib.MemoryPool | None = None
-) -> lib.BooleanScalar: ...
-@overload
-def and_(
-    x: BooleanArray,
-    y: BooleanArray,
-    /,
-    *,
-    memory_pool: lib.MemoryPool | None = None,
-) -> lib.BooleanArray: ...
-@overload
-def and_(
     x: Expression,
     y: Expression,
     /,
@@ -2696,15 +2723,59 @@ def and_(
 ) -> Expression: ...
 @overload
 def and_(
-    x: lib.BooleanScalar,
-    y: BooleanArray,
+    x: Expression,
+    y: Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def and_(
+    x: Any,
+    y: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def and_(
+    x: lib.BooleanScalar, y: lib.BooleanScalar, /, *, memory_pool: lib.MemoryPool | None = None
+) -> lib.BooleanScalar: ...
+@overload
+def and_(
+    x: lib.Array[lib.BooleanScalar],
+    y: lib.Array[lib.BooleanScalar],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.BooleanArray: ...
 @overload
 def and_(
-    x: BooleanArray,
+    x: lib.ChunkedArray[lib.BooleanScalar],
+    y: lib.ChunkedArray[lib.BooleanScalar] | lib.Array[lib.BooleanScalar] | lib.BooleanScalar,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
+@overload
+def and_(
+    x: lib.Array[lib.BooleanScalar] | lib.BooleanScalar,
+    y: lib.ChunkedArray[lib.BooleanScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.BooleanScalar]: ...
+@overload
+def and_(
+    x: lib.BooleanScalar,
+    y: lib.Array[lib.BooleanScalar],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.BooleanArray: ...
+@overload
+def and_(
+    x: lib.Array[lib.BooleanScalar],
     y: lib.BooleanScalar,
     /,
     *,
@@ -4457,9 +4528,83 @@ def extract_regex(*args, **kwargs):
     """
 
 # ========================= 2.16 String join =========================
+_JoinDataTypeT = TypeVar(
+    "_JoinDataTypeT",
+    lib.StringType,
+    lib.LargeStringType,
+    lib.BinaryType,
+    lib.LargeBinaryType,
+)
+
+_JoinListScalar: TypeAlias = (
+    lib.Scalar[lib.ListType[_JoinDataTypeT]]
+    | lib.Scalar[lib.LargeListType[_JoinDataTypeT]]
+    | lib.Scalar[lib.FixedSizeListType[_JoinDataTypeT, Any]]
+    | lib.Scalar[lib.ListViewType[_JoinDataTypeT]]
+    | lib.Scalar[lib.LargeListViewType[_JoinDataTypeT]]
+)
+
+_JoinListArray: TypeAlias = (
+    lib.Array[lib.Scalar[lib.ListType[_JoinDataTypeT]]]
+    | lib.Array[lib.Scalar[lib.LargeListType[_JoinDataTypeT]]]
+    | lib.Array[lib.Scalar[lib.FixedSizeListType[_JoinDataTypeT, Any]]]
+    | lib.Array[lib.Scalar[lib.ListViewType[_JoinDataTypeT]]]
+    | lib.Array[lib.Scalar[lib.LargeListViewType[_JoinDataTypeT]]]
+)
+
+_JoinListChunkedArray: TypeAlias = (
+    lib.ChunkedArray[lib.Scalar[lib.ListType[_JoinDataTypeT]]]
+    | lib.ChunkedArray[lib.Scalar[lib.LargeListType[_JoinDataTypeT]]]
+    | lib.ChunkedArray[lib.Scalar[lib.FixedSizeListType[_JoinDataTypeT, Any]]]
+    | lib.ChunkedArray[lib.Scalar[lib.ListViewType[_JoinDataTypeT]]]
+    | lib.ChunkedArray[lib.Scalar[lib.LargeListViewType[_JoinDataTypeT]]]
+)
+
+@overload
 def binary_join(
-    strings, separator, /, *, memory_pool: lib.MemoryPool | None = None
-) -> StringScalar | StringArray:
+    strings: Expression,
+    separator: Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def binary_join(
+    strings: Any,
+    separator: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def binary_join(  # pyright: ignore[reportOverlappingOverload]
+    strings: _JoinListScalar[_JoinDataTypeT],
+    separator: lib.Scalar[_JoinDataTypeT],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Scalar[_JoinDataTypeT]: ...
+@overload
+def binary_join(
+    strings: _JoinListArray[_JoinDataTypeT] | _JoinListScalar[_JoinDataTypeT],
+    separator: lib.Array[lib.Scalar[_JoinDataTypeT]] | lib.Scalar[_JoinDataTypeT],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[lib.Scalar[_JoinDataTypeT]]: ...
+@overload
+def binary_join(
+    strings: _JoinListChunkedArray[_JoinDataTypeT]
+    | _JoinListArray[_JoinDataTypeT]
+    | _JoinListScalar[_JoinDataTypeT],
+    separator: lib.ChunkedArray[lib.Scalar[_JoinDataTypeT]]
+    | lib.Array[lib.Scalar[_JoinDataTypeT]]
+    | lib.Scalar[_JoinDataTypeT],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Scalar[_JoinDataTypeT]]: ...
+def binary_join(*args, **kwargs):
     """
     Join a list of strings together with a separator.
 
@@ -4478,21 +4623,29 @@ def binary_join(
     """
 
 @overload
-def binary_join_element_wise(
-    *strings: _StringOrBinaryScalarT,
+def binary_join_element_wise(  # pyright: ignore[reportOverlappingOverload]
+    *strings: _JoinScalarT,
     null_handling: Literal["emit_null", "skip", "replace"] = "emit_null",
     null_replacement: str = "",
     options: JoinOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> _StringOrBinaryScalarT: ...
+) -> _JoinScalarT: ...
 @overload
 def binary_join_element_wise(
-    *strings: _StringOrBinaryArrayT,
+    *strings: lib.Array[_JoinScalarT] | _JoinScalarT,
     null_handling: Literal["emit_null", "skip", "replace"] = "emit_null",
     null_replacement: str = "",
     options: JoinOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> _StringOrBinaryArrayT: ...
+) -> lib.Array[_JoinScalarT]: ...
+@overload
+def binary_join_element_wise(
+    *strings: lib.ChunkedArray[_JoinScalarT] | lib.Array[_JoinScalarT] | _JoinScalarT,
+    null_handling: Literal["emit_null", "skip", "replace"] = "emit_null",
+    null_replacement: str = "",
+    options: JoinOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[_JoinScalarT]: ...
 @overload
 def binary_join_element_wise(
     *strings: Expression,
@@ -5243,6 +5396,23 @@ def choose(indices, /, *values, memory_pool: lib.MemoryPool | None = None):
         If not passed, will allocate memory from the default memory pool.
     """
 
+@overload
+def coalesce(
+    *values: Expression, memory_pool: lib.MemoryPool | None = None
+) -> Expression: ...
+@overload
+def coalesce(
+    *values: _ScalarT, memory_pool: lib.MemoryPool | None = None
+) -> _ScalarT: ...
+@overload
+def coalesce(
+    *values: lib.Array[_ScalarT] | _ScalarT, memory_pool: lib.MemoryPool | None = None
+) -> lib.Array[_ScalarT]: ...
+@overload
+def coalesce(
+    *values: lib.ChunkedArray[_ScalarT] | lib.Array[_ScalarT] | _ScalarT, memory_pool: lib.MemoryPool | None = None
+) -> lib.ChunkedArray[_ScalarT]: ...
+@overload
 def coalesce(
     *values: _ScalarOrArrayT, memory_pool: lib.MemoryPool | None = None
 ) -> _ScalarOrArrayT:
@@ -5313,6 +5483,61 @@ Examples
 ]
 """
 
+@overload
+def if_else(
+    cond: Expression,
+    left: Any,
+    right: Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def if_else(
+    cond: Any,
+    left: Expression,
+    right: Any,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def if_else(
+    cond: Any,
+    left: Any,
+    right: Expression,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+@overload
+def if_else(  # pyright: ignore[reportOverlappingOverload]
+    cond: lib.BooleanScalar | bool,
+    left: _ScalarT,
+    right: _ScalarT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _ScalarT: ...
+@overload
+def if_else(
+    cond: lib.Array[lib.BooleanScalar] | lib.BooleanScalar | bool,
+    left: lib.Array[_ScalarT] | _ScalarT,
+    right: lib.Array[_ScalarT] | _ScalarT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[_ScalarT]: ...
+@overload
+def if_else(
+    cond: lib.ChunkedArray[lib.BooleanScalar] | lib.Array[lib.BooleanScalar] | lib.BooleanScalar | bool,
+    left: lib.ChunkedArray[_ScalarT] | lib.Array[_ScalarT] | _ScalarT,
+    right: lib.ChunkedArray[_ScalarT] | lib.Array[_ScalarT] | _ScalarT,
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[_ScalarT]: ...
+@overload
 def if_else(
     cond: ArrayLike | ScalarLike,
     left: ArrayLike | ScalarLike,
@@ -5344,25 +5569,39 @@ def if_else(
 
 @overload
 def list_value_length(
-    lists: _ListArray[Any],
+    lists: lib.Array[lib.ListScalar[Any]] | lib.Array[_ListScalar[Any]],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int32Array: ...
 @overload
 def list_value_length(
-    lists: _LargeListArray[Any],
+    lists: lib.Array[_LargeListScalar[Any]],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.Int64Array: ...
 @overload
 def list_value_length(
+    lists: lib.ChunkedArray[lib.ListScalar[Any]] | lib.ChunkedArray[_ListScalar[Any]],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Int32Scalar]: ...
+@overload
+def list_value_length(
+    lists: lib.ChunkedArray[_LargeListScalar[Any]],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Int64Scalar]: ...
+@overload
+def list_value_length(
     lists: ListArray[Any],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.Int32Array | lib.Int64Array: ...
+) -> lib.Int32Array | lib.Int64Array | lib.ChunkedArray[lib.Int32Scalar] | lib.ChunkedArray[lib.Int64Scalar]: ...
 @overload
 def list_value_length(
     lists: Expression,
@@ -7482,13 +7721,22 @@ def list_flatten(
 ) -> Expression: ...
 @overload
 def list_flatten(
-    lists: ArrayOrChunkedArray[ListScalar[Any]],
+    lists: lib.Array[ListScalar[_DataTypeT]],
     /,
     recursive: bool = False,
     *,
     options: ListFlattenOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-) -> lib.ListArray[Any]: ...
+) -> lib.Array[lib.Scalar[_DataTypeT]]: ...
+@overload
+def list_flatten(
+    lists: lib.ChunkedArray[ListScalar[_DataTypeT]],
+    /,
+    recursive: bool = False,
+    *,
+    options: ListFlattenOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Scalar[_DataTypeT]]: ...
 def list_flatten(*args, **kwargs):
     """
     Flatten list values.
@@ -7624,14 +7872,60 @@ def map_lookup(
         If not passed, will allocate memory from the default memory pool.
     """
 
+@overload
 def struct_field(
-    values,
+    values: Expression,
     /,
-    indices,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
     *,
     options: StructFieldOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
-):
+) -> Expression: ...
+@overload
+def struct_field(
+    values: lib.ChunkedArray[lib.StructScalar] | lib.ChunkedArray[lib.Scalar[lib.StructType]],
+    /,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
+    *,
+    options: StructFieldOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[Any]: ...
+@overload
+def struct_field(
+    values: lib.ChunkedArray[lib.UnionScalar] | lib.ChunkedArray[lib.Scalar[lib.UnionType]],
+    /,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
+    *,
+    options: StructFieldOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[Any]: ...
+@overload
+def struct_field(
+    values: lib.StructArray | lib.Array[lib.Scalar[lib.StructType]],
+    /,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
+    *,
+    options: StructFieldOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[Any]: ...
+@overload
+def struct_field(
+    values: lib.UnionArray | lib.Array[lib.Scalar[lib.UnionType]],
+    /,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
+    *,
+    options: StructFieldOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[Any]: ...
+@overload
+def struct_field(
+    values: lib.StructScalar | lib.UnionScalar,
+    /,
+    indices: list[str] | list[bytes] | list[int] | Expression | bytes | str | int,
+    *,
+    options: StructFieldOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Scalar[Any]:
     """
     Extract children of a struct or union by index.
 

@@ -2,7 +2,7 @@ from typing import IO, Any, Literal
 
 from _typeshed import StrPath
 
-from .lib import MemoryPool, RecordBatchReader, Schema, Table, _Weakrefable
+from .lib import Buffer, MemoryPool, NativeFile, RecordBatchReader, Schema, Table, _Weakrefable
 
 class ReadOptions(_Weakrefable):
     """
@@ -110,7 +110,7 @@ class JSONStreamingReader(RecordBatchReader):
     """
 
 def read_json(
-    input_file: StrPath | IO[Any],
+    input_file: StrPath | IO[Any] | Buffer | NativeFile | None,
     read_options: ReadOptions | None = None,
     parse_options: ParseOptions | None = None,
     memory_pool: MemoryPool | None = None,
@@ -138,7 +138,7 @@ def read_json(
     """
 
 def open_json(
-    input_file: StrPath | IO[Any],
+    input_file: StrPath | IO[Any] | Buffer | NativeFile,
     read_options: ReadOptions | None = None,
     parse_options: ParseOptions | None = None,
     memory_pool: MemoryPool | None = None,
