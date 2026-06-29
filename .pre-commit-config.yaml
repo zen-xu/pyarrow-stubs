@@ -21,13 +21,13 @@ repos:
       - id: check-docstring-first
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.18
+    rev: v0.15.20
     hooks:
       - id: ruff
         args: [--fix]
       - id: ruff-format
 
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.410
+    rev: v1.1.411
     hooks:
       - id: pyright
