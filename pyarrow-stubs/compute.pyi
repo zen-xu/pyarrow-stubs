@@ -90,6 +90,7 @@ from pyarrow._compute import register_vector_function as register_vector_functio
 from pyarrow._compute import _Order, _Placement
 from pyarrow._stubs_typing import ArrayLike, ScalarLike
 from . import lib
+from .__lib_pxi.types import _K, _ValueT, _Ordered
 
 _P = ParamSpec("_P")
 _R = TypeVar("_R")
@@ -7841,6 +7842,46 @@ def list_slice(*args, **kwargs):
         If not passed, will allocate memory from the default memory pool.
     """
 
+@overload
+def map_lookup(
+    container: lib.MapArray[_K, _ValueT],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last", "all"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[lib.ListScalar[_ValueT]]: ...
+@overload
+def map_lookup(
+    container: lib.Array[lib.Scalar[lib.MapType[_K, _ValueT, _Ordered]]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last", "all"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[lib.ListScalar[_ValueT]]: ...
+@overload
+def map_lookup(
+    container: lib.ChunkedArray[lib.Scalar[lib.MapType[_K, _ValueT, _Ordered]]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last", "all"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.ListScalar[_ValueT]]: ...
+@overload
+def map_lookup(
+    container: Expression,
+    /,
+    query_key: lib.Scalar[lib.DataType] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last", "all"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
 def map_lookup(
     container,
     /,

@@ -3365,7 +3365,7 @@ class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, _S
         """
 
 _MapKeyT = TypeVar("_MapKeyT", bound=_BasicDataType)
-_MapItemT = TypeVar("_MapItemT", bound=_BasicDataType)
+_MapItemT = TypeVar("_MapItemT", bound=DataType)
 
 class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
     @overload
