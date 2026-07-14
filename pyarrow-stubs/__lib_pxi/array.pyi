@@ -1092,6 +1092,12 @@ def nulls(
     type: types.ExtensionType,
     memory_pool: MemoryPool | None = None,
 ) -> ExtensionArray[Any]: ...
+@overload
+def nulls(
+    size: int,
+    type: _DataTypeT,
+    memory_pool: MemoryPool | None = None,
+) -> Array[Scalar[_DataTypeT]]: ...
 def nulls(*args, **kwargs):
     """
     Create a strongly-typed Array instance with all elements null.
@@ -3487,10 +3493,10 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
         dtype: object
         """
     @property
-    def keys(self) -> Array:
+    def keys(self) -> Array[Scalar[_MapKeyT]]:
         """Flattened array of keys across all maps in array"""
     @property
-    def items(self) -> Array:
+    def items(self) -> Array[Scalar[_MapItemT]]:
         """Flattened array of items across all maps in array"""
 
 class UnionArray(Array[scalar.UnionScalar]):

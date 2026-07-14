@@ -2043,7 +2043,7 @@ class Schema(_Weakrefable):
         -- schema metadata --
         pandas: '{"index_columns": [{"kind": "range", "name": null, ...
         """
-    def field(self, i: int | str | bytes) -> Field:
+    def field(self, i: int | str | bytes) -> Field[DataType]:
         """
         Select a field by its column name or numeric index.
 
