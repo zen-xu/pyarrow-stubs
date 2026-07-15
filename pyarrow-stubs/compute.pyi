@@ -5913,7 +5913,7 @@ memory_pool : pyarrow.MemoryPool, optional
 
 @overload
 def cast(
-    arr: lib.Scalar,
+    arr: lib.Scalar[lib.DataType],
     target_type: _DataTypeT,
     safe: bool | None = None,
     options: CastOptions | None = None,
@@ -5921,7 +5921,7 @@ def cast(
 ) -> lib.Scalar[_DataTypeT]: ...
 @overload
 def cast(
-    arr: lib.Array,
+    arr: lib.Array[lib.Scalar[lib.DataType]],
     target_type: _DataTypeT,
     safe: bool | None = None,
     options: CastOptions | None = None,
@@ -5929,7 +5929,7 @@ def cast(
 ) -> lib.Array[lib.Scalar[_DataTypeT]]: ...
 @overload
 def cast(
-    arr: lib.ChunkedArray,
+    arr: lib.ChunkedArray[lib.Scalar[lib.DataType]],
     target_type: _DataTypeT,
     safe: bool | None = None,
     options: CastOptions | None = None,

@@ -19,6 +19,7 @@ from typing import (
 )
 
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 from pandas.core.dtypes.base import ExtensionDtype
@@ -2488,7 +2489,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: Array[Scalar[_DataTypeT]],
         *,
         type: None = None,
@@ -2499,7 +2500,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: list[int],
         *,
         type: None = None,
@@ -2510,7 +2511,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: list[float],
         *,
         type: None = None,
@@ -2521,7 +2522,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: list[str],
         *,
         type: None = None,
@@ -2532,7 +2533,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: list[bytes],
         *,
         type: None = None,
@@ -2543,7 +2544,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: list,
         *,
         type: None = None,
@@ -2554,7 +2555,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: Array | list,
         *,
         type: _DataTypeT,
