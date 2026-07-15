@@ -7854,6 +7854,26 @@ def map_lookup(
 ) -> lib.ListArray[lib.ListScalar[_ValueT]]: ...
 @overload
 def map_lookup(
+    container: lib.Array[lib.MapScalar[_K, _ValueT]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last", "all"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[lib.ListScalar[_ValueT]]: ...
+@overload
+def map_lookup(
+    container: lib.ChunkedArray[lib.MapScalar[_K, _ValueT]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last", "all"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.ListScalar[_ValueT]]: ...
+@overload
+def map_lookup(
     container: lib.Array[lib.Scalar[lib.MapType[_K, _ValueT, _Ordered]]],
     /,
     query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
@@ -7872,6 +7892,26 @@ def map_lookup(
     options: MapLookupOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.ChunkedArray[lib.ListScalar[_ValueT]]: ...
+@overload
+def map_lookup(
+    container: lib.Array[lib.Scalar[lib.DataType]],
+    /,
+    query_key: lib.Scalar[lib.DataType] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last", "all"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[lib.Scalar[lib.DataType]]: ...
+@overload
+def map_lookup(
+    container: lib.ChunkedArray[lib.Scalar[lib.DataType]],
+    /,
+    query_key: lib.Scalar[lib.DataType] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last", "all"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Scalar[lib.DataType]]: ...
 @overload
 def map_lookup(
     container: Expression,

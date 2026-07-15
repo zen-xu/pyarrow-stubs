@@ -2513,7 +2513,7 @@ class _Tabular(_PandasConvertible[pd.DataFrame], Generic[_ColumnT]):
         year: [[2021,2022,2019,2021]]
         """
 
-class RecordBatch(_Tabular[Array]):
+class RecordBatch(_Tabular[Array[Scalar[DataType]]]):
     """
     Batch of rows of columns of equal length
 
@@ -3655,7 +3655,7 @@ JoinType: TypeAlias = Literal[
     "full outer",
 ]
 
-class Table(_Tabular[ChunkedArray[Any]]):
+class Table(_Tabular[ChunkedArray[Scalar[DataType]]]):
     """
     A collection of top-level named, equal length Arrow arrays.
 

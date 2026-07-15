@@ -3371,8 +3371,10 @@ class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, _S
 
         """
 
-_MapKeyT = TypeVar("_MapKeyT", bound=_BasicDataType)
+_MapKeyT = TypeVar("_MapKeyT", bound=DataType)
 _MapItemT = TypeVar("_MapItemT", bound=DataType)
+_FromArraysKeyT = TypeVar("_FromArraysKeyT", bound=DataType)
+_FromArraysItemT = TypeVar("_FromArraysItemT", bound=DataType)
 
 class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
     @overload
@@ -3380,26 +3382,26 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
     def from_arrays(
         cls,
         offsets: Int64Array,
-        keys: Array[Scalar[_MapKeyT]],
-        items: Array[Scalar[_MapItemT]],
+        keys: Array[Scalar[_FromArraysKeyT]],
+        items: Array[Scalar[_FromArraysItemT]],
         *,
         type: None = None,
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
-    ) -> MapArray[_MapKeyT, _MapItemT]: ...
+    ) -> MapArray[_FromArraysKeyT, _FromArraysItemT]: ...
     @overload
     @classmethod
-    def from_arrays(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def from_arrays(
         cls,
         offsets: Int64Array,
-        values: Array,
+        values: Array[Any],
         *,
-        type: MapType[_MapKeyT, _MapItemT],
+        type: MapType[_FromArraysKeyT, _FromArraysItemT],
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
-    ) -> MapArray[_MapKeyT, _MapItemT]: ...
+    ) -> MapArray[_FromArraysKeyT, _FromArraysItemT]: ...
     @classmethod
-    def from_arrays(cls, *args, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
+    def from_arrays(cls, *args, **kwargs):
         """
         Construct MapArray from arrays of int32 offsets and key, item arrays.
 

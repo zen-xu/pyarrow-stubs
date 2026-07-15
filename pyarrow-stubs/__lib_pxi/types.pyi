@@ -754,7 +754,7 @@ class DictionaryType(DataType, Generic[_IndexT, _BasicValueT, _Ordered]):
         DataType(string)
         """
 
-_K = TypeVar("_K", bound=_BasicDataType)
+_K = TypeVar("_K", bound=DataType)
 
 class MapType(DataType, Generic[_K, _ValueT, _Ordered]):
     """
