@@ -2468,7 +2468,7 @@ class Decimal64Array(FixedSizeBinaryArray): ...
 class Decimal128Array(FixedSizeBinaryArray): ...
 class Decimal256Array(FixedSizeBinaryArray): ...
 
-class BaseListArray(Array[_ScalarT]):
+class BaseListArray(Array[_Scalar_co]):
     @overload
     def flatten(self: BaseListArray[scalar.ListScalar[_DataTypeT]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
     @overload
@@ -2480,11 +2480,11 @@ class BaseListArray(Array[_ScalarT]):
     @overload
     def flatten(self: BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, Any]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
     @overload
-    def flatten(self, recursive: bool = False) -> Array[_ScalarT]: ...
+    def flatten(self, recursive: bool = False) -> Array[_Scalar_co]: ...
     def value_parent_indices(self) -> Int64Array: ...
     def value_lengths(self) -> Int32Array: ...
 
-class ListArray(BaseListArray[_ScalarT]):
+class ListArray(BaseListArray[_Scalar_co]):
     @overload
     @classmethod
     def from_arrays(
@@ -2710,18 +2710,20 @@ class ListArray(BaseListArray[_ScalarT]):
         ]
         """
 
+_LargeListValueT = TypeVar("_LargeListValueT", bound=DataType)
+
 class LargeListArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
     @overload
     @classmethod
     def from_arrays(
         cls,
         offsets: Int64Array,
-        values: Array[Scalar[_DataTypeT]],
+        values: Array[Scalar[_LargeListValueT]],
         *,
         type: None = None,
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
-    ) -> LargeListArray[_DataTypeT]: ...
+    ) -> LargeListArray[_LargeListValueT]: ...
     @overload
     @classmethod
     def from_arrays(
@@ -2729,10 +2731,10 @@ class LargeListArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
         offsets: Int64Array,
         values: Array,
         *,
-        type: _DataTypeT,
+        type: _LargeListValueT,
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
-    ) -> LargeListArray[_DataTypeT]: ...
+    ) -> LargeListArray[_LargeListValueT]: ...
     @classmethod
     def from_arrays(cls, *args, **kwargs):
         """
@@ -3256,26 +3258,28 @@ class LargeListViewArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
         ]
         """
 
+_FixedSizeListValueT = TypeVar("_FixedSizeListValueT", bound=DataType)
+
 class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, _Size]]):
     @overload
     @classmethod
     def from_arrays(
         cls,
-        values: Array[Scalar[_DataTypeT]],
+        values: Array[Scalar[_FixedSizeListValueT]],
         *,
         type: None = None,
         mask: Mask | None = None,
-    ) -> FixedSizeListArray[_DataTypeT, None]: ...
+    ) -> FixedSizeListArray[_FixedSizeListValueT, None]: ...
     @overload
     @classmethod
     def from_arrays(
         cls,
-        values: Array[Scalar[_DataTypeT]],
+        values: Array[Scalar[_FixedSizeListValueT]],
         limit_size: _Size,
         *,
         type: None = None,
         mask: Mask | None = None,
-    ) -> FixedSizeListArray[_DataTypeT, _Size]: ...
+    ) -> FixedSizeListArray[_FixedSizeListValueT, _Size]: ...
     @classmethod
     def from_arrays(cls, *args, **kwargs):
         """
