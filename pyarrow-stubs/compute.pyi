@@ -5570,7 +5570,7 @@ def if_else(
 
 @overload
 def list_value_length(
-    lists: lib.Array[lib.ListScalar[Any]] | lib.Array[_ListScalar[Any]],
+    lists: lib.Array[lib.ListScalar[Any] | _ListScalar[Any]],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
@@ -5584,7 +5584,14 @@ def list_value_length(
 ) -> lib.Int64Array: ...
 @overload
 def list_value_length(
-    lists: lib.ChunkedArray[lib.ListScalar[Any]] | lib.ChunkedArray[_ListScalar[Any]],
+    lists: lib.Array[lib.ListScalar[Any] | _ListScalar[Any] | _LargeListScalar[Any]],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Int32Array | lib.Int64Array: ...
+@overload
+def list_value_length(
+    lists: lib.ChunkedArray[lib.ListScalar[Any] | _ListScalar[Any]],
     /,
     *,
     memory_pool: lib.MemoryPool | None = None,
@@ -5596,6 +5603,13 @@ def list_value_length(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.ChunkedArray[lib.Int64Scalar]: ...
+@overload
+def list_value_length(
+    lists: lib.ChunkedArray[lib.ListScalar[Any] | _ListScalar[Any] | _LargeListScalar[Any]],
+    /,
+    *,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Int32Scalar] | lib.ChunkedArray[lib.Int64Scalar]: ...
 @overload
 def list_value_length(
     lists: ListArray[Any],
