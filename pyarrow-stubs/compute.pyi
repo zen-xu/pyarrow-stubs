@@ -5403,20 +5403,16 @@ def coalesce(
 ) -> Expression: ...
 @overload
 def coalesce(
-    *values: _ScalarT, memory_pool: lib.MemoryPool | None = None
+    *values: _ScalarT | int | float | str | bool | bytes, memory_pool: lib.MemoryPool | None = None
 ) -> _ScalarT: ...
 @overload
 def coalesce(
-    *values: lib.Array[_ScalarT] | _ScalarT, memory_pool: lib.MemoryPool | None = None
+    *values: lib.Array[_ScalarT] | _ScalarT | int | float | str | bool | bytes, memory_pool: lib.MemoryPool | None = None
 ) -> lib.Array[_ScalarT]: ...
 @overload
 def coalesce(
-    *values: lib.ChunkedArray[_ScalarT] | lib.Array[_ScalarT] | _ScalarT, memory_pool: lib.MemoryPool | None = None
+    *values: lib.ChunkedArray[_ScalarT] | lib.Array[_ScalarT] | _ScalarT | int | float | str | bool | bytes, memory_pool: lib.MemoryPool | None = None
 ) -> lib.ChunkedArray[_ScalarT]: ...
-@overload
-def coalesce(
-    *values: _ScalarOrArrayT, memory_pool: lib.MemoryPool | None = None
-) -> _ScalarOrArrayT:
     """
     Select the first non-null value.
 

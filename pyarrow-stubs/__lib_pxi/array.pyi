@@ -3385,7 +3385,7 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int64Array,
+        offsets: Int32Array | Int64Array,
         keys: Array[Scalar[_FromArraysKeyT]],
         items: Array[Scalar[_FromArraysItemT]],
         *,
@@ -3397,7 +3397,7 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int64Array,
+        offsets: Int32Array | Int64Array,
         values: Array[Any],
         *,
         type: MapType[_FromArraysKeyT, _FromArraysItemT],
@@ -3503,7 +3503,7 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
     def keys(self) -> Array[Scalar[_MapKeyT]]:
         """Flattened array of keys across all maps in array"""
     @property
-    def items(self) -> Array[Scalar[_MapItemT]]:
+    def items(self: MapArray[Any, types.ListType[_DataTypeT]]) -> ListArray[scalar.ListScalar[_DataTypeT]]:
         """Flattened array of items across all maps in array"""
 
 class UnionArray(Array[scalar.UnionScalar]):
