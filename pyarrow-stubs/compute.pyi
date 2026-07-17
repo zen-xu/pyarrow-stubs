@@ -7856,52 +7856,154 @@ def list_slice(*args, **kwargs):
         If not passed, will allocate memory from the default memory pool.
     """
 
+_ItemT = TypeVar("_ItemT", bound=lib.DataType)
+
+@overload
+def map_lookup(
+    container: lib.MapArray[_K, lib.ListType[_ItemT]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[lib.ListScalar[_ItemT]]: ...
 @overload
 def map_lookup(
     container: lib.MapArray[_K, _ValueT],
     /,
     query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
-    occurrence: Literal["first", "last", "all"] = "first",
+    occurrence: Literal["first", "last"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[lib.Scalar[_ValueT]]: ...
+@overload
+def map_lookup(
+    container: lib.MapArray[_K, _ValueT],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["all"],
     *,
     options: MapLookupOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.ListArray[lib.ListScalar[_ValueT]]: ...
+@overload
+def map_lookup(
+    container: lib.Array[lib.MapScalar[_K, lib.ListType[_ItemT]]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[lib.ListScalar[_ItemT]]: ...
 @overload
 def map_lookup(
     container: lib.Array[lib.MapScalar[_K, _ValueT]],
     /,
     query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
-    occurrence: Literal["first", "last", "all"] = "first",
+    occurrence: Literal["first", "last"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[lib.Scalar[_ValueT]]: ...
+@overload
+def map_lookup(
+    container: lib.Array[lib.MapScalar[_K, _ValueT]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["all"],
     *,
     options: MapLookupOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.ListArray[lib.ListScalar[_ValueT]]: ...
 @overload
 def map_lookup(
+    container: lib.ChunkedArray[lib.MapScalar[_K, lib.ListType[_ItemT]]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.ListScalar[_ItemT]]: ...
+@overload
+def map_lookup(
     container: lib.ChunkedArray[lib.MapScalar[_K, _ValueT]],
     /,
     query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
-    occurrence: Literal["first", "last", "all"] = "first",
+    occurrence: Literal["first", "last"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Scalar[_ValueT]]: ...
+@overload
+def map_lookup(
+    container: lib.ChunkedArray[lib.MapScalar[_K, _ValueT]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["all"],
     *,
     options: MapLookupOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.ChunkedArray[lib.ListScalar[_ValueT]]: ...
 @overload
 def map_lookup(
+    container: lib.Array[lib.Scalar[lib.MapType[_K, lib.ListType[_ItemT], _Ordered]]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ListArray[lib.ListScalar[_ItemT]]: ...
+@overload
+def map_lookup(
     container: lib.Array[lib.Scalar[lib.MapType[_K, _ValueT, _Ordered]]],
     /,
     query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
-    occurrence: Literal["first", "last", "all"] = "first",
+    occurrence: Literal["first", "last"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.Array[lib.Scalar[_ValueT]]: ...
+@overload
+def map_lookup(
+    container: lib.Array[lib.Scalar[lib.MapType[_K, _ValueT, _Ordered]]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["all"],
     *,
     options: MapLookupOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
 ) -> lib.ListArray[lib.ListScalar[_ValueT]]: ...
 @overload
 def map_lookup(
+    container: lib.ChunkedArray[lib.Scalar[lib.MapType[_K, lib.ListType[_ItemT], _Ordered]]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["first", "last"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.ListScalar[_ItemT]]: ...
+@overload
+def map_lookup(
     container: lib.ChunkedArray[lib.Scalar[lib.MapType[_K, _ValueT, _Ordered]]],
     /,
     query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
-    occurrence: Literal["first", "last", "all"] = "first",
+    occurrence: Literal["first", "last"] = "first",
+    *,
+    options: MapLookupOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> lib.ChunkedArray[lib.Scalar[_ValueT]]: ...
+@overload
+def map_lookup(
+    container: lib.ChunkedArray[lib.Scalar[lib.MapType[_K, _ValueT, _Ordered]]],
+    /,
+    query_key: lib.Scalar[_K] | lib.DataType | str | bytes | int | float | bool,
+    occurrence: Literal["all"],
     *,
     options: MapLookupOptions | None = None,
     memory_pool: lib.MemoryPool | None = None,
