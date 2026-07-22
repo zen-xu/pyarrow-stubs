@@ -4,7 +4,7 @@ import pandas as pd
 
 from _typeshed import StrPath
 from pyarrow._feather import FeatherError
-from pyarrow.lib import Table
+from pyarrow.lib import NativeFile, Table
 
 __all__ = [
     "FeatherError",
@@ -29,21 +29,21 @@ class FeatherDataset:
 def check_chunked_overflow(name: str, col) -> None: ...
 def write_feather(
     df: pd.DataFrame | Table,
-    dest: StrPath | IO,
+    dest: StrPath | IO | NativeFile,
     compression: Literal["zstd", "lz4", "uncompressed"] | None = None,
     compression_level: int | None = None,
     chunksize: int | None = None,
     version: Literal[1, 2] = 2,
 ) -> None: ...
 def read_feather(
-    source: StrPath | IO,
+    source: StrPath | IO | NativeFile,
     columns: list[str] | None = None,
     use_threads: bool = True,
     memory_map: bool = False,
     **kwargs,
 ) -> pd.DataFrame: ...
 def read_table(
-    source: StrPath | IO,
+    source: StrPath | IO | NativeFile,
     columns: list[str] | None = None,
     memory_map: bool = False,
     use_threads: bool = True,
