@@ -1594,6 +1594,14 @@ def bit_wise_and(
     *,
     memory_pool: lib.MemoryPool | None = None,
 ) -> Expression: ...
+@overload
+def bit_wise_and(
+    x: _NumericArrayT, y: int, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericArrayT: ...
+@overload
+def bit_wise_and(
+    x: int, y: _NumericArrayT, /, *, memory_pool: lib.MemoryPool | None = None
+) -> _NumericArrayT: ...
 def bit_wise_and(*args, **kwargs):
     """
     Bit-wise AND the arguments element-wise.
