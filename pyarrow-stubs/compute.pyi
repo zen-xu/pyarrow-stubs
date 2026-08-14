@@ -7091,47 +7091,85 @@ def drop_null(
     input: Expression, /, *, memory_pool: lib.MemoryPool | None = None
 ) -> Expression: ...
 
+_TabularT = TypeVar("_TabularT", bound=lib.Table | lib.RecordBatch)
+# Any integer width is accepted, signed or not: ``sort_indices`` in particular
+# hands back a ``UInt64Array``.
+_TakeIndices: TypeAlias = list[int] | list[int | None] | IntegerArray
+
 filter = array_filter
-take = array_take
-"""
-Select values (or records) from array- or table-like data given integer
-selection indices.
 
-The result will be of the same type(s) as the input, with elements taken
-from the input array (or record batch / table fields) at the given
-indices. If an index is null then the corresponding value in the output
-will be null.
+# ``take`` is not just an alias for ``array_take``: unlike the array kernel it
+# also accepts a RecordBatch or a Table and returns the same kind back.
+@overload
+def take(
+    data: _ArrayT,
+    indices: _TakeIndices,
+    /,
+    *,
+    boundscheck: bool = True,
+    options: TakeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _ArrayT: ...
+@overload
+def take(
+    data: _TabularT,
+    indices: _TakeIndices,
+    /,
+    *,
+    boundscheck: bool = True,
+    options: TakeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> _TabularT: ...
+@overload
+def take(
+    data: Expression,
+    indices: _TakeIndices,
+    /,
+    *,
+    boundscheck: bool = True,
+    options: TakeOptions | None = None,
+    memory_pool: lib.MemoryPool | None = None,
+) -> Expression: ...
+def take(*args, **kwargs):
+    """
+    Select values (or records) from array- or table-like data given integer
+    selection indices.
 
-Parameters
-----------
-data : Array, ChunkedArray, RecordBatch, or Table
-indices : Array, ChunkedArray
-    Must be of integer type
-boundscheck : boolean, default True
-    Whether to boundscheck the indices. If False and there is an out of
-    bounds index, will likely cause the process to crash.
-memory_pool : MemoryPool, optional
-    If not passed, will allocate memory from the default memory pool.
+    The result will be of the same type(s) as the input, with elements taken
+    from the input array (or record batch / table fields) at the given
+    indices. If an index is null then the corresponding value in the output
+    will be null.
 
-Returns
--------
-result : depends on inputs
-    Selected values for the given indices
+    Parameters
+    ----------
+    data : Array, ChunkedArray, RecordBatch, or Table
+    indices : Array, ChunkedArray
+        Must be of integer type
+    boundscheck : boolean, default True
+        Whether to boundscheck the indices. If False and there is an out of
+        bounds index, will likely cause the process to crash.
+    memory_pool : MemoryPool, optional
+        If not passed, will allocate memory from the default memory pool.
 
-Examples
---------
->>> import pyarrow as pa
->>> arr = pa.array(["a", "b", "c", None, "e", "f"])
->>> indices = pa.array([0, None, 4, 3])
->>> arr.take(indices)
-<pyarrow.lib.StringArray object at ...>
-[
-    "a",
-    null,
-    "e",
-    null
-]
-"""
+    Returns
+    -------
+    result : depends on inputs
+        Selected values for the given indices
+
+    Examples
+    --------
+    >>> import pyarrow as pa
+    >>> arr = pa.array(["a", "b", "c", None, "e", "f"])
+    >>> indices = pa.array([0, None, 4, 3])
+    >>> arr.take(indices)
+    <pyarrow.lib.StringArray object at ...>
+    [
+        "a",
+        null,
+        "e",
+        null
+    ]
+    """
 
 # ========================= 3.4 Containment tests  =========================
 @overload
