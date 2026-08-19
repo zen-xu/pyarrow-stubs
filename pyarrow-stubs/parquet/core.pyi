@@ -87,7 +87,7 @@ def filters_to_expression(filters: list[FilterTuple | list[FilterTuple]]) -> Exp
 @deprecated("use filters_to_expression")
 def _filters_to_expression(filters: list[FilterTuple | list[FilterTuple]]) -> Expression: ...
 
-_Compression: TypeAlias = Literal["gzip", "bz2", "brotli", "lz4", "zstd", "snappy", "none"]
+_Compression: TypeAlias = Literal["gzip", "brotli", "lz4", "zstd", "snappy", "none"]
 
 class ParquetFile:
     """
