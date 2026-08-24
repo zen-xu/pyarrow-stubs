@@ -28,8 +28,8 @@ from typing_extensions import TypeVar, deprecated
 from .io import Buffer
 from .scalar import ExtensionScalar
 
-_AsPyType = TypeVar("_AsPyType")
-_DataTypeT = TypeVar("_DataTypeT", bound=DataType)
+_AsPyType = TypeVar("_AsPyType", covariant=True)
+_DataTypeT = TypeVar("_DataTypeT", bound=DataType, covariant=True)
 
 class _Weakrefable: ...
 class _Metadata(_Weakrefable): ...
@@ -2043,7 +2043,7 @@ class Schema(_Weakrefable):
         -- schema metadata --
         pandas: '{"index_columns": [{"kind": "range", "name": null, ...
         """
-    def field(self, i: int | str | bytes) -> Field:
+    def field(self, i: int | str | bytes) -> Field[DataType]:
         """
         Select a field by its column name or numeric index.
 

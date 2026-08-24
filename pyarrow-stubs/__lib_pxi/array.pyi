@@ -19,6 +19,7 @@ from typing import (
 )
 
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 from pandas.core.dtypes.base import ExtensionDtype
@@ -44,7 +45,7 @@ from typing_extensions import deprecated
 
 from . import scalar, types
 from .device import DeviceAllocationType
-from .scalar import NullableCollection, Scalar
+from .scalar import FixedSizeListScalar, LargeListScalar, ListScalar, NullableCollection, Scalar
 from .types import (
     DataType,
     Field,
@@ -518,6 +519,16 @@ def array(
     safe: bool = True,
     memory_pool: MemoryPool | None = None,
 ) -> MonthDayNanoIntervalArray: ...
+@overload
+def array(
+    values: Iterable[Any] | SupportArrowArray | SupportArrowDeviceArray,
+    type: types.ListType[_DataTypeT],
+    mask: Mask | None = None,
+    size: int | None = None,
+    from_pandas: bool | None = None,
+    safe: bool = True,
+    memory_pool: MemoryPool | None = None,
+) -> Array[scalar.ListScalar[_DataTypeT]]: ...
 @overload
 def array(
     values: Iterable[Any] | SupportArrowArray | SupportArrowDeviceArray,
@@ -1082,6 +1093,12 @@ def nulls(
     type: types.ExtensionType,
     memory_pool: MemoryPool | None = None,
 ) -> ExtensionArray[Any]: ...
+@overload
+def nulls(
+    size: int,
+    type: _DataTypeT,
+    memory_pool: MemoryPool | None = None,
+) -> Array[Scalar[_DataTypeT]]: ...
 def nulls(*args, **kwargs):
     """
     Create a strongly-typed Array instance with all elements null.
@@ -2151,11 +2168,37 @@ class Array(_PandasConvertible[pd.Series], Generic[_Scalar_co]):
         -------
         array : numpy.ndarray
         """
+    @overload
     def to_pylist(
         self: Array[Scalar[_BasicDataType[_AsPyType]]],
         *,
         maps_as_pydicts: Literal["lossy", "strict"] | None = None,
-    ) -> list[_AsPyType | None]:
+    ) -> list[_AsPyType | None]: ...
+    @overload
+    def to_pylist(
+        self: Array[ListScalar[_BasicDataType[_AsPyType]]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[list[_AsPyType | None] | None]: ...
+    @overload
+    def to_pylist(
+        self: Array[LargeListScalar[_BasicDataType[_AsPyType]]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[list[_AsPyType | None] | None]: ...
+    @overload
+    def to_pylist(
+        self: Array[FixedSizeListScalar[_BasicDataType[_AsPyType], _Size]],
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[list[_AsPyType | None] | None]: ...
+    @overload
+    def to_pylist(
+        self,
+        *,
+        maps_as_pydicts: Literal["lossy", "strict"] | None = None,
+    ) -> list[Any]: ...
+    def to_pylist(self, *args, **kwargs):
         """
         Convert to a list of native Python objects.
 
@@ -2163,7 +2206,7 @@ class Array(_PandasConvertible[pd.Series], Generic[_Scalar_co]):
         ----------
         maps_as_pydicts : str, optional, default `None`
             Valid values are `None`, 'lossy', or 'strict'.
-            The default behavior (`None`), is to convert Arrow Map arrays to
+            The default behavior (`None``), is to convert Arrow Map arrays to
             Python association lists (list-of-tuples) in the same order as the
             Arrow Map, as in [(key1, value1), (key2, value2), ...].
 
@@ -2425,17 +2468,28 @@ class Decimal64Array(FixedSizeBinaryArray): ...
 class Decimal128Array(FixedSizeBinaryArray): ...
 class Decimal256Array(FixedSizeBinaryArray): ...
 
-class BaseListArray(Array[_ScalarT]):
-    def flatten(self, recursive: bool = False) -> Array: ...
+class BaseListArray(Array[_Scalar_co]):
+    @overload
+    def flatten(self: BaseListArray[scalar.ListScalar[_DataTypeT]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
+    @overload
+    def flatten(self: BaseListArray[scalar.LargeListScalar[_DataTypeT]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
+    @overload
+    def flatten(self: BaseListArray[scalar.ListViewScalar[_DataTypeT]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
+    @overload
+    def flatten(self: BaseListArray[scalar.LargeListViewScalar[_DataTypeT]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
+    @overload
+    def flatten(self: BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, Any]], recursive: bool = False) -> Array[Scalar[_DataTypeT]]: ...
+    @overload
+    def flatten(self, recursive: bool = False) -> Array[_Scalar_co]: ...
     def value_parent_indices(self) -> Int64Array: ...
     def value_lengths(self) -> Int32Array: ...
 
-class ListArray(BaseListArray[_ScalarT]):
+class ListArray(BaseListArray[_Scalar_co]):
     @overload
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: Array[Scalar[_DataTypeT]],
         *,
         type: None = None,
@@ -2446,7 +2500,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: list[int],
         *,
         type: None = None,
@@ -2457,7 +2511,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: list[float],
         *,
         type: None = None,
@@ -2468,7 +2522,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: list[str],
         *,
         type: None = None,
@@ -2479,7 +2533,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: list[bytes],
         *,
         type: None = None,
@@ -2490,7 +2544,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: list,
         *,
         type: None = None,
@@ -2501,7 +2555,7 @@ class ListArray(BaseListArray[_ScalarT]):
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int32Array | list[int],
+        offsets: Int32Array | npt.NDArray[np.int32] | list[int],
         values: Array | list,
         *,
         type: _DataTypeT,
@@ -2656,18 +2710,20 @@ class ListArray(BaseListArray[_ScalarT]):
         ]
         """
 
+_LargeListValueT = TypeVar("_LargeListValueT", bound=DataType)
+
 class LargeListArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
     @overload
     @classmethod
     def from_arrays(
         cls,
         offsets: Int64Array,
-        values: Array[Scalar[_DataTypeT]],
+        values: Array[Scalar[_LargeListValueT]],
         *,
         type: None = None,
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
-    ) -> LargeListArray[_DataTypeT]: ...
+    ) -> LargeListArray[_LargeListValueT]: ...
     @overload
     @classmethod
     def from_arrays(
@@ -2675,10 +2731,10 @@ class LargeListArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
         offsets: Int64Array,
         values: Array,
         *,
-        type: _DataTypeT,
+        type: _LargeListValueT,
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
-    ) -> LargeListArray[_DataTypeT]: ...
+    ) -> LargeListArray[_LargeListValueT]: ...
     @classmethod
     def from_arrays(cls, *args, **kwargs):
         """
@@ -3202,26 +3258,28 @@ class LargeListViewArray(BaseListArray[scalar.LargeListScalar[_DataTypeT]]):
         ]
         """
 
+_FixedSizeListValueT = TypeVar("_FixedSizeListValueT", bound=DataType)
+
 class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, _Size]]):
     @overload
     @classmethod
     def from_arrays(
         cls,
-        values: Array[Scalar[_DataTypeT]],
+        values: Array[Scalar[_FixedSizeListValueT]],
         *,
         type: None = None,
         mask: Mask | None = None,
-    ) -> FixedSizeListArray[_DataTypeT, None]: ...
+    ) -> FixedSizeListArray[_FixedSizeListValueT, None]: ...
     @overload
     @classmethod
     def from_arrays(
         cls,
-        values: Array[Scalar[_DataTypeT]],
+        values: Array[Scalar[_FixedSizeListValueT]],
         limit_size: _Size,
         *,
         type: None = None,
         mask: Mask | None = None,
-    ) -> FixedSizeListArray[_DataTypeT, _Size]: ...
+    ) -> FixedSizeListArray[_FixedSizeListValueT, _Size]: ...
     @classmethod
     def from_arrays(cls, *args, **kwargs):
         """
@@ -3317,35 +3375,37 @@ class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, _S
 
         """
 
-_MapKeyT = TypeVar("_MapKeyT", bound=_BasicDataType)
-_MapItemT = TypeVar("_MapItemT", bound=_BasicDataType)
+_MapKeyT = TypeVar("_MapKeyT", bound=DataType)
+_MapItemT = TypeVar("_MapItemT", bound=DataType)
+_FromArraysKeyT = TypeVar("_FromArraysKeyT", bound=DataType)
+_FromArraysItemT = TypeVar("_FromArraysItemT", bound=DataType)
 
 class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
     @overload
     @classmethod
     def from_arrays(
         cls,
-        offsets: Int64Array,
-        keys: Array[Scalar[_MapKeyT]],
-        items: Array[Scalar[_MapItemT]],
+        offsets: Int32Array | Int64Array,
+        keys: Array[Scalar[_FromArraysKeyT]],
+        items: Array[Scalar[_FromArraysItemT]],
         *,
         type: None = None,
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
-    ) -> MapArray[_MapKeyT, _MapItemT]: ...
+    ) -> MapArray[_FromArraysKeyT, _FromArraysItemT]: ...
     @overload
     @classmethod
-    def from_arrays(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def from_arrays(
         cls,
-        offsets: Int64Array,
-        values: Array,
+        offsets: Int32Array | Int64Array,
+        values: Array[Any],
         *,
-        type: MapType[_MapKeyT, _MapItemT],
+        type: MapType[_FromArraysKeyT, _FromArraysItemT],
         pool: MemoryPool | None = None,
         mask: Mask | None = None,
-    ) -> MapArray[_MapKeyT, _MapItemT]: ...
+    ) -> MapArray[_FromArraysKeyT, _FromArraysItemT]: ...
     @classmethod
-    def from_arrays(cls, *args, **kwargs):  # pyright: ignore[reportIncompatibleMethodOverride]
+    def from_arrays(cls, *args, **kwargs):
         """
         Construct MapArray from arrays of int32 offsets and key, item arrays.
 
@@ -3440,10 +3500,10 @@ class MapArray(ListArray[scalar.MapScalar[_MapKeyT, _MapItemT]]):
         dtype: object
         """
     @property
-    def keys(self) -> Array:
+    def keys(self) -> Array[Scalar[_MapKeyT]]:
         """Flattened array of keys across all maps in array"""
     @property
-    def items(self) -> Array:
+    def items(self: MapArray[Any, types.ListType[_DataTypeT]]) -> ListArray[scalar.ListScalar[_DataTypeT]]:
         """Flattened array of items across all maps in array"""
 
 class UnionArray(Array[scalar.UnionScalar]):
