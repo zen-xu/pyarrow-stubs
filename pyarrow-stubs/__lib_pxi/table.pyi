@@ -46,6 +46,7 @@ from pyarrow._stubs_typing import (
     SupportArrowArray,
     SupportArrowDeviceArray,
     SupportArrowStream,
+    SupportDataFrame,
 )
 from pyarrow.compute import ArrayOrChunkedArray, Expression
 from pyarrow.interchange.dataframe import _PyArrowDataFrame
@@ -5082,7 +5083,7 @@ class Table(_Tabular[ChunkedArray[Any]]):
 def record_batch(
     data: Mapping[str, Sequence[Any] | Array[Any]]
     | Collection[Array[Any]]
-    | pd.DataFrame
+    | SupportDataFrame
     | SupportArrowArray
     | SupportArrowDeviceArray,
     names: list[str] | None = None,
@@ -5231,7 +5232,7 @@ def table(
 @overload
 def table(
     data: Collection[ArrayOrChunkedArray[Any]]
-    | pd.DataFrame
+    | SupportDataFrame
     | SupportArrowArray
     | SupportArrowStream
     | SupportArrowDeviceArray,
