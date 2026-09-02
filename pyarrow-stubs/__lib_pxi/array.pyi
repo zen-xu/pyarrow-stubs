@@ -59,7 +59,6 @@ from .types import (
 )
 
 _FixedSizeListDataTypeT = TypeVar("_FixedSizeListDataTypeT", bound=DataType)
-_FixedSizeListSize = TypeVar("_FixedSizeListSize", bound=int)
 
 @overload
 def array(
@@ -3220,11 +3219,11 @@ class FixedSizeListArray(BaseListArray[scalar.FixedSizeListScalar[_DataTypeT, _S
     def from_arrays(
         cls,
         values: Array[Scalar[_FixedSizeListDataTypeT]],
-        list_size: _FixedSizeListSize,
+        list_size: _Size,
         *,
         type: None = None,
         mask: Mask | None = None,
-    ) -> FixedSizeListArray[_FixedSizeListDataTypeT, _FixedSizeListSize]: ...
+    ) -> FixedSizeListArray[_FixedSizeListDataTypeT, _Size]: ...
     @classmethod
     def from_arrays(cls, *args, **kwargs):
         """
