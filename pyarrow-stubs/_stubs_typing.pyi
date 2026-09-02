@@ -78,3 +78,6 @@ class SupportArrowDeviceArray(Protocol):
 
 class SupportArrowSchema(Protocol):
     def __arrow_c_schema(self) -> Any: ...
+
+class SupportDataFrame(Protocol):
+    def __dataframe__(self, nan_as_null: bool = False, allow_copy: bool = True) -> Any: ...
